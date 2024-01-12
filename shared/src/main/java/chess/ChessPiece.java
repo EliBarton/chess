@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -54,6 +55,48 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
+    }
+
+    public Collection<ChessMove> getKingMoves(){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+
+
+        return movelist;
+    }
+
+    public Collection<ChessMove> getQueenMoves(){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+
+
+        return movelist;
+    }
+
+    public Collection<ChessMove> getBishopMoves(){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+
+
+        return movelist;
+    }
+
+    public Collection<ChessMove> getKnightMoves(){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+
+
+        return movelist;
+    }
+
+    public Collection<ChessMove> getRookMoves(){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+
+
+        return movelist;
+    }
+
+    public Collection<ChessMove> getPawnMoves(){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+
+
+        return movelist;
     }
 
 }
