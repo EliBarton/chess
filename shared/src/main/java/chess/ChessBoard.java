@@ -11,7 +11,6 @@ public class ChessBoard {
     public ChessBoard() {
         
     }
-
     /**
      * Adds a chess piece to the chessboard
      *
@@ -20,6 +19,7 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         throw new RuntimeException("Not implemented");
+
     }
 
     /**
