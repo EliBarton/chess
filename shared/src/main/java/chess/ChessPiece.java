@@ -82,22 +82,52 @@ public class ChessPiece {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
         ChessPosition endPosition;
         int directions = 8;
-        boolean diagonal = true;
         int distance = 1;
+        int currentRow = piecePosition.getRow();
+        int currentCol = piecePosition.getColumn();
         for (int i = 0; i < directions; i++){
-            int k = i + 1;
-            int row;
-            int col;
-            if(k % 4 > 1) {
-                k = -k;
+            switch (i+1){
+                case 1:
+                    endPosition = new ChessPosition(currentRow+1, currentCol);
+                case 2:
+                    endPosition = new ChessPosition(currentRow+1, currentCol-1);
+                case 3:
+                    endPosition = new ChessPosition(currentRow, currentCol-1);
+                case 4:
+                    endPosition = new ChessPosition(currentRow-1, currentCol-1);
+                case 5:
+                    endPosition = new ChessPosition(currentRow-1, currentCol);
+                case 6:
+                    endPosition = new ChessPosition(currentRow-1, currentCol+1);
+                case 7:
+                    endPosition = new ChessPosition(currentRow, currentCol+1);
+                case 8:
+                    endPosition = new ChessPosition(currentRow+1, currentCol+1);
+                default:
+                    endPosition = new ChessPosition(currentRow, currentCol);
             }
-            if (i % 4 > 1){
-                i = -i;
-            }
-            endPosition = new ChessPosition(i % 2, k % 2);
             movelist.add(new ChessMove(piecePosition, endPosition, null));
-            i = Math.abs(i);
         }
+//        for (int i = 0; i < directions; i++){
+//            int k = i + 1;
+//            int row;
+//            int col;
+//            if(k % 4 > 1) {
+//                k = -k;
+//
+//            }
+//            if (i % 4 > 1){
+//                i = -i;
+//            }
+//            if (i > 6) {
+//                row = i % 2;
+//                col = k % 2;
+//            }
+//            endPosition = new ChessPosition(i % 2, k % 2);
+//            movelist.add(new ChessMove(piecePosition, endPosition, null));
+//            i = Math.abs(i);
+//            System.out.println(endPosition.toString());
+//        }
 
         return movelist;
     }
@@ -125,8 +155,28 @@ public class ChessPiece {
 
     public Collection<ChessMove> getRookMoves(ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
-
-
+        ChessPosition endPosition;
+        int directions = 4;
+        boolean diagonal = true;
+        int distance = 1;
+        for (int i = 0; i < directions; i++) {
+            int k = i + 1;
+            int row;
+            int col;
+            if (k % 4 > 1) {
+                k = -k;
+            }
+            if (i % 4 > 1) {
+                i = -i;
+            }
+            if (i > 6) {
+                row = i % 2;
+                col = k % 2;
+            }
+            endPosition = new ChessPosition(i % 2, k % 2);
+            movelist.add(new ChessMove(piecePosition, endPosition, null));
+            //i = Math.abs(i);
+        }
         return movelist;
     }
 
