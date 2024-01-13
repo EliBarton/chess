@@ -56,29 +56,29 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (selfType){
             case KING -> {
-                return getKingMoves(myPosition);
+                return getKingMoves(board, myPosition);
             }
             case PAWN -> {
-                return getPawnMoves(myPosition);
+                return getPawnMoves(board, myPosition);
             }
             case ROOK -> {
-                return getRookMoves(myPosition);
+                return getRookMoves(board, myPosition);
             }
             case QUEEN -> {
-                return getQueenMoves(myPosition);
+                return getQueenMoves(board, myPosition);
             }
             case BISHOP -> {
-                return getBishopMoves(myPosition);
+                return getBishopMoves(board, myPosition);
             }
             case KNIGHT -> {
-                return getKnightMoves(myPosition);
+                return getKnightMoves(board, myPosition);
             }
         }
 
         throw new RuntimeException("Error, piece does not exist");
     }
 
-    public Collection<ChessMove> getKingMoves(ChessPosition piecePosition){
+    public Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
         ChessPosition endPosition;
         int directions = 8;
@@ -87,28 +87,28 @@ public class ChessPiece {
         int currentCol = piecePosition.getColumn();
         for (int i = 0; i < directions; i++){
             switch (i+1){
-                case 1:
+                case 4:
                     endPosition = new ChessPosition(currentRow+1, currentCol);
                     break;
-                case 2:
+                case 5:
                     endPosition = new ChessPosition(currentRow+1, currentCol-1);
                     break;
-                case 3:
+                case 6:
                     endPosition = new ChessPosition(currentRow, currentCol-1);
                     break;
-                case 4:
+                case 7:
                     endPosition = new ChessPosition(currentRow-1, currentCol-1);
                     break;
-                case 5:
+                case 8:
                     endPosition = new ChessPosition(currentRow-1, currentCol);
                     break;
-                case 6:
+                case 1:
                     endPosition = new ChessPosition(currentRow-1, currentCol+1);
                     break;
-                case 7:
+                case 2:
                     endPosition = new ChessPosition(currentRow, currentCol+1);
                     break;
-                case 8:
+                case 3:
                     endPosition = new ChessPosition(currentRow+1, currentCol+1);
                     break;
                 default:
@@ -116,7 +116,9 @@ public class ChessPiece {
                     System.out.println("Failed");
                     System.out.println("expected a number 1-8. Instead got " + (i+1));
             }
+
             movelist.add(new ChessMove(piecePosition, endPosition, null));
+            System.out.println(piecePosition + " to " + endPosition);
         }
 //        for (int i = 0; i < directions; i++){
 //            int k = i + 1;
@@ -142,28 +144,28 @@ public class ChessPiece {
         return movelist;
     }
 
-    public Collection<ChessMove> getQueenMoves(ChessPosition piecePosition){
+    public Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getBishopMoves(ChessPosition piecePosition){
+    public Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getKnightMoves(ChessPosition piecePosition){
+    public Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getRookMoves(ChessPosition piecePosition){
+    public Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
         ChessPosition endPosition;
         int directions = 4;
@@ -190,11 +192,21 @@ public class ChessPiece {
         return movelist;
     }
 
-    public Collection<ChessMove> getPawnMoves(ChessPosition piecePosition){
+    public Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
+    }
+
+    public ArrayList<ChessMove> removeObstacles(ChessBoard board, ArrayList<ChessMove> input){
+        ArrayList<ChessMove> output = input;
+        for (int i = 0; i < output.size(); i++){
+            if (board.getPiece(output.get(i).getEndPosition()) != null){
+                output.remove(i);
+            }
+        }
+        return output;
     }
 
 }

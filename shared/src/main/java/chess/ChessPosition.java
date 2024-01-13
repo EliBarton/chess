@@ -17,10 +17,10 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return "ChessPosition{" +
-                "rowPos=" + rowPos +
-                ", colPos=" + colPos +
-                '}';
+        return "ChessPosition{"
+                + rowPos +
+                ", " + colPos +
+                ')';
     }
 
     /**
