@@ -54,45 +54,83 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        switch (selfType){
+            case KING -> {
+                return getKingMoves(myPosition);
+            }
+            case PAWN -> {
+                return getPawnMoves(myPosition);
+            }
+            case ROOK -> {
+                return getRookMoves(myPosition);
+            }
+            case QUEEN -> {
+                return getQueenMoves(myPosition);
+            }
+            case BISHOP -> {
+                return getBishopMoves(myPosition);
+            }
+            case KNIGHT -> {
+                return getKnightMoves(myPosition);
+            }
+        }
+
+        throw new RuntimeException("Error, piece does not exist");
     }
 
-    public Collection<ChessMove> getKingMoves(){
+    public Collection<ChessMove> getKingMoves(ChessPosition piecePosition){
+        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+        ChessPosition endPosition;
+        int directions = 8;
+        boolean diagonal = true;
+        int distance = 1;
+        for (int i = 0; i < directions; i++){
+            int k = i + 1;
+            int row;
+            int col;
+            if(k % 4 > 1) {
+                k = -k;
+            }
+            if (i % 4 > 1){
+                i = -i;
+            }
+            endPosition = new ChessPosition(i % 2, k % 2);
+            movelist.add(new ChessMove(piecePosition, endPosition, null));
+            i = Math.abs(i);
+        }
+
+        return movelist;
+    }
+
+    public Collection<ChessMove> getQueenMoves(ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getQueenMoves(){
+    public Collection<ChessMove> getBishopMoves(ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getBishopMoves(){
+    public Collection<ChessMove> getKnightMoves(ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getKnightMoves(){
+    public Collection<ChessMove> getRookMoves(ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getRookMoves(){
-        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
-
-
-        return movelist;
-    }
-
-    public Collection<ChessMove> getPawnMoves(){
+    public Collection<ChessMove> getPawnMoves(ChessPosition piecePosition){
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
