@@ -18,6 +18,15 @@ public class ChessMove {
         promotePiece = promotionPiece;
     }
 
+    @Override
+    public String toString() {
+        return "ChessMove{" +
+                "startPos=" + startPos +
+                ", endPos=" + endPos +
+                ", promotePiece=" + promotePiece +
+                '}';
+    }
+
     /**
      * @return ChessPosition of starting location
      */

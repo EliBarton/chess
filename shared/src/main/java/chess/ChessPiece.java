@@ -89,22 +89,32 @@ public class ChessPiece {
             switch (i+1){
                 case 1:
                     endPosition = new ChessPosition(currentRow+1, currentCol);
+                    break;
                 case 2:
                     endPosition = new ChessPosition(currentRow+1, currentCol-1);
+                    break;
                 case 3:
                     endPosition = new ChessPosition(currentRow, currentCol-1);
+                    break;
                 case 4:
                     endPosition = new ChessPosition(currentRow-1, currentCol-1);
+                    break;
                 case 5:
                     endPosition = new ChessPosition(currentRow-1, currentCol);
+                    break;
                 case 6:
                     endPosition = new ChessPosition(currentRow-1, currentCol+1);
+                    break;
                 case 7:
                     endPosition = new ChessPosition(currentRow, currentCol+1);
+                    break;
                 case 8:
                     endPosition = new ChessPosition(currentRow+1, currentCol+1);
+                    break;
                 default:
                     endPosition = new ChessPosition(currentRow, currentCol);
+                    System.out.println("Failed");
+                    System.out.println("expected a number 1-8. Instead got " + (i+1));
             }
             movelist.add(new ChessMove(piecePosition, endPosition, null));
         }
