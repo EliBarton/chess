@@ -85,19 +85,25 @@ public class ChessPiece {
         ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
         directions.addAll(getDiagDirections(piecePosition));
         directions.addAll(getHorVerDirections(piecePosition));
+        System.out.println(directions);
         int distance = 0;
         int max_distance = 1;
         ChessPosition targetPosition = new ChessPosition(0 ,0);
+        System.out.println(directions.size());
 
         for (int i = 0; i < directions.size(); i++){
             boolean invalid = false;
-            distance += 1;
-            while (distance < max_distance && !invalid){
+            distance = 1;
+            while (distance <= max_distance && invalid == false) {
+                System.out.println(directions.get(i));
                 targetPosition.colPos = directions.get(i).colPos * distance;
                 targetPosition.rowPos = directions.get(i).rowPos * distance;
-                if (board.getPiece(targetPosition) == null){
-                    break;
+                if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
+                    movelist.add(new ChessMove(piecePosition, targetPosition, null));
+                } else {
+                    invalid = true;
                 }
+                distance += 1;
             }
         }
 
@@ -158,7 +164,7 @@ public class ChessPiece {
 //            i = Math.abs(i);
 //            System.out.println(newDirection.toString());
 //        }
-
+        System.out.println(movelist);
         return movelist;
     }
 
