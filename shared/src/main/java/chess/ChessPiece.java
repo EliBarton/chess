@@ -88,16 +88,17 @@ public class ChessPiece {
         System.out.println(directions);
         int distance = 0;
         int max_distance = 1;
-        ChessPosition targetPosition = new ChessPosition(0 ,0);
+
         System.out.println(directions.size());
 
         for (int i = 0; i < directions.size(); i++){
             boolean invalid = false;
             distance = 1;
-            while (distance <= max_distance && invalid == false) {
-                System.out.println(directions.get(i));
+            while (distance <= max_distance && !invalid) {
+                ChessPosition targetPosition = new ChessPosition(0 ,0);
                 targetPosition.colPos = directions.get(i).colPos * distance;
                 targetPosition.rowPos = directions.get(i).rowPos * distance;
+                System.out.println(targetPosition);
                 if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
                     movelist.add(new ChessMove(piecePosition, targetPosition, null));
                 } else {
