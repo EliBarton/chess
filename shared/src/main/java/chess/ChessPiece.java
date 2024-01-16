@@ -80,33 +80,11 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
-        ChessPosition newDirection;
+
         ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
         directions.addAll(getDiagDirections(piecePosition));
         directions.addAll(getHorVerDirections(piecePosition));
-        System.out.println(directions);
-        int distance = 0;
-        int max_distance = 1;
-
-        System.out.println(directions.size());
-
-        for (int i = 0; i < directions.size(); i++){
-            boolean invalid = false;
-            distance = 1;
-            while (distance <= max_distance && !invalid) {
-                ChessPosition targetPosition = new ChessPosition(0 ,0);
-                targetPosition.colPos = directions.get(i).colPos * distance;
-                targetPosition.rowPos = directions.get(i).rowPos * distance;
-                System.out.println(targetPosition);
-                if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
-                    movelist.add(new ChessMove(piecePosition, targetPosition, null));
-                } else {
-                    invalid = true;
-                }
-                distance += 1;
-            }
-        }
+        ArrayList<ChessMove> movelist = calculateMoves(directions, 1, board, piecePosition);
 
 //        int distance = 1;
 //        int currentRow = piecePosition.getRow();
@@ -170,14 +148,21 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        directions.addAll(getDiagDirections(piecePosition));
+        directions.addAll(getHorVerDirections(piecePosition));
+
+        ArrayList<ChessMove> movelist = calculateMoves(directions, 8, board, piecePosition);
 
 
         return movelist;
     }
 
     public Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        directions.addAll(getDiagDirections(piecePosition));
+
+        ArrayList<ChessMove> movelist = calculateMoves(directions, 8, board, piecePosition);
 
 
         return movelist;
@@ -191,29 +176,11 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
-        ChessPosition newDirection;
-        int directions = 4;
-        boolean diagonal = true;
-        int distance = 1;
-        for (int i = 0; i < directions; i++) {
-            int k = i + 1;
-            int row;
-            int col;
-            if (k % 4 > 1) {
-                k = -k;
-            }
-            if (i % 4 > 1) {
-                i = -i;
-            }
-            if (i > 6) {
-                row = i % 2;
-                col = k % 2;
-            }
-            newDirection = new ChessPosition(i % 2, k % 2);
-            movelist.add(new ChessMove(piecePosition, newDirection, null));
-            //i = Math.abs(i);
-        }
+
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        directions.addAll(getHorVerDirections(piecePosition));
+        ArrayList<ChessMove> movelist = calculateMoves(directions, 8, board, piecePosition);
+
         return movelist;
     }
 
@@ -248,6 +215,27 @@ public class ChessPiece {
         output.add(new ChessPosition(currentRow - 1, currentCol-1));
         output.add(new ChessPosition(currentRow-1, currentCol + 1));
 
+        return output;
+    }
+
+    public ArrayList<ChessMove> calculateMoves(ArrayList<ChessPosition> directions, int max_distance, ChessBoard board, ChessPosition piecePosition){
+        int distance = 0;
+        ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        for (int i = 0; i < directions.size(); i++){
+            boolean invalid = false;
+            distance = 1;
+            while (distance <= max_distance && !invalid) {
+                ChessPosition targetPosition = new ChessPosition(0 ,0);
+                targetPosition.colPos = directions.get(i).colPos * distance;
+                targetPosition.rowPos = directions.get(i).rowPos * distance;
+                if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
+                    output.add(new ChessMove(piecePosition, targetPosition, null));
+                } else {
+                    invalid = true;
+                }
+                distance += 1;
+            }
+        }
         return output;
     }
 }
