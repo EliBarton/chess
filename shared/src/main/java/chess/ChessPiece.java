@@ -13,6 +13,7 @@ public class ChessPiece {
 
     public ChessGame.TeamColor selfTeam;
     public PieceType selfType;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         selfTeam = pieceColor;
         selfType = type;
@@ -54,7 +55,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (selfType){
+        switch (selfType) {
             case KING -> {
                 return getKingMoves(board, myPosition);
             }
@@ -78,48 +79,47 @@ public class ChessPiece {
         throw new RuntimeException("Error, piece does not exist");
     }
 
-    public Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition piecePosition){
+    public Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition piecePosition) {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
-        ChessPosition endPosition;
-        int directions = 8;
-        int distance = 1;
-        int currentRow = piecePosition.getRow();
-        int currentCol = piecePosition.getColumn();
-        for (int i = 0; i < directions; i++){
-            switch (i+1){
-                case 4:
-                    endPosition = new ChessPosition(currentRow+1, currentCol);
-                    break;
-                case 5:
-                    endPosition = new ChessPosition(currentRow+1, currentCol-1);
-                    break;
-                case 6:
-                    endPosition = new ChessPosition(currentRow, currentCol-1);
-                    break;
-                case 7:
-                    endPosition = new ChessPosition(currentRow-1, currentCol-1);
-                    break;
-                case 8:
-                    endPosition = new ChessPosition(currentRow-1, currentCol);
-                    break;
-                case 1:
-                    endPosition = new ChessPosition(currentRow-1, currentCol+1);
-                    break;
-                case 2:
-                    endPosition = new ChessPosition(currentRow, currentCol+1);
-                    break;
-                case 3:
-                    endPosition = new ChessPosition(currentRow+1, currentCol+1);
-                    break;
-                default:
-                    endPosition = new ChessPosition(currentRow, currentCol);
-                    System.out.println("Failed");
-                    System.out.println("expected a number 1-8. Instead got " + (i+1));
-            }
-
-            movelist.add(new ChessMove(piecePosition, endPosition, null));
-            System.out.println(piecePosition + " to " + endPosition);
-        }
+        ChessPosition newDirection;
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+//        int distance = 1;
+//        int currentRow = piecePosition.getRow();
+//        int currentCol = piecePosition.getColumn();
+//        for (int i = 0; i < directions; i++) {
+//            switch (i + 1) {
+//                case 4:
+//                    newDirection = new ChessPosition(currentRow + 1, currentCol);
+//                    break;
+//                case 5:
+//                    newDirection = new ChessPosition(currentRow + 1, currentCol - 1);
+//                    break;
+//                case 6:
+//                    newDirection = new ChessPosition(currentRow, currentCol - 1);
+//                    break;
+//                case 7:
+//                    newDirection = new ChessPosition(currentRow - 1, currentCol - 1);
+//                    break;
+//                case 8:
+//                    newDirection = new ChessPosition(currentRow - 1, currentCol);
+//                    break;
+//                case 1:
+//                    newDirection = new ChessPosition(currentRow - 1, currentCol + 1);
+//                    break;
+//                case 2:
+//                    newDirection = new ChessPosition(currentRow, currentCol + 1);
+//                    break;
+//                case 3:
+//                    newDirection = new ChessPosition(currentRow + 1, currentCol + 1);
+//                    break;
+//                default:
+//                    newDirection = new ChessPosition(currentRow, currentCol);
+//                    System.out.println("Failed");
+//                    System.out.println("expected a number 1-8. Instead got " + (i + 1));
+//            }
+//
+//            directions.add(newDirection);
+//        }
 //        for (int i = 0; i < directions; i++){
 //            int k = i + 1;
 //            int row;
@@ -135,39 +135,39 @@ public class ChessPiece {
 //                row = i % 2;
 //                col = k % 2;
 //            }
-//            endPosition = new ChessPosition(i % 2, k % 2);
-//            movelist.add(new ChessMove(piecePosition, endPosition, null));
+//            newDirection = new ChessPosition(i % 2, k % 2);
+//            movelist.add(new ChessMove(piecePosition, newDirection, null));
 //            i = Math.abs(i);
-//            System.out.println(endPosition.toString());
+//            System.out.println(newDirection.toString());
 //        }
 
         return movelist;
     }
 
-    public Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition piecePosition){
+    public Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition piecePosition) {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition piecePosition){
+    public Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition piecePosition) {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition piecePosition){
+    public Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition piecePosition) {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition piecePosition){
+    public Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition piecePosition) {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
-        ChessPosition endPosition;
+        ChessPosition newDirection;
         int directions = 4;
         boolean diagonal = true;
         int distance = 1;
@@ -185,28 +185,44 @@ public class ChessPiece {
                 row = i % 2;
                 col = k % 2;
             }
-            endPosition = new ChessPosition(i % 2, k % 2);
-            movelist.add(new ChessMove(piecePosition, endPosition, null));
+            newDirection = new ChessPosition(i % 2, k % 2);
+            movelist.add(new ChessMove(piecePosition, newDirection, null));
             //i = Math.abs(i);
         }
         return movelist;
     }
 
-    public Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition piecePosition){
+    public Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition piecePosition) {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
 
 
         return movelist;
     }
 
-    public ArrayList<ChessMove> removeObstacles(ChessBoard board, ArrayList<ChessMove> input){
-        ArrayList<ChessMove> output = input;
-        for (int i = 0; i < output.size(); i++){
-            if (board.getPiece(output.get(i).getEndPosition()) != null){
-                output.remove(i);
-            }
-        }
+    private ArrayList<ChessPosition> getHorVerDirections(ChessPosition currentPos) {
+        ArrayList<ChessPosition> output = new ArrayList<ChessPosition>();
+
+        int currentRow = currentPos.getRow();
+        int currentCol = currentPos.getColumn();
+
+        output.add(new ChessPosition(currentRow + 1, currentCol));
+        output.add(new ChessPosition(currentRow, currentCol - 1));
+        output.add(new ChessPosition(currentRow - 1, currentCol));
+        output.add(new ChessPosition(currentRow, currentCol + 1));
+
         return output;
     }
+    private ArrayList<ChessPosition> getDiagDirections(ChessPosition currentPos) {
+        ArrayList<ChessPosition> output = new ArrayList<ChessPosition>();
 
+        int currentRow = currentPos.getRow();
+        int currentCol = currentPos.getColumn();
+
+        output.add(new ChessPosition(currentRow + 1, currentCol+1));
+        output.add(new ChessPosition(currentRow+1, currentCol - 1));
+        output.add(new ChessPosition(currentRow - 1, currentCol-1));
+        output.add(new ChessPosition(currentRow-1, currentCol + 1));
+
+        return output;
+    }
 }
