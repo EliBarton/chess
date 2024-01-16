@@ -83,6 +83,24 @@ public class ChessPiece {
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
         ChessPosition newDirection;
         ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        directions.addAll(getDiagDirections(piecePosition));
+        directions.addAll(getHorVerDirections(piecePosition));
+        int distance = 0;
+        int max_distance = 1;
+        ChessPosition targetPosition = new ChessPosition(0 ,0);
+
+        for (int i = 0; i < directions.size(); i++){
+            boolean invalid = false;
+            distance += 1;
+            while (distance < max_distance && !invalid){
+                targetPosition.colPos = directions.get(i).colPos * distance;
+                targetPosition.rowPos = directions.get(i).rowPos * distance;
+                if (board.getPiece(targetPosition) == null){
+                    break;
+                }
+            }
+        }
+
 //        int distance = 1;
 //        int currentRow = piecePosition.getRow();
 //        int currentCol = piecePosition.getColumn();
@@ -199,7 +217,7 @@ public class ChessPiece {
         return movelist;
     }
 
-    private ArrayList<ChessPosition> getHorVerDirections(ChessPosition currentPos) {
+    public ArrayList<ChessPosition> getHorVerDirections(ChessPosition currentPos) {
         ArrayList<ChessPosition> output = new ArrayList<ChessPosition>();
 
         int currentRow = currentPos.getRow();
@@ -212,7 +230,7 @@ public class ChessPiece {
 
         return output;
     }
-    private ArrayList<ChessPosition> getDiagDirections(ChessPosition currentPos) {
+    public ArrayList<ChessPosition> getDiagDirections(ChessPosition currentPos) {
         ArrayList<ChessPosition> output = new ArrayList<ChessPosition>();
 
         int currentRow = currentPos.getRow();

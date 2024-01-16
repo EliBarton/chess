@@ -40,4 +40,14 @@ public class ChessPosition {
         //throw new RuntimeException("Not implemented");
         return colPos;
     }
+
+    public boolean isOnBoard(){
+        if (rowPos > 0 && rowPos <= 8){
+            if (colPos > 0 && colPos <= 8){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
