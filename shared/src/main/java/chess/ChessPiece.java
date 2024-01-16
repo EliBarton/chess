@@ -228,10 +228,17 @@ public class ChessPiece {
                 ChessPosition targetPosition = new ChessPosition(0 ,0);
                 targetPosition.colPos = directions.get(i).colPos * distance;
                 targetPosition.rowPos = directions.get(i).rowPos * distance;
-                if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
-                    output.add(new ChessMove(piecePosition, targetPosition, null));
-                } else {
+                try {
+                    board.getPiece(targetPosition);
+                } catch (ArrayIndexOutOfBoundsException e){
                     invalid = true;
+                }
+                if (!invalid) {
+                    if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
+                        output.add(new ChessMove(piecePosition, targetPosition, null));
+                    } else {
+                        invalid = true;
+                    }
                 }
                 distance += 1;
             }
