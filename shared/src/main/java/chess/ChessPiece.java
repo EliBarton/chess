@@ -221,13 +221,16 @@ public class ChessPiece {
     public ArrayList<ChessMove> calculateMoves(ArrayList<ChessPosition> directions, int max_distance, ChessBoard board, ChessPosition piecePosition){
         int distance = 0;
         ArrayList<ChessMove> output = new ArrayList<ChessMove>();
+        ChessPosition referencePosition = new ChessPosition(piecePosition.rowPos ,piecePosition.colPos);
         for (int i = 0; i < directions.size(); i++){
             boolean invalid = false;
             distance = 1;
             while (distance <= max_distance && !invalid) {
+                referencePosition.colPos += directions.get(i).colPos - piecePosition.colPos;
+                referencePosition.rowPos += directions.get(i).rowPos - piecePosition.rowPos;
                 ChessPosition targetPosition = new ChessPosition(0 ,0);
-                targetPosition.colPos = directions.get(i).colPos * distance;
-                targetPosition.rowPos = directions.get(i).rowPos * distance;
+                targetPosition.colPos = referencePosition.colPos;
+                targetPosition.rowPos = referencePosition.rowPos;
                 try {
                     board.getPiece(targetPosition);
                 } catch (ArrayIndexOutOfBoundsException e){
@@ -242,6 +245,8 @@ public class ChessPiece {
                 }
                 distance += 1;
             }
+            referencePosition.colPos = piecePosition.colPos;
+            referencePosition.rowPos = piecePosition.rowPos;
         }
         return output;
     }
