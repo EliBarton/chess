@@ -239,7 +239,10 @@ public class ChessPiece {
                 if (!invalid) {
                     if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
                         output.add(new ChessMove(piecePosition, targetPosition, null));
-                    } else {
+                    } else if (board.getPiece(targetPosition).selfTeam != selfTeam){
+                        output.add(new ChessMove(piecePosition, targetPosition, null));
+                        invalid = true;
+                    }else {
                         invalid = true;
                     }
                 }
