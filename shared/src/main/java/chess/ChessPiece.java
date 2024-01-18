@@ -209,10 +209,18 @@ public class ChessPiece {
             directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos-1));
             movelist.addAll(calculateMoves(directions, 0, board, piecePosition));
         }else{
-            if (piecePosition.colPos == 7){
-
+            directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos));
+            if (piecePosition.rowPos == 7){
+                movelist.addAll(calculateMoves(directions, 2, board, piecePosition));
+            }else{
+                movelist.addAll(calculateMoves(directions, 1, board, piecePosition));
             }
+            directions.clear();
+            directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos+1));
+            directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos-1));
+            movelist.addAll(calculateMoves(directions, 0, board, piecePosition));
         }
+
 
 
 
