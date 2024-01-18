@@ -195,7 +195,25 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition piecePosition) {
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
         ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+        if(selfTeam == ChessGame.TeamColor.WHITE){
+            directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos));
+            if (piecePosition.rowPos == 2){
+                movelist.addAll(calculateMoves(directions, 2, board, piecePosition));
+            }else{
+                movelist.addAll(calculateMoves(directions, 1, board, piecePosition));
+            }
+            directions.clear();
+            directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos+1));
+            directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos-1));
+            movelist.addAll(calculateMoves(directions, 0, board, piecePosition));
+        }else{
+            if (piecePosition.colPos == 7){
+
+            }
+        }
+
 
 
         return movelist;
@@ -250,13 +268,30 @@ public class ChessPiece {
                     if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
                         output.add(new ChessMove(piecePosition, targetPosition, null));
                     } else if (board.getPiece(targetPosition).selfTeam != selfTeam){
-                        output.add(new ChessMove(piecePosition, targetPosition, null));
+                        if(selfType != PieceType.PAWN) {
+                            output.add(new ChessMove(piecePosition, targetPosition, null));
+                        }
                         invalid = true;
                     }else {
                         invalid = true;
                     }
                 }
                 distance += 1;
+            }
+            if (max_distance == 0){
+                System.out.println("max distance is zero");
+                referencePosition.colPos += directions.get(i).colPos - piecePosition.colPos;
+                referencePosition.rowPos += directions.get(i).rowPos - piecePosition.rowPos;
+                ChessPosition targetPosition = new ChessPosition(0 ,0);
+                targetPosition.colPos = referencePosition.colPos;
+                targetPosition.rowPos = referencePosition.rowPos;
+                if (board.getPiece(referencePosition) != null) {
+                    if (board.getPiece(targetPosition).selfTeam != selfTeam) {
+                        System.out.println("enemy in range");
+                        output.add(new ChessMove(piecePosition, targetPosition, null));
+                        invalid = true;
+                    }
+                }
             }
             referencePosition.colPos = piecePosition.colPos;
             referencePosition.rowPos = piecePosition.rowPos;
