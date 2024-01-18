@@ -169,7 +169,17 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessMove> movelist = new ArrayList<ChessMove>();
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos+2));
+        directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos+2));
+        directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos-2));
+        directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos-2));
+        directions.add(new ChessPosition(piecePosition.rowPos+2, piecePosition.colPos+1));
+        directions.add(new ChessPosition(piecePosition.rowPos-2, piecePosition.colPos+1));
+        directions.add(new ChessPosition(piecePosition.rowPos+2, piecePosition.colPos-1));
+        directions.add(new ChessPosition(piecePosition.rowPos-2, piecePosition.colPos-1));
+
+        ArrayList<ChessMove> movelist = calculateMoves(directions, 1, board, piecePosition);
 
 
         return movelist;
