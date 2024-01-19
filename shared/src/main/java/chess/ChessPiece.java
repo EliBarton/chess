@@ -279,11 +279,15 @@ public class ChessPiece {
                 }
                 if (!invalid) {
                     if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
-                        if (targetPosition.getRow() == 8 && selfTeam == ChessGame.TeamColor.WHITE || targetPosition.getRow() == 1 && selfTeam == ChessGame.TeamColor.BLACK) {
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.QUEEN));
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.ROOK));
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.KNIGHT));
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.BISHOP));
+                        if (selfType == PieceType.PAWN) {
+                            if (targetPosition.getRow() == 8 && selfTeam == ChessGame.TeamColor.WHITE || targetPosition.getRow() == 1 && selfTeam == ChessGame.TeamColor.BLACK) {
+                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.QUEEN));
+                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.ROOK));
+                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.KNIGHT));
+                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.BISHOP));
+                            } else {
+                                output.add(new ChessMove(piecePosition, targetPosition, null));
+                            }
                         }else{
                             output.add(new ChessMove(piecePosition, targetPosition, null));
                         }
@@ -337,5 +341,13 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(selfTeam, selfType);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "selfTeam=" + selfTeam +
+                ", selfType=" + selfType +
+                '}';
     }
 }

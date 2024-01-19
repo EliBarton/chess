@@ -43,7 +43,66 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for (int i = 0; i < 8; i++){
+            ArrayList<ChessPiece> rowPieces;
+            switch (i) {
+                case 0:
+                    rowPieces = createBasePieces(ChessGame.TeamColor.WHITE);
+                    for (int k = 0; k < 8; k++) {
+                        board[i][k] = rowPieces.get(k);
+                    }
+                    break;
+                case 1:
+                    rowPieces = createPawns(ChessGame.TeamColor.WHITE);
+                    for (int k = 0; k < 8; k++) {
+                        board[i][k] = rowPieces.get(k);
+                    }
+                    break;
+                case 6:
+                    rowPieces = createPawns(ChessGame.TeamColor.BLACK);
+                    for (int k = 0; k < 8; k++) {
+                        board[i][k] = rowPieces.get(k);
+                    }
+                    break;
+                case 7:
+                    rowPieces = createBasePieces(ChessGame.TeamColor.BLACK);
+                    for (int k = 0; k < 8; k++) {
+                        board[i][k] = rowPieces.get(k);
+                    }
+                    break;
+                default:
+                    for (int k = 0; k < 8; k++) {
+                        board[i][k] = null;
+                    }
+            }
+        }
+        //throw new RuntimeException("Not implemented");
+    }
+
+    private ArrayList<ChessPiece> createBasePieces(ChessGame.TeamColor team){
+        ArrayList<ChessPiece> baseRow = new ArrayList<ChessPiece>();
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.ROOK));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.KNIGHT));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.BISHOP));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.QUEEN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.KING));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.BISHOP));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.KNIGHT));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.ROOK));
+        return baseRow;
+    }
+
+    private ArrayList<ChessPiece> createPawns(ChessGame.TeamColor team){
+        ArrayList<ChessPiece> baseRow = new ArrayList<ChessPiece>();
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        baseRow.add(new ChessPiece(team, ChessPiece.PieceType.PAWN));
+        return baseRow;
     }
 
     @Override
@@ -57,5 +116,12 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.hashCode(board);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "board=" + Arrays.deepToString(board) +
+                '}';
     }
 }
