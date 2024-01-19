@@ -188,11 +188,7 @@ public class ChessPiece {
             directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos+1));
             directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos-1));
             movelist.addAll(calculateMoves(directions, 0, board, piecePosition));
-            if (piecePosition.rowPos == 7){
-                for (ChessMove move : movelist){
-                    move.promotePiece = PieceType.QUEEN;
-                }
-            }
+
         }else {
             directions.add(new ChessPosition(piecePosition.rowPos - 1, piecePosition.colPos));
             if (piecePosition.rowPos == 7) {
