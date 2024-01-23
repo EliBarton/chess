@@ -249,33 +249,39 @@ public class ChessPiece {
 
     /**
      *
-     * @param directions
-     * @param max_distance
-     * @param board
-     * @param piecePosition
+     * @param directions The amount of directions that the piece can move
+     * @param max_distance The maximum distance that a piece can move
+     * @param board The current board
+     * @param piecePosition The current position
      * @return all valid moves in the directions and distance given
      */
     public HashSet<ChessMove> calculateMoves(ArrayList<ChessPosition> directions, int max_distance, ChessBoard board, ChessPosition piecePosition){
         int distance = 0;
         HashSet<ChessMove> output = new HashSet<ChessMove>();
+        // a position to reference during the calculations
         ChessPosition referencePosition = new ChessPosition(piecePosition.rowPos ,piecePosition.colPos);
-        for (int i = 0; i < directions.size(); i++){
+        for (int i = 0; i < directions.size(); i++){ // For every direction coordinate
             boolean invalid = false;
             distance = 1;
-            while (distance <= max_distance && !invalid) {
+            while (distance <= max_distance && !invalid) { //While less than max distance and valid
+                // Set reference to position in given direction
                 referencePosition.colPos += directions.get(i).colPos - piecePosition.colPos;
                 referencePosition.rowPos += directions.get(i).rowPos - piecePosition.rowPos;
                 ChessPosition targetPosition = new ChessPosition(0 ,0);
+                // set target position values to reference
                 targetPosition.colPos = referencePosition.colPos;
                 targetPosition.rowPos = referencePosition.rowPos;
-                try {
+                try { // If target position is not on the board, it's invalid
                     board.getPiece(targetPosition);
                 } catch (ArrayIndexOutOfBoundsException e){
                     invalid = true;
                 }
                 if (!invalid) {
+                    // if nothing is in the way
                     if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
+
                         if (selfType == PieceType.PAWN) {
+                            //if you are a pawn and you are moving to the upgrade row
                             if (targetPosition.getRow() == 8 && selfTeam == ChessGame.TeamColor.WHITE || targetPosition.getRow() == 1 && selfTeam == ChessGame.TeamColor.BLACK) {
                                 output.add(new ChessMove(piecePosition, targetPosition, PieceType.QUEEN));
                                 output.add(new ChessMove(piecePosition, targetPosition, PieceType.ROOK));
@@ -285,10 +291,13 @@ public class ChessPiece {
                                 output.add(new ChessMove(piecePosition, targetPosition, null));
                             }
                         }else{
+                            //if you are not a pawn, add move to position
                             output.add(new ChessMove(piecePosition, targetPosition, null));
                         }
+                    // if there is a piece in the target position that is not in your team
                     } else if (board.getPiece(targetPosition).selfTeam != selfTeam){
                         if(selfType != PieceType.PAWN) {
+                            //if you are not a pawn, move to replace enemy piece
                             output.add(new ChessMove(piecePosition, targetPosition, null));
                         }
                         invalid = true;
@@ -298,6 +307,7 @@ public class ChessPiece {
                 }
                 distance += 1;
             }
+            // look for an enemy piece in the direction, if so, move to replace it
             if (max_distance == 0){
                 System.out.println("max distance is zero");
                 referencePosition.colPos += directions.get(i).colPos - piecePosition.colPos;
@@ -308,6 +318,7 @@ public class ChessPiece {
                 if (board.getPiece(referencePosition) != null) {
                     if (board.getPiece(targetPosition).selfTeam != selfTeam) {
                         System.out.println("enemy in range");
+                        //Piece is always pawn, upgrade at the end.
                         if (targetPosition.getRow() == 8 && selfTeam == ChessGame.TeamColor.WHITE || targetPosition.getRow() == 1 && selfTeam == ChessGame.TeamColor.BLACK) {
                             output.add(new ChessMove(piecePosition, targetPosition, PieceType.QUEEN));
                             output.add(new ChessMove(piecePosition, targetPosition, PieceType.BISHOP));
