@@ -1,7 +1,9 @@
 package chess;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,9 +13,9 @@ import java.util.HashSet;
  */
 public class ChessPiece {
 
-    public ChessGame.TeamColor selfTeam;
-    public PieceType selfType;
+    PieceType selfType;
 
+    ChessGame.TeamColor selfTeam;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         selfTeam = pieceColor;
         selfType = type;
@@ -36,7 +38,6 @@ public class ChessPiece {
      */
     public ChessGame.TeamColor getTeamColor() {
         return selfTeam;
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -44,7 +45,6 @@ public class ChessPiece {
      */
     public PieceType getPieceType() {
         return selfType;
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -55,306 +55,220 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (selfType) {
-            case KING -> {
-                return getKingMoves(board, myPosition);
-            }
-            case PAWN -> {
-                return getPawnMoves(board, myPosition);
-            }
-            case ROOK -> {
-                return getRookMoves(board, myPosition);
-            }
-            case QUEEN -> {
-                return getQueenMoves(board, myPosition);
-            }
-            case BISHOP -> {
-                return getBishopMoves(board, myPosition);
-            }
-            case KNIGHT -> {
-                return getKnightMoves(board, myPosition);
-            }
-        }
-
-        throw new RuntimeException("Error, piece does not exist");
-    }
-
-    /**
-     *
-     * @param board The current board
-     * @param piecePosition The current position of the piece on the board
-     * @return the list of valid moves that a king can make
-     */
-    public Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition piecePosition) {
-
-        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
-        directions.addAll(getDiagDirections(piecePosition));
-        directions.addAll(getHorVerDirections(piecePosition));
-        HashSet<ChessMove> movelist = calculateMoves(directions, 1, board, piecePosition);
-
-        System.out.println(movelist);
-        return movelist;
-    }
-
-    /**
-     *
-     * @param board The current board
-     * @param piecePosition The current position of the piece on the board
-     * @return the list of valid moves that a queen can make
-     */
-    public Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
-        directions.addAll(getDiagDirections(piecePosition));
-        directions.addAll(getHorVerDirections(piecePosition));
-
-        HashSet<ChessMove> movelist = calculateMoves(directions, 8, board, piecePosition);
-
-
-        return movelist;
-    }
-
-    /**
-     *
-     * @param board The current board
-     * @param piecePosition The current position of the piece on the board
-     * @return the list of valid moves that a bishop can make
-     */
-    public Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
-        directions.addAll(getDiagDirections(piecePosition));
-
-        HashSet<ChessMove> movelist = calculateMoves(directions, 8, board, piecePosition);
-
-
-        return movelist;
-    }
-
-    /**
-     *
-     * @param board The current board
-     * @param piecePosition The current position of the piece on the board
-     * @return the list of valid moves that a knight can make
-     */
-    public Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
-        directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos+2));
-        directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos+2));
-        directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos-2));
-        directions.add(new ChessPosition(piecePosition.rowPos-1, piecePosition.colPos-2));
-        directions.add(new ChessPosition(piecePosition.rowPos+2, piecePosition.colPos+1));
-        directions.add(new ChessPosition(piecePosition.rowPos-2, piecePosition.colPos+1));
-        directions.add(new ChessPosition(piecePosition.rowPos+2, piecePosition.colPos-1));
-        directions.add(new ChessPosition(piecePosition.rowPos-2, piecePosition.colPos-1));
-
-        HashSet<ChessMove> movelist = calculateMoves(directions, 1, board, piecePosition);
-
-
-        return movelist;
-    }
-
-    /**
-     *
-     * @param board The current board
-     * @param piecePosition The current position of the piece on the board
-     * @return the list of valid moves that a rook can make
-     */
-    public Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition piecePosition) {
-
-        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
-        directions.addAll(getHorVerDirections(piecePosition));
-        HashSet<ChessMove> movelist = calculateMoves(directions, 8, board, piecePosition);
-
-        return movelist;
-    }
-
-    /**
-     *
-     * @param board The current board
-     * @param piecePosition The current position of the piece on the board
-     * @return the list of valid moves that a pawn can make
-     */
-    public Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition piecePosition) {
-        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
-        HashSet<ChessMove> movelist = new HashSet<ChessMove>();
-
-        if(selfTeam == ChessGame.TeamColor.WHITE){
-            directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos));
-            if (piecePosition.rowPos == 2){
-                movelist.addAll(calculateMoves(directions, 2, board, piecePosition));
-            }else{
-                movelist.addAll(calculateMoves(directions, 1, board, piecePosition));
-            }
-            directions.clear();
-            directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos+1));
-            directions.add(new ChessPosition(piecePosition.rowPos+1, piecePosition.colPos-1));
-            movelist.addAll(calculateMoves(directions, 0, board, piecePosition));
-
-        }else {
-            directions.add(new ChessPosition(piecePosition.rowPos - 1, piecePosition.colPos));
-            if (piecePosition.rowPos == 7) {
-                movelist.addAll(calculateMoves(directions, 2, board, piecePosition));
-            } else {
-                movelist.addAll(calculateMoves(directions, 1, board, piecePosition));
-            }
-            directions.clear();
-            directions.add(new ChessPosition(piecePosition.rowPos - 1, piecePosition.colPos + 1));
-            directions.add(new ChessPosition(piecePosition.rowPos - 1, piecePosition.colPos - 1));
-            movelist.addAll(calculateMoves(directions, 0, board, piecePosition));
-
-        }
-
-
-
-
-        return movelist;
-    }
-
-    /**
-     *
-     * @param currentPos The current position of the piece
-     * @return the positions above, below, to the right, and to the left
-     */
-    public Collection<ChessPosition> getHorVerDirections(ChessPosition currentPos) {
-        HashSet<ChessPosition> output = new HashSet<ChessPosition>();
-
-        int currentRow = currentPos.getRow();
-        int currentCol = currentPos.getColumn();
-
-        output.add(new ChessPosition(currentRow + 1, currentCol));
-        output.add(new ChessPosition(currentRow, currentCol - 1));
-        output.add(new ChessPosition(currentRow - 1, currentCol));
-        output.add(new ChessPosition(currentRow, currentCol + 1));
-
-        return output;
-    }
-
-    /**
-     *
-     * @param currentPos
-     * @return the coordinates in all diagonal directions
-     */
-    public Collection<ChessPosition> getDiagDirections(ChessPosition currentPos) {
-        HashSet<ChessPosition> output = new HashSet<ChessPosition>();
-
-        int currentRow = currentPos.getRow();
-        int currentCol = currentPos.getColumn();
-
-        output.add(new ChessPosition(currentRow + 1, currentCol+1));
-        output.add(new ChessPosition(currentRow+1, currentCol - 1));
-        output.add(new ChessPosition(currentRow - 1, currentCol-1));
-        output.add(new ChessPosition(currentRow-1, currentCol + 1));
-
-        return output;
-    }
-
-    /**
-     *
-     * @param directions The amount of directions that the piece can move
-     * @param max_distance The maximum distance that a piece can move
-     * @param board The current board
-     * @param piecePosition The current position
-     * @return all valid moves in the directions and distance given
-     */
-    public HashSet<ChessMove> calculateMoves(ArrayList<ChessPosition> directions, int max_distance, ChessBoard board, ChessPosition piecePosition){
-        int distance = 0;
         HashSet<ChessMove> output = new HashSet<ChessMove>();
-        // a position to reference during the calculations
-        ChessPosition referencePosition = new ChessPosition(piecePosition.rowPos ,piecePosition.colPos);
-        for (int i = 0; i < directions.size(); i++){ // For every direction coordinate
-            boolean invalid = false;
-            distance = 1;
-            while (distance <= max_distance && !invalid) { //While less than max distance and valid
-                // Set reference to position in given direction
-                referencePosition.colPos += directions.get(i).colPos - piecePosition.colPos;
-                referencePosition.rowPos += directions.get(i).rowPos - piecePosition.rowPos;
-                ChessPosition targetPosition = new ChessPosition(0 ,0);
-                // set target position values to reference
-                targetPosition.colPos = referencePosition.colPos;
-                targetPosition.rowPos = referencePosition.rowPos;
-                try { // If target position is not on the board, it's invalid
-                    board.getPiece(targetPosition);
-                } catch (ArrayIndexOutOfBoundsException e){
-                    invalid = true;
-                }
-                if (!invalid) {
-                    // if nothing is in the way
-                    if (board.getPiece(targetPosition) == null && targetPosition.isOnBoard()) {
+        switch (selfType){
+            case BISHOP -> output.addAll(getBishopMoves(myPosition, board));
+            case ROOK -> output.addAll(getRookMoves(myPosition, board));
+            case QUEEN -> output.addAll(getQueenMoves(myPosition, board));
+            case KING -> output.addAll(getKingMoves(myPosition, board));
+            case PAWN -> output.addAll(getPawnMoves(myPosition, board));
+        }
+        return output;
+    }
 
-                        if (selfType == PieceType.PAWN) {
-                            //if you are a pawn and you are moving to the upgrade row
-                            if (targetPosition.getRow() == 8 && selfTeam == ChessGame.TeamColor.WHITE || targetPosition.getRow() == 1 && selfTeam == ChessGame.TeamColor.BLACK) {
-                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.QUEEN));
-                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.ROOK));
-                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.KNIGHT));
-                                output.add(new ChessMove(piecePosition, targetPosition, PieceType.BISHOP));
-                            } else {
-                                output.add(new ChessMove(piecePosition, targetPosition, null));
-                            }
-                        }else{
-                            //if you are not a pawn, add move to position
-                            output.add(new ChessMove(piecePosition, targetPosition, null));
-                        }
-                    // if there is a piece in the target position that is not in your team
-                    } else if (board.getPiece(targetPosition).selfTeam != selfTeam){
-                        if(selfType != PieceType.PAWN) {
-                            //if you are not a pawn, move to replace enemy piece
-                            output.add(new ChessMove(piecePosition, targetPosition, null));
-                        }
-                        invalid = true;
+
+    private ArrayList<ChessPosition> getDiagMoves(ChessPosition startPos){
+        ArrayList<ChessPosition> output = new ArrayList<ChessPosition>();
+
+        output.add(new ChessPosition(startPos.getRow() + 1, startPos.getColumn() + 1));
+        output.add(new ChessPosition(startPos.getRow() + 1, startPos.getColumn() - 1));
+        output.add(new ChessPosition(startPos.getRow() - 1, startPos.getColumn() + 1));
+        output.add(new ChessPosition(startPos.getRow() - 1, startPos.getColumn() - 1));
+
+        return output;
+    }
+
+    private ArrayList<ChessPosition> getHorVerMoves(ChessPosition startPos){
+        ArrayList<ChessPosition> output = new ArrayList<ChessPosition>();
+
+        output.add(new ChessPosition(startPos.getRow() + 1, startPos.getColumn()));
+        output.add(new ChessPosition(startPos.getRow() - 1, startPos.getColumn()));
+        output.add(new ChessPosition(startPos.getRow(), startPos.getColumn() + 1));
+        output.add(new ChessPosition(startPos.getRow(), startPos.getColumn() - 1));
+
+        return output;
+    }
+
+    private HashSet<ChessMove> getBishopMoves(ChessPosition startPos, ChessBoard board){
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+
+        directions.addAll(getDiagMoves(startPos));
+
+        HashSet<ChessMove> moveList = calculateMoves(startPos, 9, directions, board);
+        return moveList;
+    }
+
+    private HashSet<ChessMove> getRookMoves(ChessPosition startPos, ChessBoard board){
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+
+        directions.addAll(getHorVerMoves(startPos));
+
+        HashSet<ChessMove> moveList = calculateMoves(startPos, 9, directions, board);
+        return moveList;
+    }
+
+    private HashSet<ChessMove> getQueenMoves(ChessPosition startPos, ChessBoard board){
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+
+        directions.addAll(getHorVerMoves(startPos));
+        directions.addAll(getDiagMoves(startPos));
+
+        HashSet<ChessMove> moveList = calculateMoves(startPos, 9, directions, board);
+        return moveList;
+    }
+
+    private HashSet<ChessMove> getKingMoves(ChessPosition startPos, ChessBoard board){
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+
+        directions.addAll(getHorVerMoves(startPos));
+        directions.addAll(getDiagMoves(startPos));
+
+        HashSet<ChessMove> moveList = calculateMoves(startPos, 2, directions, board);
+        return moveList;
+    }
+
+    private HashSet<ChessMove> getPawnMoves(ChessPosition startPos, ChessBoard board){
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        HashSet<ChessMove> output = new HashSet<ChessMove>();
+        if (selfTeam == ChessGame.TeamColor.WHITE){
+            directions.add(new ChessPosition(startPos.getRow()-1, startPos.getColumn()));
+            if (startPos.getRow() == 2) {
+                output.addAll(calculateMoves(startPos, 3, directions, board));
+            }else{
+                output.addAll(calculateMoves(startPos, 2, directions, board));
+            }
+        }else{
+            directions.add(new ChessPosition(startPos.getRow()+1, startPos.getColumn()));
+            if (startPos.getRow() == 7){
+                output.addAll(calculateMoves(startPos, 3, directions, board));
+            }else{
+                output.addAll(calculateMoves(startPos, 2, directions, board));
+            }
+        }
+        ChessPosition referencePos = new ChessPosition(0, 0);
+        if (selfTeam == ChessGame.TeamColor.WHITE) {
+            referencePos.rowPos = startPos.rowPos +1;
+            referencePos.colPos = startPos.colPos +1;
+            if (board.getPiece(referencePos) != null) {
+                System.out.println("enemy in range of pwn");
+                if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
+                    if (referencePos.rowPos == 8){
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.QUEEN));
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.KNIGHT));
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.BISHOP));
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.ROOK));
                     }else {
-                        invalid = true;
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
                     }
                 }
+            }
+            referencePos.rowPos = startPos.rowPos +1;
+            referencePos.colPos = startPos.colPos -1;
+        }else{
+            referencePos.rowPos = startPos.rowPos -1;
+            referencePos.colPos = startPos.colPos -1;
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
+                    if (referencePos.rowPos == 1){
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.QUEEN));
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.KNIGHT));
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.BISHOP));
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.ROOK));
+                    }else {
+                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+                    }
+                }
+            }
+            referencePos.rowPos = startPos.rowPos -1;
+            referencePos.colPos = startPos.colPos +1;
+        }
+        if (board.getPiece(referencePos) != null) {
+            if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
+                output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+            }
+        }
+        return output;
+    }
+
+    private HashSet<ChessMove> calculateMoves(ChessPosition startPos, int max_distance, ArrayList<ChessPosition> directions, ChessBoard board){
+        HashSet<ChessMove> output = new HashSet<ChessMove>();
+        ChessPosition referencePos = new ChessPosition(0, 0);
+        int distance = 0;
+        for (int i = 0; i < directions.size(); i++){
+            distance = 1;
+            while (distance <= max_distance){
+                boolean valid = true;
+                ChessPosition targetPos = new ChessPosition(0, 0);
+                System.out.println("adding new move position");
+                referencePos.colPos = directions.get(i).colPos + ((distance)*(startPos.colPos - directions.get(i).colPos));
+                referencePos.rowPos = directions.get(i).rowPos + ((distance)*(startPos.rowPos - directions.get(i).rowPos));
+
+                if (referencePos.colPos < 1 || referencePos.colPos > 8 || referencePos.rowPos < 1 || referencePos.rowPos > 8){
+                    valid = false;
+                }
+                if (referencePos.equals(startPos)){
+                    valid = false;
+                }
+
+                targetPos = referencePos.clone();
+
+                if (valid){
+                    if (board.getPiece(referencePos) != null) {
+                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                            if (selfType != PieceType.PAWN) {
+                                output.add(new ChessMove(startPos, targetPos, null));
+                            }
+                        }
+                        break;
+
+                    }
+                    System.out.println("adding new move position" + targetPos);
+                    if (selfType != PieceType.PAWN) {
+                        output.add(new ChessMove(startPos, targetPos, null));
+                    }else if (selfTeam == ChessGame.TeamColor.WHITE && targetPos.rowPos == 8){
+                        output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
+                        output.add(new ChessMove(startPos, targetPos, PieceType.QUEEN));
+                        output.add(new ChessMove(startPos, targetPos, PieceType.BISHOP));
+                        output.add(new ChessMove(startPos, targetPos, PieceType.ROOK));
+                    }else if (selfTeam == ChessGame.TeamColor.BLACK && targetPos.rowPos == 1) {
+                        output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
+                        output.add(new ChessMove(startPos, targetPos, PieceType.QUEEN));
+                        output.add(new ChessMove(startPos, targetPos, PieceType.BISHOP));
+                        output.add(new ChessMove(startPos, targetPos, PieceType.ROOK));
+                    }else{
+                        output.add(new ChessMove(startPos, targetPos, null));
+                    }
+                }
+
                 distance += 1;
             }
-            // look for an enemy piece in the direction, if so, move to replace it
-            if (max_distance == 0){
-                System.out.println("max distance is zero");
-                referencePosition.colPos += directions.get(i).colPos - piecePosition.colPos;
-                referencePosition.rowPos += directions.get(i).rowPos - piecePosition.rowPos;
-                ChessPosition targetPosition = new ChessPosition(0 ,0);
-                targetPosition.colPos = referencePosition.colPos;
-                targetPosition.rowPos = referencePosition.rowPos;
-                if (board.getPiece(referencePosition) != null) {
-                    if (board.getPiece(targetPosition).selfTeam != selfTeam) {
-                        System.out.println("enemy in range");
-                        //Piece is always pawn, upgrade at the end.
-                        if (targetPosition.getRow() == 8 && selfTeam == ChessGame.TeamColor.WHITE || targetPosition.getRow() == 1 && selfTeam == ChessGame.TeamColor.BLACK) {
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.QUEEN));
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.BISHOP));
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.KNIGHT));
-                            output.add(new ChessMove(piecePosition, targetPosition, PieceType.ROOK));
-                        }else{
-                            output.add(new ChessMove(piecePosition, targetPosition, null));
-                        }
-                        invalid = true;
-                    }
-                }
-            }
-            referencePosition.colPos = piecePosition.colPos;
-            referencePosition.rowPos = piecePosition.rowPos;
+
         }
+
+
         return output;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChessPiece that = (ChessPiece) o;
-        return selfTeam == that.selfTeam && selfType == that.selfType;
+        ChessPiece piece = (ChessPiece) o;
+        return selfType == piece.selfType && selfTeam == piece.selfTeam;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(selfTeam, selfType);
+        return Objects.hash(selfType, selfTeam);
     }
 
     @Override
     public String toString() {
         return "ChessPiece{" +
-                "selfTeam=" + selfTeam +
-                ", selfType=" + selfType +
+                "selfType=" + selfType +
+                ", selfTeam=" + selfTeam +
                 '}';
     }
 }
