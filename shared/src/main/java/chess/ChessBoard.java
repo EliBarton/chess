@@ -20,7 +20,7 @@ public class ChessBoard implements Cloneable {
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
-    public Object[][] board = new Object[8][8];
+    public ChessPiece[][] board = new ChessPiece[8][8];
     public void addPiece(ChessPosition position, ChessPiece piece) {
         //throw new RuntimeException("Not implemented");
         board[position.getRow()-1][position.getColumn()-1] = piece;

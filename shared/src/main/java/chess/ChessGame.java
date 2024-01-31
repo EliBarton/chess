@@ -58,24 +58,27 @@ public class ChessGame {
     Piece leaves the board
 
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
-        HashSet<ChessMove> output = new HashSet<ChessMove>();
+        HashSet<ChessMove> output = new HashSet<>();
         if (piece == null){
             return null;
         }
-        ArrayList<ChessMove> baseMoves = new ArrayList<ChessMove>(piece.pieceMoves(gameBoard, startPosition));
+        ArrayList<ChessMove> baseMoves = new ArrayList<>(piece.pieceMoves(gameBoard, startPosition));
         ChessBoard currentBoard = gameBoard.clone();
-
-        for (ChessMove baseMove : baseMoves) {
-            makeMove(baseMove);
-            if (isInCheck(getTeamTurn())){
-                break;
+        try {
+            for (ChessMove baseMove : baseMoves) {
+                makeMove(baseMove);
+                if (isInCheck(getTeamTurn())) {
+                    break;
+                }
+                output.add(baseMove);
+                gameBoard = currentBoard.clone();
             }
-            output.add(baseMove);
+        } catch (InvalidMoveException e){
+            System.err.println("An InvalidMoveException occurred: " + e.getMessage());
         }
-
-        throw new RuntimeException("Not implemented");
+        return output;
     }
 
     /**
@@ -95,7 +98,19 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ArrayList<Collection> enemyEndMoves = new ArrayList<>();
+        ArrayList<ChessPosition> enemyEndPositions = new ArrayList<>();
+        for (int i = 0; i < gameBoard.board.length; i++){
+            for (int k = 0; k < gameBoard.board[i].length; i++){
+                ChessPiece square = gameBoard.board[i][k];
+                if (square != null){
+                    if (square.getTeamColor() != teamColor){
+                        enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
