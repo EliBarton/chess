@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
 
     public ChessBoard() {
         
@@ -36,6 +36,15 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return (ChessPiece) board[position.getRow()-1][position.getColumn()-1];
         //throw new RuntimeException("Not implemented");
+    }
+
+    public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessPosition startPos = move.getStartPosition();
+        ChessPiece piece = getPiece(startPos);
+        board[startPos.getRow()][startPos.getColumn()] = null;
+        ChessPosition endPos = move.getEndPosition();
+        board[endPos.getRow()][endPos.getColumn()] = piece;
+
     }
 
     /**
@@ -123,5 +132,18 @@ public class ChessBoard {
         return "ChessBoard{" +
                 "board=" + Arrays.deepToString(board) +
                 '}';
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+            for (int i = 0; i < 8; i++){
+                System.arraycopy(board[i], 0, clone.board[i], 0, 8);
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

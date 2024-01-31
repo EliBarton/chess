@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -12,9 +14,10 @@ public class ChessGame {
 
 
     TeamColor turn = TeamColor.WHITE;
+    ChessBoard gameBoard = new ChessBoard();
 
     public ChessGame() {
-
+        gameBoard.resetBoard();
     }
 
     /**
@@ -55,7 +58,23 @@ public class ChessGame {
     Piece leaves the board
 
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) throws InvalidMoveException {
+        ChessPiece piece = gameBoard.getPiece(startPosition);
+        HashSet<ChessMove> output = new HashSet<ChessMove>();
+        if (piece == null){
+            return null;
+        }
+        ArrayList<ChessMove> baseMoves = new ArrayList<ChessMove>(piece.pieceMoves(gameBoard, startPosition));
+        ChessBoard currentBoard = gameBoard.clone();
+
+        for (ChessMove baseMove : baseMoves) {
+            makeMove(baseMove);
+            if (isInCheck(getTeamTurn())){
+                break;
+            }
+            output.add(baseMove);
+        }
+
         throw new RuntimeException("Not implemented");
     }
 
@@ -66,7 +85,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        gameBoard.makeMove(move);
     }
 
     /**
@@ -81,6 +100,13 @@ public class ChessGame {
 
     /**
      * Determines if the given team is in checkmate
+     *
+     * In Check and no valid moves to make
+     * Try all moves, see if they get you out of check
+     * else return true
+     *
+     * method1: Clone board for every move, check if is in check.
+     * method2: allow for an undo of a move. Apply move, check if is in check, undo, continue.
      *
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
