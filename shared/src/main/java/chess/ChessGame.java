@@ -98,19 +98,36 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ArrayList<Collection> enemyEndMoves = new ArrayList<>();
+        ArrayList<HashSet<ChessMove>> enemyEndMoves = new ArrayList<>();
         ArrayList<ChessPosition> enemyEndPositions = new ArrayList<>();
+        ChessPosition kingPos = new ChessPosition(0, 0);
         for (int i = 0; i < gameBoard.board.length; i++){
-            for (int k = 0; k < gameBoard.board[i].length; i++){
+            System.out.println(gameBoard.board[i].length);
+            for (int k = 0; k < gameBoard.board[i].length; k++){
                 ChessPiece square = gameBoard.board[i][k];
                 if (square != null){
                     if (square.getTeamColor() != teamColor){
                         enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
+                    }else{
+                        if (square.getPieceType() == ChessPiece.PieceType.KING){
+                            kingPos = new ChessPosition(i+1, k+1);
+                        }
                     }
                 }
             }
         }
-        return true;
+        for (HashSet<ChessMove> moveList : enemyEndMoves){
+            for (ChessMove move : moveList){
+                enemyEndPositions.add(move.getEndPosition());
+            }
+        }
+        for (ChessPosition endPos : enemyEndPositions){
+            if (endPos.equals(kingPos)){
+                System.out.println("The king is in check");
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -147,7 +164,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        gameBoard = board;
     }
 
     /**
@@ -156,6 +173,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return gameBoard;
     }
 }

@@ -41,9 +41,9 @@ public class ChessBoard implements Cloneable {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
         ChessPiece piece = getPiece(startPos);
-        board[startPos.getRow()][startPos.getColumn()] = null;
+        board[startPos.getRow()-1][startPos.getColumn()-1] = null;
         ChessPosition endPos = move.getEndPosition();
-        board[endPos.getRow()][endPos.getColumn()] = piece;
+        board[endPos.getRow()-1][endPos.getColumn()-1] = piece;
 
     }
 

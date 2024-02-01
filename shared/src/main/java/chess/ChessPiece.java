@@ -54,7 +54,7 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+    public HashSet<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         HashSet<ChessMove> output = new HashSet<ChessMove>();
         switch (selfType){
             case BISHOP -> output.addAll(getBishopMoves(myPosition, board));
@@ -198,8 +198,7 @@ public class ChessPiece {
             distance = 1;
             while (distance <= max_distance){
                 boolean valid = true;
-                ChessPosition targetPos = new ChessPosition(0, 0);
-                System.out.println("adding new move position");
+                ChessPosition targetPos;
                 referencePos.colPos = directions.get(i).colPos + ((distance)*(startPos.colPos - directions.get(i).colPos));
                 referencePos.rowPos = directions.get(i).rowPos + ((distance)*(startPos.rowPos - directions.get(i).rowPos));
 
@@ -222,7 +221,6 @@ public class ChessPiece {
                         break;
 
                     }
-                    System.out.println("adding new move position" + targetPos);
                     if (selfType != PieceType.PAWN) {
                         output.add(new ChessMove(startPos, targetPos, null));
                     }else if (selfTeam == ChessGame.TeamColor.WHITE && targetPos.rowPos == 8){
