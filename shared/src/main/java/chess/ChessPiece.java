@@ -62,6 +62,7 @@ public class ChessPiece {
             case QUEEN -> output.addAll(getQueenMoves(myPosition, board));
             case KING -> output.addAll(getKingMoves(myPosition, board));
             case PAWN -> output.addAll(getPawnMoves(myPosition, board));
+            case KNIGHT -> output.addAll(getKnightMoves(myPosition, board));
         }
         return output;
     }
@@ -187,6 +188,25 @@ public class ChessPiece {
                 output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
             }
         }
+        return output;
+    }
+
+    public HashSet<ChessMove> getKnightMoves(ChessPosition startPos, ChessBoard board){
+        HashSet<ChessMove> output = new HashSet<ChessMove>();
+
+
+        ArrayList<ChessPosition> directions = new ArrayList<ChessPosition>();
+        directions.add(new ChessPosition(startPos.getRow()+2, startPos.getColumn()+1));
+        directions.add(new ChessPosition(startPos.getRow()+2, startPos.getColumn()-1));
+        directions.add(new ChessPosition(startPos.getRow()-2, startPos.getColumn()+1));
+        directions.add(new ChessPosition(startPos.getRow()-2, startPos.getColumn()-1));
+        directions.add(new ChessPosition(startPos.getRow()+1, startPos.getColumn()+2));
+        directions.add(new ChessPosition(startPos.getRow()+1, startPos.getColumn()-2));
+        directions.add(new ChessPosition(startPos.getRow()-1, startPos.getColumn()+2));
+        directions.add(new ChessPosition(startPos.getRow()-1, startPos.getColumn()-2));
+
+        output = calculateMoves(startPos, 2, directions, board);
+
         return output;
     }
 

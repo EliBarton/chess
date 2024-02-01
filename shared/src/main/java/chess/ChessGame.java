@@ -55,7 +55,6 @@ public class ChessGame {
     /*
     Invalid if:
     King gets moved to check
-    Piece leaves the board
 
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
@@ -102,16 +101,20 @@ public class ChessGame {
         ArrayList<ChessPosition> enemyEndPositions = new ArrayList<>();
         ChessPosition kingPos = new ChessPosition(0, 0);
         for (int i = 0; i < gameBoard.board.length; i++){
-            System.out.println(gameBoard.board[i].length);
             for (int k = 0; k < gameBoard.board[i].length; k++){
                 ChessPiece square = gameBoard.board[i][k];
+
                 if (square != null){
+
                     if (square.getTeamColor() != teamColor){
-                        enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
-                    }else{
                         if (square.getPieceType() == ChessPiece.PieceType.KING){
+
                             kingPos = new ChessPosition(i+1, k+1);
                         }
+                        enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
+                    }else{
+                        System.out.println(square);
+
                     }
                 }
             }
@@ -122,11 +125,13 @@ public class ChessGame {
             }
         }
         for (ChessPosition endPos : enemyEndPositions){
+            System.out.println(endPos + " " + kingPos);
             if (endPos.equals(kingPos)){
                 System.out.println("The king is in check");
                 return true;
             }
         }
+        System.out.println("The king is not in check");
         return false;
     }
 
