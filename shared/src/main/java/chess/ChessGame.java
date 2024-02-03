@@ -71,16 +71,19 @@ public class ChessGame {
             baseMoves = new ArrayList<>(piece.pieceMoves(currentBoard, startPosition));
             try {
                 gameBoard.makeMove(baseMove);
-                if (!isInCheck(getTeamTurn())){
+
+                if (!isInCheck(piece.getTeamColor())){
                     System.out.println("added new move to list from " + piece + ": " + baseMove);
                     output.add(baseMove);
                 }
-                System.out.println(gameBoard + "\n\n" + currentBoard);
+
+                //System.out.println(gameBoard + "\n\n" + currentBoard);
             } catch (InvalidMoveException e) {
                 System.err.println(e);
                 System.out.println(gameBoard + "\n\n" + currentBoard);
             }
             gameBoard = currentBoard.clone();
+            setTeamTurn(TeamColor.WHITE);
         }
 
         /*for (ChessMove baseMove : baseMoves) {
@@ -126,20 +129,23 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ArrayList<HashSet<ChessMove>> enemyEndMoves = new ArrayList<>();
         ArrayList<ChessPosition> enemyEndPositions = new ArrayList<>();
-        ChessPosition kingPos = new ChessPosition(0, 0);
+        ChessPosition kingPos = null;
         for (int i = 0; i < gameBoard.board.length; i++){
             for (int k = 0; k < gameBoard.board[i].length; k++){
                 ChessPiece square = gameBoard.board[i][k];
 
                 if (square != null){
-
-                    if (square.getTeamColor() == teamColor){
-
-                        System.out.println(square);
+                    if (square.getPieceType() == ChessPiece.PieceType.KING){
+                        System.out.println("King at");
+                        System.out.println(new ChessPosition(i+1, k+1));
+                        //kingPos = new ChessPosition(i+1, k+1);
+                    }
+                    if (square.getTeamColor() != teamColor){
+                        System.out.println("It is " + teamColor + "'s turn.");
+                        System.out.println(square.getTeamColor() + " is attempting to attack the king");
                         //System.out.println(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
                         enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
                     }else{
-                        //System.out.println(square);
                         if (square.getPieceType() == ChessPiece.PieceType.KING){
 
                             kingPos = new ChessPosition(i+1, k+1);
@@ -153,14 +159,17 @@ public class ChessGame {
                 enemyEndPositions.add(move.getEndPosition());
             }
         }
+        if (kingPos == null){
+            System.out.println("The " + teamColor + "'s enemy king is nowhere to be found");
+        }
         for (ChessPosition endPos : enemyEndPositions){
-            //System.out.println(endPos + " " + kingPos);
+            System.out.println(endPos + " " + kingPos);
             if (endPos.equals(kingPos)){
                 System.out.println("king is in check");
                 return true;
             }
         }
-        System.out.println("The king is not in check");
+        System.out.println("The king is not in check at " + kingPos);
         return false;
     }
 
