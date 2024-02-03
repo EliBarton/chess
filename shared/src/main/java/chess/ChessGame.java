@@ -65,10 +65,25 @@ public class ChessGame {
         }
         ArrayList<ChessMove> baseMoves = new ArrayList<>(piece.pieceMoves(gameBoard, startPosition));
         ChessBoard currentBoard;
-
-        currentBoard = gameBoard.clone();
-
-
+        System.out.println(gameBoard);
+        for (ChessMove baseMove : baseMoves) {
+            currentBoard = gameBoard.clone();
+            baseMoves = new ArrayList<>(piece.pieceMoves(currentBoard, startPosition));
+            try {
+                gameBoard.makeMove(baseMove);
+                if (isInCheck(getTeamTurn())){
+                    System.out.println("king is in check by " + piece.getPieceType() + " at " + startPosition);
+                }else{
+                    System.out.println("added new move to list; " + baseMove);
+                    output.add(baseMove);
+                }
+                System.out.println(gameBoard + "\n\n" + currentBoard);
+            } catch (InvalidMoveException e) {
+                System.err.println(e);
+                System.out.println(gameBoard + "\n\n" + currentBoard);
+            }
+            gameBoard = currentBoard.clone();
+        }
 
         /*for (ChessMove baseMove : baseMoves) {
             currentBoard = gameBoard.clone();

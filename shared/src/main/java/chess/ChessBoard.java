@@ -43,7 +43,7 @@ public class ChessBoard implements Cloneable {
         ChessPiece piece = getPiece(startPos);
         Boolean valid = false;
         if (piece == null){
-            throw new InvalidMoveException("There's no piece here!");
+            throw new InvalidMoveException("There's no piece at " + startPos);
         }
         try {
 
@@ -156,8 +156,13 @@ public class ChessBoard implements Cloneable {
     public ChessBoard clone() {
         try {
             ChessBoard clone = (ChessBoard) super.clone();
+            clone.board = new ChessPiece[8][8];
             for (int i = 0; i < 8; i++){
-                System.arraycopy(board[i], 0, clone.board[i], 0, 8);
+                for (int k = 0; k < 8; k++){
+                    if (board[i][k] != null) {
+                        clone.board[i][k] = board[i][k].clone();
+                    }
+                }
             }
             return clone;
         } catch (CloneNotSupportedException e) {
