@@ -71,10 +71,8 @@ public class ChessGame {
             baseMoves = new ArrayList<>(piece.pieceMoves(currentBoard, startPosition));
             try {
                 gameBoard.makeMove(baseMove);
-                if (isInCheck(getTeamTurn())){
-                    System.out.println("king is in check by " + piece.getPieceType() + " at " + startPosition);
-                }else{
-                    System.out.println("added new move to list; " + baseMove);
+                if (!isInCheck(getTeamTurn())){
+                    System.out.println("added new move to list from " + piece + ": " + baseMove);
                     output.add(baseMove);
                 }
                 System.out.println(gameBoard + "\n\n" + currentBoard);
@@ -135,9 +133,9 @@ public class ChessGame {
 
                 if (square != null){
 
-                    if (square.getTeamColor() != teamColor){
+                    if (square.getTeamColor() == teamColor){
 
-                        //System.out.println(square);
+                        System.out.println(square);
                         //System.out.println(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
                         enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
                     }else{
@@ -158,7 +156,7 @@ public class ChessGame {
         for (ChessPosition endPos : enemyEndPositions){
             //System.out.println(endPos + " " + kingPos);
             if (endPos.equals(kingPos)){
-                System.out.println("The king is in check");
+                System.out.println("king is in check");
                 return true;
             }
         }
