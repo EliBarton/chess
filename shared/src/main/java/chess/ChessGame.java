@@ -64,19 +64,26 @@ public class ChessGame {
             return null;
         }
         ArrayList<ChessMove> baseMoves = new ArrayList<>(piece.pieceMoves(gameBoard, startPosition));
-        ChessBoard currentBoard = gameBoard.clone();
-        try {
-            for (ChessMove baseMove : baseMoves) {
+        ChessBoard currentBoard;
+
+        currentBoard = gameBoard.clone();
+
+
+
+        /*for (ChessMove baseMove : baseMoves) {
+            currentBoard = gameBoard.clone();
+            try {
                 makeMove(baseMove);
-                if (isInCheck(getTeamTurn())) {
-                    break;
-                }
-                output.add(baseMove);
-                gameBoard = currentBoard.clone();
+            }catch (InvalidMoveException e){
+                continue;
             }
-        } catch (InvalidMoveException e){
-            System.err.println("An InvalidMoveException occurred: " + e.getMessage());
-        }
+            if (isInCheck(getTeamTurn())) {
+                System.out.println("king is in check by " + piece.getPieceType() + " at " + startPosition);
+                continue;
+            }
+            output.add(baseMove);
+            gameBoard = currentBoard.clone();
+        }*/
         return output;
     }
 
@@ -87,7 +94,14 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        gameBoard.makeMove(move);
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        try {
+            gameBoard.makeMove(move);
+        }catch (InvalidMoveException e){
+            throw new InvalidMoveException("move is not on the list brother");
+        }
+
     }
 
     /**
@@ -107,14 +121,16 @@ public class ChessGame {
                 if (square != null){
 
                     if (square.getTeamColor() != teamColor){
+
+                        //System.out.println(square);
+                        //System.out.println(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
+                        enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
+                    }else{
+                        //System.out.println(square);
                         if (square.getPieceType() == ChessPiece.PieceType.KING){
 
                             kingPos = new ChessPosition(i+1, k+1);
                         }
-                        enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
-                    }else{
-                        System.out.println(square);
-
                     }
                 }
             }
@@ -125,7 +141,7 @@ public class ChessGame {
             }
         }
         for (ChessPosition endPos : enemyEndPositions){
-            System.out.println(endPos + " " + kingPos);
+            //System.out.println(endPos + " " + kingPos);
             if (endPos.equals(kingPos)){
                 System.out.println("The king is in check");
                 return true;

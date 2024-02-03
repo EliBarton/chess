@@ -41,10 +41,28 @@ public class ChessBoard implements Cloneable {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
         ChessPiece piece = getPiece(startPos);
-        board[startPos.getRow()-1][startPos.getColumn()-1] = null;
-        ChessPosition endPos = move.getEndPosition();
-        board[endPos.getRow()-1][endPos.getColumn()-1] = piece;
+        Boolean valid = false;
+        if (piece == null){
+            throw new InvalidMoveException("There's no piece here!");
+        }
+        try {
 
+            for (ChessMove pieceMove : getPiece(startPos).pieceMoves(this, startPos)) {
+                if (pieceMove.equals(move)) {
+                    valid = true;
+                    break;
+                }
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            throw new InvalidMoveException("Piece is not on the board brother");
+        }
+        if (valid) {
+            board[startPos.getRow() - 1][startPos.getColumn() - 1] = null;
+            ChessPosition endPos = move.getEndPosition();
+            board[endPos.getRow() - 1][endPos.getColumn() - 1] = piece;
+        }else{
+            throw new InvalidMoveException("move is not on the list brother");
+        }
     }
 
     /**

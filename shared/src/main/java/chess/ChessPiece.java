@@ -191,7 +191,7 @@ public class ChessPiece {
         return output;
     }
 
-    public HashSet<ChessMove> getKnightMoves(ChessPosition startPos, ChessBoard board){
+    private HashSet<ChessMove> getKnightMoves(ChessPosition startPos, ChessBoard board){
         HashSet<ChessMove> output = new HashSet<ChessMove>();
 
 
