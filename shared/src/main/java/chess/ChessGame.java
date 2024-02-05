@@ -203,7 +203,23 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)){
+            ChessPosition kingPos = null;
+            for (int i = 0; i < gameBoard.board.length; i++){
+                for (int k = 0; k < gameBoard.board[i].length; k++){
+                    ChessPiece square = gameBoard.board[i][k];
+                    if (square != null){
+                        if (square.getTeamColor() == teamColor){
+                            if (square.getPieceType() == ChessPiece.PieceType.KING){
+                                kingPos = new ChessPosition(i+1, k+1);
+                            }
+                        }
+                    }
+                }
+            }
+            return validMoves(kingPos).isEmpty();
+        }
+        return false;
     }
 
     /**
@@ -214,7 +230,21 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)){
+            for (int i = 0; i < gameBoard.board.length; i++){
+                for (int k = 0; k < gameBoard.board[i].length; k++){
+                    ChessPiece square = gameBoard.board[i][k];
+                    if (square != null){
+                        if (square.getTeamColor() == teamColor){
+                            if (!validMoves(new ChessPosition( i+1, k+1)).isEmpty()){
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
