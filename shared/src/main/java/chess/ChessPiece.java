@@ -161,16 +161,18 @@ public class ChessPiece implements Cloneable{
         if (selfTeam == ChessGame.TeamColor.WHITE) {
             referencePos.rowPos = startPos.rowPos +1;
             referencePos.colPos = startPos.colPos +1;
-            if (board.getPiece(referencePos) != null) {
-                System.out.println("enemy in range of pwn");
-                if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
-                    if (referencePos.rowPos == 8){
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.QUEEN));
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.KNIGHT));
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.BISHOP));
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.ROOK));
-                    }else {
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+            if (referencePos.isOnBoard()) {
+                if (board.getPiece(referencePos) != null) {
+                    System.out.println("enemy in range of pwn");
+                    if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
+                        if (referencePos.rowPos == 8) {
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.QUEEN));
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.KNIGHT));
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.BISHOP));
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.ROOK));
+                        } else {
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+                        }
                     }
                 }
             }
@@ -179,15 +181,17 @@ public class ChessPiece implements Cloneable{
         }else{
             referencePos.rowPos = startPos.rowPos -1;
             referencePos.colPos = startPos.colPos -1;
-            if (board.getPiece(referencePos) != null) {
-                if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
-                    if (referencePos.rowPos == 1){
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.QUEEN));
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.KNIGHT));
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.BISHOP));
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.ROOK));
-                    }else {
-                        output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+            if (referencePos.isOnBoard()) {
+                if (board.getPiece(referencePos) != null) {
+                    if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
+                        if (referencePos.rowPos == 1) {
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.QUEEN));
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.KNIGHT));
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.BISHOP));
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), PieceType.ROOK));
+                        } else {
+                            output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+                        }
                     }
                 }
             }
