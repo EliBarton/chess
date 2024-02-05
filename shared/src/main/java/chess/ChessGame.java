@@ -112,11 +112,8 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
         ChessPosition endPos = move.getEndPosition();
-        try {
-            gameBoard.makeMove(move);
-        }catch (InvalidMoveException e){
-            throw new InvalidMoveException("move is not on the list brother");
-        }
+        gameBoard.makeMove(move);
+
 
     }
 

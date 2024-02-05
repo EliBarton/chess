@@ -34,7 +34,11 @@ public class ChessMove {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startPos, chessMove.startPos) && Objects.equals(endPos, chessMove.endPos) && promotePiece == chessMove.promotePiece;
+        if (promotePiece == null) {
+            return Objects.equals(startPos, chessMove.startPos) && Objects.equals(endPos, chessMove.endPos);
+        }else{
+            return Objects.equals(startPos, chessMove.startPos) && Objects.equals(endPos, chessMove.endPos) && promotePiece.equals(chessMove.promotePiece);
+        }
     }
 
     @Override

@@ -48,6 +48,7 @@ public class ChessBoard implements Cloneable {
         try {
 
             for (ChessMove pieceMove : getPiece(startPos).pieceMoves(this, startPos)) {
+                System.out.println(pieceMove + " is not " + move);
                 if (pieceMove.equals(move)) {
                     valid = true;
                     break;
@@ -59,7 +60,11 @@ public class ChessBoard implements Cloneable {
         if (valid) {
             board[startPos.getRow() - 1][startPos.getColumn() - 1] = null;
             ChessPosition endPos = move.getEndPosition();
-            board[endPos.getRow() - 1][endPos.getColumn() - 1] = piece;
+            if (move.getPromotionPiece() == null) {
+                board[endPos.getRow() - 1][endPos.getColumn() - 1] = piece;
+            }else{
+                board[endPos.getRow() - 1][endPos.getColumn() - 1] = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+            }
         }else{
             throw new InvalidMoveException("move is not on the list brother");
         }
