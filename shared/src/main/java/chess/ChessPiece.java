@@ -194,9 +194,11 @@ public class ChessPiece implements Cloneable{
             referencePos.rowPos = startPos.rowPos -1;
             referencePos.colPos = startPos.colPos +1;
         }
-        if (board.getPiece(referencePos) != null) {
-            if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
-                output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+        if (referencePos.isOnBoard()) {
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).getTeamColor() != selfTeam) {
+                    output.add(new ChessMove(startPos, new ChessPosition(referencePos.rowPos, referencePos.colPos), null));
+                }
             }
         }
         return output;

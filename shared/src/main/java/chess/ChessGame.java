@@ -112,7 +112,15 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
         ChessPosition endPos = move.getEndPosition();
-        gameBoard.makeMove(move);
+        ChessBoard oldBoard = gameBoard.clone();
+        try {
+            gameBoard.makeMove(move);
+        }catch (InvalidMoveException e){
+            System.err.println(e.getMessage());
+            gameBoard = oldBoard.clone();
+            throw new InvalidMoveException(e.getMessage());
+        }
+
 
 
     }
