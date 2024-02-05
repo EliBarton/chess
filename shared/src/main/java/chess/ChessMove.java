@@ -43,7 +43,11 @@ public class ChessMove {
 
     @Override
     public int hashCode() {
-        return Objects.hash(startPos, endPos, promotePiece);
+        if (promotePiece == null){
+            return Objects.hash(startPos, endPos);
+        }else {
+            return Objects.hash(startPos, endPos, promotePiece);
+        }
     }
 
     /**
