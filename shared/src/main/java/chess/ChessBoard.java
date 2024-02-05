@@ -51,7 +51,6 @@ public class ChessBoard implements Cloneable {
             }if (!move.getEndPosition().isOnBoard()){
                 throw new InvalidMoveException("End position is not on the board");
             }
-        System.out.println(startPos);
             if (piece.pieceMoves(this, startPos).contains(move)){
                 valid = true;
             }

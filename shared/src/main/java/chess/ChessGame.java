@@ -65,7 +65,6 @@ public class ChessGame {
         }
         ArrayList<ChessMove> baseMoves = new ArrayList<>(piece.pieceMoves(gameBoard, startPosition));
         ChessBoard currentBoard;
-        System.out.println(gameBoard);
         for (ChessMove baseMove : baseMoves) {
             currentBoard = gameBoard.clone();
             baseMoves = new ArrayList<>(piece.pieceMoves(currentBoard, startPosition));
@@ -73,7 +72,6 @@ public class ChessGame {
                 gameBoard.makeMove(baseMove);
 
                 if (!isInCheck(piece.getTeamColor())){
-                    //System.out.println("added new move to list from " + piece + ": " + baseMove);
                     output.add(baseMove);
                 }
 
@@ -151,11 +149,7 @@ public class ChessGame {
                 ChessPiece square = gameBoard.board[i][k];
 
                 if (square != null){
-                    if (square.getPieceType() == ChessPiece.PieceType.KING){
-                        System.out.println("King at");
-                        System.out.println(new ChessPosition(i+1, k+1));
-                        //kingPos = new ChessPosition(i+1, k+1);
-                    }
+
                     if (square.getTeamColor() != teamColor){
                         //System.out.println("It is " + teamColor + "'s turn.");
                         //System.out.println(square.getTeamColor() + " is attempting to attack the king");
@@ -175,9 +169,7 @@ public class ChessGame {
                 enemyEndPositions.add(move.getEndPosition());
             }
         }
-        if (kingPos == null){
-            System.out.println("The " + teamColor + "'s enemy king is nowhere to be found");
-        }
+
         for (ChessPosition endPos : enemyEndPositions){
             //System.out.println(endPos + " " + kingPos);
             if (endPos.equals(kingPos)){

@@ -331,7 +331,6 @@ public class ChessPiece implements Cloneable {
                             output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
                             break;
                         }
-                        System.out.println(targetPos);
                         output.add(new ChessMove(startPos, targetPos, null));
                     }else{
                         if (targetPos.rowPos == 1){
@@ -341,7 +340,6 @@ public class ChessPiece implements Cloneable {
                             output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
                             break;
                         }
-                        System.out.println(targetPos);
                         output.add(new ChessMove(startPos, targetPos, null));
                     }
                 }
