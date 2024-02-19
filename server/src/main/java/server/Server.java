@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import model.UserData;
 import spark.*;
 
 import java.util.ArrayList;
@@ -15,24 +16,23 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.get("/", (request, response) -> "hello");
-        Spark.get("/user", (request, response) -> "hello");
         Spark.get("/user", this::listUsers);
         Spark.post("/user", this::register);
-        Spark.delete("/user/:user", this::deleteUser);
+        Spark.delete("/user", this::deleteUser);
         Spark.awaitInitialization();
         return Spark.port();
     }
 
     private Object register(Request req, Response res) {
-        users.add(req.params().toString());
+        Gson gson = new Gson();
+        UserData newUser = gson.fromJson(req.body(), UserData.class);
+        users.add(gson.toJson(newUser));
         return listUsers(req, res);
     }
 
     private Object listUsers(Request req, Response res) {
-        System.out.println(req.params());
         res.type("application/json");
-        return new Gson().toJson(Map.of("user", users));
+        return new Gson().toJson(Map.of("users", users));
     }
 
     private Object deleteUser(Request req, Response res) {
