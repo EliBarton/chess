@@ -18,7 +18,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.get("/user", this::listUsers);
         Spark.post("/user", this::register);
-        Spark.delete("/user", this::deleteUser);
+        Spark.delete("/db", this::clear);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -35,8 +35,10 @@ public class Server {
         return new Gson().toJson(Map.of("users", users));
     }
 
-    private Object deleteUser(Request req, Response res) {
-        users.remove(req.params(":user"));
+    private Object clear(Request req, Response res) {
+        users.clear();
+        res.status(200);
+        res.body(listUsers(req, res).toString());
         return listUsers(req, res);
     }
 
