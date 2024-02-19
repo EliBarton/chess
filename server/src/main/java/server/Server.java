@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import model.UserData;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.processor.ObjectRowWriterProcessor;
 import spark.*;
 
 import java.util.ArrayList;
@@ -37,8 +38,13 @@ public class Server {
 
     private Object clear(Request req, Response res) {
         users.clear();
-        res.status(200);
-        res.body(listUsers(req, res).toString());
+        if (!users.isEmpty()){
+            res.status(500);
+            res.body("didn't work");
+        }else{
+            res.status(200);
+            res.body(listUsers(req, res).toString());
+        }
         return listUsers(req, res);
     }
 
