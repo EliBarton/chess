@@ -30,13 +30,18 @@ public class Main {
 
     private static void getRunningUserInput(Server server){
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Type 2 to stop server\n");
+        System.out.print("Type 2 to stop server or 3 to restart it\n");
         String input = scanner.nextLine();
         int response = Integer.parseInt(input);
         if (response == 2){
             server.stop();
-        }
-        else{
+        } else if (response == 3) {
+            server.stop();
+            server = new Server();
+            server.run(8080);
+            System.out.println("Server is running...");
+            getRunningUserInput(server);
+        } else{
             getRunningUserInput(server);
         }
     }
