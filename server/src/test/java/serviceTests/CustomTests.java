@@ -30,6 +30,8 @@ public class CustomTests {
 
         ClearService clearService = new ClearService(testUserData);
         clearService.clear();
-        assertNull(testUserData.getUser("Chessmaster"));
+        assertNull(testUserData.getUser("Chessmaster"), "User was not deleted");
+        assertNull(testUserData.getUser("Checkersdude"), "User was not deleted");
+        assertNull(testUserData.getUser("minecraftzombie"), "User was not deleted");
     }
 }

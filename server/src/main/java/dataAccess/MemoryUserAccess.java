@@ -19,6 +19,11 @@ public class MemoryUserAccess implements UserAccess {
 
     @Override
     public UserData getUser(String username) {
+        for (UserData user : users){
+            if (user.username().equals(username)){
+                return user;
+            }
+        }
         return null;
     }
 
