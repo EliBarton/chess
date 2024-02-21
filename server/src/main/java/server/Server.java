@@ -28,8 +28,11 @@ public class Server {
         Gson gson = new Gson();
         UserData newUser = gson.fromJson(req.body(), UserData.class);
         users.add(gson.toJson(newUser));
+        RegisterService registerService = new RegisterService();
+        registerService.register(newUser);
         return listUsers(req, res);
     }
+
 
     private Object listUsers(Request req, Response res) {
         res.type("application/json");
