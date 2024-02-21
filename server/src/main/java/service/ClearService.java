@@ -1,12 +1,16 @@
 package service;
 
+import dataAccess.MemoryUserAccess;
 import dataAccess.UserAccess;
 
 public class ClearService {
-    public ClearService() {
+    private final UserAccess userData;
+    public ClearService(UserAccess userData) {
+        this.userData = userData;
     }
 
+
     public void clear(){
-        UserAccess.clearData();
+        userData.clear();
     }
 }
