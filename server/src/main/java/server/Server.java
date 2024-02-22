@@ -42,6 +42,9 @@ public class Server {
         catch (DataAccessException e){
             res.status(403);
             return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
+        }catch (RuntimeException e){
+            res.status(400);
+            return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
         }
 
         return gson.toJson(result);
