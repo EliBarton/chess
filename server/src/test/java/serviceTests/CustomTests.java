@@ -1,15 +1,9 @@
 package serviceTests;
 
-import chess.*;
-import dataAccess.DataAccessException;
-import dataAccess.MemoryUserAccess;
-import dataAccess.UserAccess;
+import dataAccess.*;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import service.ClearService;
-import service.RegisterService;
-
-import java.util.Arrays;
+import service.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,5 +42,26 @@ public class CustomTests {
         } catch (DataAccessException e) {
             fail("Registration failed during data access");
         }
+        assertNotNull(testUserData.getUser("Chessmaster"));
+    }
+
+    @Test
+    @DisplayName("Register Twice")
+    public void registerUserAgain(){
+        UserAccess testUserData = new MemoryUserAccess();
+        RegisterService registerService = new RegisterService(testUserData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        try {
+            registerService.register(testUser1);
+        } catch (DataAccessException e) {
+            fail("Registration failed during data access");
+        }
+        try {
+            registerService.register(testUser1);
+        } catch (DataAccessException ignored) {
+            return;
+        }
+        fail("User was able to register twice");
     }
 }

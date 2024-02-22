@@ -23,6 +23,7 @@ public class MemoryUserAccess implements UserAccess {
     public UserData getUser(String username) {
         for (UserData user : users){
             if (user.username().equals(username)){
+                System.out.println(user.username() + " == " + username);
                 return user;
             }
         }
