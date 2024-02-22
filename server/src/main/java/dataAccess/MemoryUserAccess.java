@@ -3,6 +3,7 @@ package dataAccess;
 import model.UserData;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MemoryUserAccess implements UserAccess {
     ArrayList<UserData> users = new ArrayList<>();
@@ -13,8 +14,9 @@ public class MemoryUserAccess implements UserAccess {
     }
 
     @Override
-    public void addUser(UserData user) {
+    public LoginResult addUser(UserData user) {
         users.add(user);
+        return new LoginResult(user.username(), UUID.randomUUID().toString());
     }
 
     @Override
@@ -36,6 +38,4 @@ public class MemoryUserAccess implements UserAccess {
     public void updateUser(String username, UserData newUserData) {
 
     }
-
-
 }
