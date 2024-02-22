@@ -8,15 +8,21 @@ import java.util.UUID;
 public class MemoryUserAccess implements UserAccess {
     ArrayList<UserData> users = new ArrayList<>();
 
+    AuthAccess authData;
+
+    public MemoryUserAccess(AuthAccess authData) {
+        this.authData = authData;
+    }
+
     @Override
     public void clear() {
         users.clear();
     }
 
     @Override
-    public LoginResult addUser(UserData user) {
+    public AuthAccess.AuthResult addUser(UserData user) {
         users.add(user);
-        return new LoginResult(user.username(), UUID.randomUUID().toString());
+        return authData.createAuth(user.username());
     }
 
     @Override

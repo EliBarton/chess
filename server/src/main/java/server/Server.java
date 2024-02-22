@@ -1,9 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
-import dataAccess.MemoryUserAccess;
-import dataAccess.UserAccess;
+import dataAccess.*;
 import model.UserData;
 import service.ClearService;
 import service.RegisterService;
@@ -14,7 +12,8 @@ import java.util.Map;
 
 
 public class Server {
-    private final UserAccess userData = new MemoryUserAccess();
+    private final AuthAccess authData = new MemoryAuthAccess();
+    private final UserAccess userData = new MemoryUserAccess(authData);
     private final ClearService clearService = new ClearService(userData);
     private final RegisterService registerService = new RegisterService(userData);
     private record errorMessage(String message){}
@@ -33,8 +32,7 @@ public class Server {
     private Object register(Request req, Response res) {
         Gson gson = new Gson();
         UserData newUser = gson.fromJson(req.body(), UserData.class);
-        UserAccess.LoginResult result;
-        res.type("application/json");
+        AuthAccess.AuthResult result;
         try {
             result = registerService.register(newUser);
             res.status(200);

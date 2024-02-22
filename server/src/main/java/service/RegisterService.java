@@ -1,6 +1,7 @@
 package service;
 
 
+import dataAccess.AuthAccess;
 import dataAccess.DataAccessException;
 import dataAccess.UserAccess;
 import model.UserData;
@@ -12,7 +13,7 @@ public class RegisterService {
         this.userData = userData;
     }
 
-    public UserAccess.LoginResult register(UserData user) throws DataAccessException {
+    public AuthAccess.AuthResult register(UserData user) throws DataAccessException {
         if (userData.getUser(user.username()) != null){
             throw new DataAccessException("User already exists");
         }
