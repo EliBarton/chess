@@ -23,7 +23,9 @@ public class MemoryAuthAccess implements AuthAccess {
     }
 
     @Override
-    public void deleteAuth(String username) {
-        auths.remove(username);
+    public void deleteAuth(String authToken) {
+        System.out.println(auths);
+        auths.values().remove(authToken);
+        System.out.println(auths);
     }
 }

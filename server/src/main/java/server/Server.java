@@ -8,16 +8,13 @@ import service.LoginoutService;
 import service.RegisterService;
 import spark.*;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 
 public class Server {
     private final AuthAccess authData = new MemoryAuthAccess();
     private final UserAccess userData = new MemoryUserAccess(authData);
     private final ClearService clearService = new ClearService(userData);
     private final RegisterService registerService = new RegisterService(userData);
-    private final LoginoutService loginoutService = new LoginoutService(authData);
+    private final LoginoutService loginoutService = new LoginoutService(authData, userData);
     private record errorMessage(String message){}
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -28,6 +25,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -43,7 +41,7 @@ public class Server {
         catch (DataAccessException e){
             res.status(403);
             return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
-        }catch (RuntimeException e){
+        }catch (InvalidDataException e){
             res.status(400);
             return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
         }
@@ -55,7 +53,6 @@ public class Server {
     private Object clear(Request req, Response res) {
         clearService.clear();
         res.status(200);
-        System.out.println("clear pressed");
         return "";
     }
 
@@ -66,10 +63,27 @@ public class Server {
         try{
             result = loginoutService.login(userData);
         }catch (DataAccessException e){
-            res.status(403);
+            res.status(401);
+            return gson.toJson(new errorMessage("Error: Login failed, " + e.getMessage()));
+        }catch (InvalidDataException e){
+            res.status(401);
             return gson.toJson(new errorMessage("Error: Login failed, " + e.getMessage()));
         }
         return gson.toJson(result);
+    }
+
+    private Object logout(Request req, Response res) {
+        Gson gson = new Gson();
+        String authData = gson.fromJson(req.body(), String.class);
+        try{
+            loginoutService.logout(authData);
+            res.status(200);
+        }catch (DataAccessException | InvalidDataException e){
+            System.out.println("Error: Logout failed, " + e.getMessage());
+            //res.status(401);
+            return gson.toJson(new errorMessage("Error: Logout failed, " + e.getMessage()));
+        }
+        return gson.toJson("");
     }
 
     public void stop() {

@@ -43,6 +43,8 @@ public class CustomTests {
             registerService.register(testUser1);
         } catch (DataAccessException e) {
             fail("Registration failed during data access");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
         }
         assertNotNull(testUserData.getUser("Chessmaster"));
     }
@@ -59,11 +61,15 @@ public class CustomTests {
             registerService.register(testUser1);
         } catch (DataAccessException e) {
             fail("Registration failed during data access");
-        }
+        } catch (InvalidDataException e){
+        fail("invalid registration info");
+    }
         try {
             registerService.register(testUser1);
         } catch (DataAccessException ignored) {
             return;
+        }catch (InvalidDataException e){
+            fail("invalid registration info");
         }
         fail("User was able to register twice");
     }
