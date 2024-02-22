@@ -73,4 +73,31 @@ public class CustomTests {
         }
         fail("User was able to register twice");
     }
+
+    @Test
+    @DisplayName("Login User")
+    public void loginUser(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
+        LoginoutService loginoutService = new LoginoutService(authData, testUserData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        testUserData.addUser(testUser1);
+
+        UserAccess.LoginRequest loginRequest = new UserAccess.LoginRequest(testUser1.username(), testUser1.password());
+
+        try {
+            loginoutService.login(loginRequest);
+        } catch (DataAccessException e) {
+            fail("There was a failure in data access: " + e);
+        } catch (InvalidDataException e) {
+            fail("Invalid data was given:" + e);
+        }
+
+        //Add test that makes sure that the login was successful and valid
+        System.out.println(authData.getAuth("Chessmaster").authToken());
+        assertNotNull(authData.getAuth("Chessmaster").authToken());
+
+    }
+
 }
