@@ -17,6 +17,7 @@ public class Server {
     private final UserAccess userData = new MemoryUserAccess();
     private final ClearService clearService = new ClearService(userData);
     private final RegisterService registerService = new RegisterService(userData);
+    private record errorMessage(String message){}
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -33,13 +34,14 @@ public class Server {
         Gson gson = new Gson();
         UserData newUser = gson.fromJson(req.body(), UserData.class);
         UserAccess.LoginResult result;
+        res.type("application/json");
         try {
             result = registerService.register(newUser);
             res.status(200);
         }
         catch (DataAccessException e){
-            res.status(401);
-            return null;
+            res.status(403);
+            return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
         }
 
         return gson.toJson(result);
@@ -48,7 +50,7 @@ public class Server {
 
     private Object clear(Request req, Response res) {
         clearService.clear();
-        res.status(204);
+        res.status(200);
         System.out.println("clear pressed");
         return "";
     }
