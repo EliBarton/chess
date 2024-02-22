@@ -100,4 +100,26 @@ public class CustomTests {
 
     }
 
+    @Test
+    @DisplayName("Login Unregistered User")
+    public void loginInvalidUser(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
+        LoginoutService loginoutService = new LoginoutService(authData, testUserData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+
+        UserAccess.LoginRequest loginRequest = new UserAccess.LoginRequest(testUser1.username(), testUser1.password());
+
+        try {
+            AuthAccess.AuthResult result = loginoutService.login(loginRequest);
+            assertNull(result);
+        } catch (DataAccessException e) {
+        } catch (InvalidDataException e) {
+        }
+        assertNull(authData.getAuth("Chessmaster").authToken());
+
+
+    }
+
 }
