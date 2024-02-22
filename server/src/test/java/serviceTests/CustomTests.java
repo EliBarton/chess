@@ -12,7 +12,8 @@ public class CustomTests {
     @Test
     @DisplayName("Clear Data")
     public void clearSuccess(){
-        UserAccess testUserData = new MemoryUserAccess();
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
         UserData testUser1 = new UserData("Chessmaster",
                 "Chess123", "bestatchess@yourmom.com");
         UserData testUser2 = new UserData("Checkersdude",
@@ -33,7 +34,8 @@ public class CustomTests {
     @Test
     @DisplayName("Register Success")
     public void registerUser(){
-        UserAccess testUserData = new MemoryUserAccess();
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
         RegisterService registerService = new RegisterService(testUserData);
         UserData testUser1 = new UserData("Chessmaster",
                 "Chess123", "bestatchess@yourmom.com");
@@ -48,7 +50,8 @@ public class CustomTests {
     @Test
     @DisplayName("Register Twice")
     public void registerUserAgain(){
-        UserAccess testUserData = new MemoryUserAccess();
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
         RegisterService registerService = new RegisterService(testUserData);
         UserData testUser1 = new UserData("Chessmaster",
                 "Chess123", "bestatchess@yourmom.com");

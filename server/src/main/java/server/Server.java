@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataAccess.*;
 import model.UserData;
 import service.ClearService;
+import service.LoginoutService;
 import service.RegisterService;
 import spark.*;
 
@@ -16,6 +17,7 @@ public class Server {
     private final UserAccess userData = new MemoryUserAccess(authData);
     private final ClearService clearService = new ClearService(userData);
     private final RegisterService registerService = new RegisterService(userData);
+    private final LoginoutService loginoutService = new LoginoutService(authData);
     private record errorMessage(String message){}
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -25,6 +27,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -54,6 +57,19 @@ public class Server {
         res.status(200);
         System.out.println("clear pressed");
         return "";
+    }
+
+    private Object login(Request req, Response res) {
+        Gson gson = new Gson();
+        UserAccess.LoginRequest userData = gson.fromJson(req.body(), UserAccess.LoginRequest.class);
+        AuthAccess.AuthResult result;
+        try{
+            result = loginoutService.login(userData);
+        }catch (DataAccessException e){
+            res.status(403);
+            return gson.toJson(new errorMessage("Error: Login failed, " + e.getMessage()));
+        }
+        return gson.toJson(result);
     }
 
     public void stop() {
