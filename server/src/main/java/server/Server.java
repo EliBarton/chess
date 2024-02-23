@@ -120,7 +120,19 @@ public class Server {
         return gson.toJson(games);
     }
 
-
+    private Object joinGame(Request req, Response res) {
+        Gson gson = new Gson();
+        String auth = req.headers("Authorization");
+        GameAccess.JoinGameRequest joinRequest = gson.fromJson(req.body(), GameAccess.JoinGameRequest.class);
+        ArrayList<GameData> games;
+        try{
+            games = gameService.listGames(auth);
+        }catch (UnauthorizedException e){
+            res.status(401);
+            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+        }
+        return gson.toJson(games);
+    }
 
     public void stop() {
         Spark.stop();

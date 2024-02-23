@@ -17,4 +17,6 @@ public interface GameAccess {
 
     record GameIdResult(int gameID){}
 
+    record JoinGameRequest(String playerColor, int gameID){}
+
 }
