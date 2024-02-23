@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Server {
     private final AuthAccess authData = new MemoryAuthAccess();
     private final UserAccess userData = new MemoryUserAccess(authData);
-    private final GameAccess gameData = new MemoryGameAccess();
+    private final GameAccess gameData = new MemoryGameAccess(authData);
     private final ClearService clearService = new ClearService(userData);
     private final RegisterService registerService = new RegisterService(userData);
     private final LoginoutService loginoutService = new LoginoutService(authData, userData);
@@ -32,6 +32,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
         Spark.get("/game", this::listGames);
+        Spark.put("/game", this::joinGame);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -111,13 +112,14 @@ public class Server {
     private Object listGames(Request req, Response res) {
         Gson gson = new Gson();
         String auth = req.headers("Authorization");
-        ArrayList<GameData> games;
+        ArrayList<GameAccess.SerializedGameData> games;
         try{
             games = gameService.listGames(auth);
         }catch (UnauthorizedException e){
             res.status(401);
             return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
         }
+        System.out.println(games);
         return gson.toJson(games);
     }
 
@@ -127,13 +129,16 @@ public class Server {
         GameAccess.JoinGameRequest joinRequest = gson.fromJson(req.body(), GameAccess.JoinGameRequest.class);
         String game;
         try{
-            game = gameService.updateGame(joinRequest.gameID(), auth);
+            game = gameService.updateGame(joinRequest.gameID(), auth, joinRequest.playerColor());
         }catch (UnauthorizedException e){
             res.status(401);
-            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+            return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
         } catch (InvalidDataException e) {
-            res.status(401);
-            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+            res.status(400);
+            return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
+        } catch (DataAccessException e){
+            res.status(403);
+            return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
         }
         return game;
     }

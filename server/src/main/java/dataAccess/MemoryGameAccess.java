@@ -5,10 +5,16 @@ import com.google.gson.Gson;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Random;
 
 public class MemoryGameAccess implements GameAccess {
+
+    AuthAccess authData;
+
+    public MemoryGameAccess(AuthAccess authData) {
+        this.authData = authData;
+    }
+
 
     ArrayList<GameData> games = new ArrayList<>();
     @Override
@@ -22,7 +28,7 @@ public class MemoryGameAccess implements GameAccess {
     @Override
     public GameData getGame(int id) {
         for (GameData game : games){
-            if (String.valueOf(game.gameID()).equals(id)){
+            if (game.gameID() == id){
                 return game;
             }
         }
@@ -30,15 +36,32 @@ public class MemoryGameAccess implements GameAccess {
     }
 
     @Override
-    public ArrayList<GameData> listGames() {
-        return games;
+    public ArrayList<SerializedGameData> listGames() {
+        Gson gson = new Gson();
+        ArrayList<SerializedGameData> serializedGames = new ArrayList<>();
+        for (GameData gameData : games){
+            serializedGames.add(new SerializedGameData(gameData.gameID(), gameData.whiteUsername(),
+                    gameData.blackUsername(), gameData.gameName(), gson.toJson(gameData.game())));
+        }
+        return serializedGames;
     }
 
     @Override
-    public String updateGame(int id) {
-        Gson serializer = new Gson();
-        ChessGame game = getGame(id).game();
+    public ChessGame updateGame(int id, String authToken, String playerColor) {
 
-        return serializer.toJson(game);
+        GameData gameData = getGame(id);
+        ChessGame game = gameData.game();
+        String username = authData.getUsernameByAuth(authToken);
+
+        if (playerColor != null) {
+            if (playerColor.equals("WHITE")) {
+                gameData = getGame(id).updateWhiteUsername(username);
+            } else if (playerColor.equals("BLACK")) {
+                gameData = getGame(id).updateBlackUsername(username);
+            }
+        }
+        return game;
     }
+
+
 }

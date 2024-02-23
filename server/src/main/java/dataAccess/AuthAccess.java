@@ -10,6 +10,8 @@ public interface AuthAccess {
 
     Boolean containsAuth(String authToken);
 
+    String getUsernameByAuth(String authToken);
+
     void deleteAuth(String authToken);
 
     record AuthRequest(String username){}

@@ -167,7 +167,7 @@ public class CustomTests {
     public void createGame(){
         MemoryAuthAccess authData = new MemoryAuthAccess();
         UserAccess UserData = new MemoryUserAccess(authData);
-        GameAccess gameData = new MemoryGameAccess();
+        GameAccess gameData = new MemoryGameAccess(authData);
         RegisterService registerService = new RegisterService(UserData);
         LoginoutService loginoutService = new LoginoutService(authData, UserData);
         GameService gameService = new GameService(authData, gameData);
@@ -193,7 +193,7 @@ public class CustomTests {
     public void createGameUnauthorized(){
         MemoryAuthAccess authData = new MemoryAuthAccess();
         UserAccess UserData = new MemoryUserAccess(authData);
-        GameAccess gameData = new MemoryGameAccess();
+        GameAccess gameData = new MemoryGameAccess(authData);
         RegisterService registerService = new RegisterService(UserData);
         LoginoutService loginoutService = new LoginoutService(authData, UserData);
         GameService gameService = new GameService(authData, gameData);

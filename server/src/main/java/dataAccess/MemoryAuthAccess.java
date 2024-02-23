@@ -4,6 +4,7 @@ import model.UserData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthAccess implements AuthAccess {
@@ -29,7 +30,24 @@ public class MemoryAuthAccess implements AuthAccess {
     }
 
     @Override
+    public String getUsernameByAuth(String authToken) {
+        for (Map.Entry<String, String> authInfo : auths.entrySet()){
+            if (authInfo.getValue().equals(authToken)){
+                return authInfo.getKey();
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void deleteAuth(String authToken) {
         auths.values().remove(authToken);
+    }
+
+    @Override
+    public String toString() {
+        return "MemoryAuthAccess{" +
+                "auths=" + auths.toString() +
+                '}';
     }
 }

@@ -1,9 +1,9 @@
 package dataAccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public interface GameAccess {
 
@@ -11,12 +11,15 @@ public interface GameAccess {
 
     GameData getGame(int id);
 
-    ArrayList<GameData> listGames();
+    ArrayList<SerializedGameData> listGames();
 
-    String updateGame(int id);
+    ChessGame updateGame(int id, String authToken, String playerColor);
 
     record GameIdResult(int gameID){}
 
     record JoinGameRequest(String playerColor, int gameID){}
+
+    record SerializedGameData(int gameID, String whiteUsername, String blackUsername,
+                              String gameName, String game){}
 
 }

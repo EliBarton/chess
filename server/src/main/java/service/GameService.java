@@ -1,9 +1,7 @@
 package service;
 
-import dataAccess.AuthAccess;
-import dataAccess.GameAccess;
-import dataAccess.InvalidDataException;
-import dataAccess.UnauthorizedException;
+import com.google.gson.Gson;
+import dataAccess.*;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -20,6 +18,8 @@ public class GameService {
 
     public int createGame(String gameName, String authToken) throws UnauthorizedException {
         int gameID;
+        System.out.println(authToken);
+        System.out.println(authData.toString());
         if(authData.containsAuth(authToken)){
             gameID = gameData.createGame(gameName,  authToken);
         }else {
@@ -28,20 +28,36 @@ public class GameService {
         return gameID;
     }
 
-    public ArrayList<GameData> listGames(String authToken) throws UnauthorizedException {
+    public ArrayList<GameAccess.SerializedGameData> listGames(String authToken) throws UnauthorizedException {
         if(authData.containsAuth(authToken)) {
             return gameData.listGames();
         }
         throw new UnauthorizedException("User not authorized");
     }
 
-    public String updateGame(int id, String authToken) throws UnauthorizedException, InvalidDataException {
+    public String updateGame(int id, String authToken, String playerColor) throws UnauthorizedException, InvalidDataException, DataAccessException {
+        Gson gson = new Gson();
         if(!authData.containsAuth(authToken)) {
             throw new UnauthorizedException("User not authorized");
         } else if (gameData.getGame(id) == null) {
             throw new InvalidDataException("ID is invalid");
+        }else if (playerColor == null || playerColor.isEmpty()) {
+            return gson.toJson(gameData.updateGame(id, authToken, null));
+        } else if (playerColor.equals("WHITE")){
+            if (gameData.getGame(id).whiteUsername() == null){
+                System.out.println(gson.toJson(gameData.updateGame(id, authToken, playerColor)));
+                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
+            } else{
+                throw new DataAccessException("Colors taken");
+            }
+        } else if (playerColor.equals("BLACK")) {
+            if (gameData.getGame(id).blackUsername() == null){
+                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
+            } else{
+                throw new DataAccessException("Colors taken");
+            }
         } else{
-            return gameData.updateGame(id);
+            throw new DataAccessException("Colors don't exist");
         }
 
     }
