@@ -29,13 +29,13 @@ public class LoginoutService {
     }
 
     public void logout(String authToken) throws DataAccessException, InvalidDataException {
-        if (authData.getAuth(authToken) == null) {
-            throw new DataAccessException("User doesn't exist or isn't logged in");
+        if (authData.containsAuth(authToken)) {
+            authData.deleteAuth(authToken);
         } else if (authToken == null) {
             throw new InvalidDataException("Invalid authorization");
         }
         else {
-            authData.deleteAuth(authToken);
+            throw new DataAccessException("User doesn't exist or isn't logged in");
         }
     }
 }

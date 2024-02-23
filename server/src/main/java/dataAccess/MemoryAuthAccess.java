@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.UserData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -23,9 +24,12 @@ public class MemoryAuthAccess implements AuthAccess {
     }
 
     @Override
+    public Boolean containsAuth(String authToken) {
+        return auths.containsValue(authToken);
+    }
+
+    @Override
     public void deleteAuth(String authToken) {
-        System.out.println(auths);
         auths.values().remove(authToken);
-        System.out.println(auths);
     }
 }

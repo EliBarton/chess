@@ -8,6 +8,8 @@ public interface AuthAccess {
 
     AuthResult getAuth(String username);
 
+    Boolean containsAuth(String authToken);
+
     void deleteAuth(String authToken);
 
     record AuthRequest(String username){}

@@ -118,8 +118,48 @@ public class CustomTests {
         } catch (InvalidDataException e) {
         }
         assertNull(authData.getAuth("Chessmaster").authToken());
+    }
 
+    @Test
+    @DisplayName("Logout user")
+    public void logoutUser(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
+        RegisterService registerService = new RegisterService(testUserData);
+        LoginoutService loginoutService = new LoginoutService(authData, testUserData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            loginoutService.logout(authResult.authToken());
+        } catch (DataAccessException e) {
+            fail("failed during data access");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        }
+        assertNotNull(testUserData.getUser("Chessmaster"));
+        assertNull(authData.getAuth("Chessmaster").authToken());
+    }
 
+    @Test
+    @DisplayName("Logout user that isn't even logged in")
+    public void logoutUserNotLoggedIn(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess testUserData = new MemoryUserAccess(authData);
+        RegisterService registerService = new RegisterService(testUserData);
+        LoginoutService loginoutService = new LoginoutService(authData, testUserData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            loginoutService.logout(authResult.authToken());
+            loginoutService.logout(authResult.authToken());
+        } catch (DataAccessException ignored) {
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        }
+        assertNotNull(testUserData.getUser("Chessmaster"));
+        assertNull(authData.getAuth("Chessmaster").authToken());
     }
 
 }

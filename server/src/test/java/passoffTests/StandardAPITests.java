@@ -72,7 +72,6 @@ public class StandardAPITests {
         //one user already logged in
         TestModels.TestLoginRegisterResult regResult = serverFacade.register(registerRequest);
         existingAuth = regResult.authToken;
-        System.out.println("Existing user auth = " + existingAuth);
     }
 
 

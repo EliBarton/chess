@@ -59,6 +59,7 @@ public class Server {
     private Object login(Request req, Response res) {
         Gson gson = new Gson();
         UserAccess.LoginRequest userData = gson.fromJson(req.body(), UserAccess.LoginRequest.class);
+        res.type("application/json");
         AuthAccess.AuthResult result;
         try{
             result = loginoutService.login(userData);
@@ -72,18 +73,21 @@ public class Server {
         return gson.toJson(result);
     }
 
+    //Request body is empty
     private Object logout(Request req, Response res) {
+        res.type("application/json");
+
         Gson gson = new Gson();
-        String authData = gson.fromJson(req.body(), String.class);
+        System.out.println(req.headers("Authorization"));
         try{
-            loginoutService.logout(authData);
+            loginoutService.logout(req.headers("Authorization"));
             res.status(200);
         }catch (DataAccessException | InvalidDataException e){
             System.out.println("Error: Logout failed, " + e.getMessage());
             //res.status(401);
             return gson.toJson(new errorMessage("Error: Logout failed, " + e.getMessage()));
         }
-        return gson.toJson("");
+        return gson.toJson(res.body());
     }
 
     public void stop() {
