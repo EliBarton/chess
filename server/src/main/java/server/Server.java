@@ -2,9 +2,12 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
+import model.GameData;
 import model.UserData;
 import service.*;
 import spark.*;
+
+import java.util.ArrayList;
 
 
 public class Server {
@@ -27,6 +30,7 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.post("/game", this::createGame);
+        Spark.get("/game", this::listGames);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -102,6 +106,21 @@ public class Server {
         }
         return gson.toJson(result);
     }
+
+    private Object listGames(Request req, Response res) {
+        Gson gson = new Gson();
+        String auth = req.headers("Authorization");
+        ArrayList<GameData> games;
+        try{
+            games = gameService.listGames(auth);
+        }catch (UnauthorizedException e){
+            res.status(401);
+            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+        }
+        return gson.toJson(games);
+    }
+
+
 
     public void stop() {
         Spark.stop();

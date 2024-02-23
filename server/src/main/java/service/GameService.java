@@ -3,6 +3,9 @@ package service;
 import dataAccess.AuthAccess;
 import dataAccess.GameAccess;
 import dataAccess.UnauthorizedException;
+import model.GameData;
+
+import java.util.ArrayList;
 
 public class GameService {
 
@@ -22,6 +25,13 @@ public class GameService {
             throw new UnauthorizedException("User not authorized");
         }
         return gameID;
+    }
+
+    public ArrayList<GameData> listGames(String authToken) throws UnauthorizedException {
+        if(authData.containsAuth(authToken)) {
+            return gameData.listGames();
+        }
+        throw new UnauthorizedException("User not authorized");
     }
 
 

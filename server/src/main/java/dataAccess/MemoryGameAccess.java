@@ -4,7 +4,6 @@ import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -30,8 +29,8 @@ public class MemoryGameAccess implements GameAccess {
     }
 
     @Override
-    public HashSet<GameData> listGames() {
-        return null;
+    public ArrayList<GameData> listGames() {
+        return games;
     }
 
     @Override

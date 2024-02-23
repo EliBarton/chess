@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public interface GameAccess {
@@ -10,7 +11,7 @@ public interface GameAccess {
 
     GameData getGame(String id);
 
-    HashSet<GameData> listGames();
+    ArrayList<GameData> listGames();
 
     void updateGame(String id, String gameString);
 
