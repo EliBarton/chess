@@ -26,6 +26,7 @@ public class Server {
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.post("/game", this::createGame);
         Spark.awaitInitialization();
         return Spark.port();
     }
@@ -75,19 +76,22 @@ public class Server {
 
     //Request body is empty
     private Object logout(Request req, Response res) {
-        res.type("application/json");
-
         Gson gson = new Gson();
-        System.out.println(req.headers("Authorization"));
         try{
             loginoutService.logout(req.headers("Authorization"));
             res.status(200);
         }catch (DataAccessException | InvalidDataException e){
             System.out.println("Error: Logout failed, " + e.getMessage());
-            //res.status(401);
+            res.status(401);
             return gson.toJson(new errorMessage("Error: Logout failed, " + e.getMessage()));
         }
         return gson.toJson(res.body());
+    }
+
+    private Object createGame(Request req, Response res) {
+        Gson gson = new Gson();
+
+        return "";
     }
 
     public void stop() {

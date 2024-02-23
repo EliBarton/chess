@@ -6,7 +6,7 @@ import java.util.HashSet;
 
 public interface GameAccess {
 
-    void createGame(String gameName, String authToken);
+    int createGame(String gameName, String authToken);
 
     GameData getGame(String id);
 
