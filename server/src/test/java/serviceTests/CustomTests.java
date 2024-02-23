@@ -185,7 +185,7 @@ public class CustomTests {
         } catch (UnauthorizedException e){
             fail("user not authorized");
         }
-        assertNotNull(gameData.getGame(String.valueOf(gameID)));
+        assertNotNull(gameData.getGame(gameID));
     }
 
     @Test
@@ -209,7 +209,7 @@ public class CustomTests {
             fail("invalid registration info");
         } catch (UnauthorizedException ignored){
         }
-        assertNull(gameData.getGame(String.valueOf(gameID)));
+        assertNull(gameData.getGame(gameID));
     }
 
 }

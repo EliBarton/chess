@@ -2,6 +2,7 @@ package service;
 
 import dataAccess.AuthAccess;
 import dataAccess.GameAccess;
+import dataAccess.InvalidDataException;
 import dataAccess.UnauthorizedException;
 import model.GameData;
 
@@ -32,6 +33,17 @@ public class GameService {
             return gameData.listGames();
         }
         throw new UnauthorizedException("User not authorized");
+    }
+
+    public String updateGame(int id, String authToken) throws UnauthorizedException, InvalidDataException {
+        if(!authData.containsAuth(authToken)) {
+            throw new UnauthorizedException("User not authorized");
+        } else if (gameData.getGame(id) == null) {
+            throw new InvalidDataException("ID is invalid");
+        } else{
+            return gameData.updateGame(id);
+        }
+
     }
 
 

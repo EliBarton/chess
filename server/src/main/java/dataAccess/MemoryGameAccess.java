@@ -1,6 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class MemoryGameAccess implements GameAccess {
     }
 
     @Override
-    public GameData getGame(String id) {
+    public GameData getGame(int id) {
         for (GameData game : games){
             if (String.valueOf(game.gameID()).equals(id)){
                 return game;
@@ -34,7 +35,10 @@ public class MemoryGameAccess implements GameAccess {
     }
 
     @Override
-    public void updateGame(String id, String gameString) {
+    public String updateGame(int id) {
+        Gson serializer = new Gson();
+        ChessGame game = getGame(id).game();
 
+        return serializer.toJson(game);
     }
 }

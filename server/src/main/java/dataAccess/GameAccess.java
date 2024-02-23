@@ -9,11 +9,11 @@ public interface GameAccess {
 
     int createGame(String gameName, String authToken);
 
-    GameData getGame(String id);
+    GameData getGame(int id);
 
     ArrayList<GameData> listGames();
 
-    void updateGame(String id, String gameString);
+    String updateGame(int id);
 
     record GameIdResult(int gameID){}
 

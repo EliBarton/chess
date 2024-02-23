@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.GameData;
@@ -124,14 +125,17 @@ public class Server {
         Gson gson = new Gson();
         String auth = req.headers("Authorization");
         GameAccess.JoinGameRequest joinRequest = gson.fromJson(req.body(), GameAccess.JoinGameRequest.class);
-        ArrayList<GameData> games;
+        String game;
         try{
-            games = gameService.listGames(auth);
+            game = gameService.updateGame(joinRequest.gameID(), auth);
         }catch (UnauthorizedException e){
             res.status(401);
             return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+        } catch (InvalidDataException e) {
+            res.status(401);
+            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
         }
-        return gson.toJson(games);
+        return game;
     }
 
     public void stop() {
