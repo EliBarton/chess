@@ -3,18 +3,18 @@ package server;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.UserData;
-import service.ClearService;
-import service.LoginoutService;
-import service.RegisterService;
+import service.*;
 import spark.*;
 
 
 public class Server {
     private final AuthAccess authData = new MemoryAuthAccess();
     private final UserAccess userData = new MemoryUserAccess(authData);
+    private final GameAccess gameData = new MemoryGameAccess();
     private final ClearService clearService = new ClearService(userData);
     private final RegisterService registerService = new RegisterService(userData);
     private final LoginoutService loginoutService = new LoginoutService(authData, userData);
+    private final GameService gameService = new GameService(authData, gameData);
     private record errorMessage(String message){}
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -90,8 +90,17 @@ public class Server {
 
     private Object createGame(Request req, Response res) {
         Gson gson = new Gson();
+        String auth = req.headers("Authorization");
+        String gameName = req.body();
+        GameAccess.GameIdResult result;
+        try{
+            result = new GameAccess.GameIdResult(gameService.createGame(gameName, auth));
 
-        return "";
+        }catch (UnauthorizedException e){
+            res.status(401);
+            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+        }
+        return gson.toJson(result);
     }
 
     public void stop() {

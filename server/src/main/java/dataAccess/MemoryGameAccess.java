@@ -3,13 +3,14 @@ package dataAccess;
 import chess.ChessGame;
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
 public class MemoryGameAccess implements GameAccess {
 
-    HashSet<GameData> games = new HashSet<>();
+    ArrayList<GameData> games = new ArrayList<>();
     @Override
     public int createGame(String gameName, String authToken) {
         Random rand = new Random();
@@ -20,6 +21,11 @@ public class MemoryGameAccess implements GameAccess {
 
     @Override
     public GameData getGame(String id) {
+        for (GameData game : games){
+            if (String.valueOf(game.gameID()).equals(id)){
+                return game;
+            }
+        }
         return null;
     }
 

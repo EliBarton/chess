@@ -13,4 +13,7 @@ public interface GameAccess {
     HashSet<GameData> listGames();
 
     void updateGame(String id, String gameString);
+
+    record GameIdResult(int gameID){}
+
 }
