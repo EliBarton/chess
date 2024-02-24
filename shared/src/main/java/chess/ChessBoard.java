@@ -22,7 +22,6 @@ public class ChessBoard implements Cloneable {
      */
     public ChessPiece[][] board = new ChessPiece[8][8];
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        //throw new RuntimeException("Not implemented");
         board[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
@@ -35,7 +34,6 @@ public class ChessBoard implements Cloneable {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return board[position.getRow()-1][position.getColumn()-1];
-        //throw new RuntimeException("Not implemented");
     }
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
@@ -45,7 +43,6 @@ public class ChessBoard implements Cloneable {
         if (piece == null){
             throw new InvalidMoveException("There's no piece at " + startPos);
         }
-       // try {
             if (!startPos.isOnBoard()){
                 throw new InvalidMoveException("Start position is not on the board");
             }if (!move.getEndPosition().isOnBoard()){
@@ -54,9 +51,6 @@ public class ChessBoard implements Cloneable {
             if (piece.pieceMoves(this, startPos).contains(move)){
                 valid = true;
             }
-        //}catch (ArrayIndexOutOfBoundsException e) {
-        //    throw new InvalidMoveException("Piece is not on the board brother");
-        //}
         if (valid) {
             board[startPos.getRow() - 1][startPos.getColumn() - 1] = null;
             ChessPosition endPos = move.getEndPosition();
@@ -108,7 +102,6 @@ public class ChessBoard implements Cloneable {
                     }
             }
         }
-        //throw new RuntimeException("Not implemented");
     }
 
     private ArrayList<ChessPiece> createBasePieces(ChessGame.TeamColor team){

@@ -25,7 +25,6 @@ public class ChessPiece implements Cloneable {
     public ChessPiece clone() {
         try {
             ChessPiece clone = (ChessPiece) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
@@ -196,18 +195,18 @@ public class ChessPiece implements Cloneable {
     private void addValidMovesWhitePawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
         ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
         if (referencePos.isOnBoard()) {
-            if (board.getPiece(referencePos) != null) {
-                if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                    output.add(new ChessMove(startPos, referencePos.clone(), null));
-                }
-            }
+            extracted(startPos, board, output, referencePos);
         }
         referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
         if (referencePos.isOnBoard()) {
-            if (board.getPiece(referencePos) != null) {
-                if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                    output.add(new ChessMove(startPos, referencePos.clone(), null));
-                }
+            extracted(startPos, board, output, referencePos);
+        }
+    }
+
+    private void extracted(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ChessPosition referencePos) {
+        if (board.getPiece(referencePos) != null) {
+            if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                output.add(new ChessMove(startPos, referencePos.clone(), null));
             }
         }
     }
@@ -249,7 +248,7 @@ public class ChessPiece implements Cloneable {
         output.addAll(calculateMoves(startPos, board, directions, 1));
     }
 
-    public HashSet<ChessMove> calculateMoves(ChessPosition startPos, ChessBoard board, ArrayList<ChessPosition> directions, int max_distance){
+    public HashSet<ChessMove> calculateMoves(ChessPosition startPos, ChessBoard board, ArrayList<ChessPosition> directions, int maxDistance){
         HashSet<ChessMove> output = new HashSet<ChessMove>();
         int distance = 0;
         ChessPosition targetPos = new ChessPosition(0, 0);
@@ -259,7 +258,7 @@ public class ChessPiece implements Cloneable {
             ChessPosition referencePos = new ChessPosition(0, 0);
             Boolean valid = true;
 
-            while (distance < max_distance){
+            while (distance < maxDistance){
                 distance += 1;
                 referencePos.rowPos = startPos.getRow() + (distance * (directions.get(i).getRow() - startPos.getRow()));
                 referencePos.colPos = startPos.getColumn() + (distance * (directions.get(i).getColumn() - startPos.getColumn()));
