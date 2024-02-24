@@ -22,4 +22,6 @@ public interface GameAccess {
     record SerializedGameData(int gameID, String whiteUsername, String blackUsername,
                               String gameName, String game){}
 
+    record ListGamesResult(String message, ArrayList<GameAccess.SerializedGameData> games){}
+
 }

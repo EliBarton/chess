@@ -103,6 +103,7 @@ public class Server {
             result = new GameAccess.GameIdResult(gameService.createGame(gameName, auth));
 
         }catch (UnauthorizedException e){
+            System.out.println(e.getMessage());
             res.status(401);
             return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
         }
@@ -113,14 +114,15 @@ public class Server {
         Gson gson = new Gson();
         String auth = req.headers("Authorization");
         ArrayList<GameAccess.SerializedGameData> games;
+
         try{
             games = gameService.listGames(auth);
         }catch (UnauthorizedException e){
             res.status(401);
             return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
         }
-        System.out.println(games);
-        return gson.toJson(games);
+        GameAccess.ListGamesResult result = new GameAccess.ListGamesResult("games", games);
+        return gson.toJson(result);
     }
 
     private Object joinGame(Request req, Response res) {
@@ -134,10 +136,10 @@ public class Server {
             res.status(401);
             return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
         } catch (InvalidDataException e) {
-            res.status(400);
+            res.status(403);
             return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
         } catch (DataAccessException e){
-            res.status(403);
+            res.status(400);
             return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
         }
         return game;

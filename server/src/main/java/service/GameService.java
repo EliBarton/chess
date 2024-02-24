@@ -35,10 +35,23 @@ public class GameService {
 
     public String updateGame(int id, String authToken, String playerColor)
             throws UnauthorizedException, InvalidDataException, DataAccessException {
-        checkForUpdateGameException(id, authToken, playerColor);
+
+
+        checkForUpdateGameExceptions(id, authToken, playerColor);
         Gson gson = new Gson();
         System.out.println("Player color:            " + playerColor);
-        return null;
+        System.out.println("The game:            " + gameData.getGame(id));
+
+        if (playerColor == null){
+            return gson.toJson(gameData.updateGame(id, authToken, null));
+        }
+
+        if (playerColor.equals("WHITE") || playerColor.equals("BLACK")){
+            return gson.toJson(gameData.updateGame(id, authToken, playerColor));
+        } else {
+            return gson.toJson(gameData.updateGame(id, authToken, null));
+        }
+
 //        if(!authData.containsAuth(authToken)) {
 //            throw new UnauthorizedException("User not authorized");
 //        } else if (gameData.getGame(id) == null) {
@@ -63,17 +76,19 @@ public class GameService {
 
     }
 
-    private void checkForUpdateGameException(int id, String authToken, String playerColor)
+    private void checkForUpdateGameExceptions(int id, String authToken, String playerColor)
             throws UnauthorizedException, InvalidDataException, DataAccessException {
         if(!authData.containsAuth(authToken)) {
             throw new UnauthorizedException("User not authorized");
         } else if (gameData.getGame(id) == null) {
-            throw new InvalidDataException("ID is invalid");
-        } else if (gameData.getGame(id).whiteUsername() != null){
+            throw new DataAccessException("ID is invalid");
+        }
+        if (gameData.getGame(id).whiteUsername() != null){
             if (playerColor.equals("WHITE")){
                 throw new InvalidDataException("White is already taken");
             }
         }else if (gameData.getGame(id).blackUsername() != null) {
+            System.out.println("This should be Null: " + playerColor);
             if (playerColor.equals("BLACK")) {
                 throw new InvalidDataException("Black is already taken");
             }

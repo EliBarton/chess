@@ -36,7 +36,7 @@ public class MemoryAuthAccess implements AuthAccess {
                 return authInfo.getKey();
             }
         }
-        return null;
+        return "Error getting username";
     }
 
     @Override

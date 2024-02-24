@@ -43,6 +43,8 @@ public class MemoryGameAccess implements GameAccess {
             serializedGames.add(new SerializedGameData(gameData.gameID(), gameData.whiteUsername(),
                     gameData.blackUsername(), gameData.gameName(), gson.toJson(gameData.game())));
         }
+        System.out.println(games);
+        System.out.println(serializedGames);
         return serializedGames;
     }
 
@@ -55,12 +57,25 @@ public class MemoryGameAccess implements GameAccess {
 
         if (playerColor != null) {
             if (playerColor.equals("WHITE")) {
-                gameData = getGame(id).updateWhiteUsername(username);
+                setGame(id, getGame(id).updateWhiteUsername(username));
             } else if (playerColor.equals("BLACK")) {
-                gameData = getGame(id).updateBlackUsername(username);
+                setGame(id, getGame(id).updateBlackUsername(username));
+
             }
+
         }
         return game;
+    }
+
+    private void setGame(int id, GameData game){
+        for (int i = 0; i < games.size(); i++){
+            if (games.get(i).gameID() == id){
+                games.remove(i);
+                games.set(i-1, game);
+                System.out.println(games.size());
+                return;
+            }
+        }
     }
 
 
