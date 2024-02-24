@@ -212,4 +212,58 @@ public class CustomTests {
         assertNull(gameData.getGame(gameID));
     }
 
+    @Test
+    @DisplayName("list games")
+    public void listGames(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess UserData = new MemoryUserAccess(authData);
+        GameAccess gameData = new MemoryGameAccess(authData);
+        RegisterService registerService = new RegisterService(UserData);
+        GameService gameService = new GameService(authData, gameData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        int gameID = 0;
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            gameID = gameService.createGame("My test game 1", authResult.authToken());
+            gameID = gameService.createGame("My test game 2", authResult.authToken());
+            gameID = gameService.createGame("My test game 3", authResult.authToken());
+            gameID = gameService.createGame("My test game 4", authResult.authToken());
+        } catch (DataAccessException ignored) {
+            fail("data access failure");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        } catch (UnauthorizedException e){
+            fail(e);
+        }
+        assertNotNull(gameData.listGames());
+    }
+
+    @Test
+    @DisplayName("list games unauthorized")
+    public void listGamesUnauthorized(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess UserData = new MemoryUserAccess(authData);
+        GameAccess gameData = new MemoryGameAccess(authData);
+        RegisterService registerService = new RegisterService(UserData);
+        GameService gameService = new GameService(authData, gameData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        int gameID = 0;
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            gameID = gameService.createGame("My test game 1", authResult.authToken() + 1);
+            gameID = gameService.createGame("My test game 2", authResult.authToken() + 1);
+            gameID = gameService.createGame("My test game 3", authResult.authToken() + 1);
+            gameID = gameService.createGame("My test game 4", authResult.authToken() + 1);
+        } catch (DataAccessException ignored) {
+            fail("data access failure");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        } catch (UnauthorizedException e){
+        }
+        assertNull(gameData.listGames());
+    }
+
+
 }
