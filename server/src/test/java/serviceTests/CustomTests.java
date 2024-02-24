@@ -1,6 +1,9 @@
 package serviceTests;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import dataAccess.*;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import service.*;
@@ -236,6 +239,7 @@ public class CustomTests {
         } catch (UnauthorizedException e){
             fail(e);
         }
+        System.out.println(gameData.listGames());
         assertNotNull(gameData.listGames());
     }
 
@@ -262,7 +266,43 @@ public class CustomTests {
             fail("invalid registration info");
         } catch (UnauthorizedException e){
         }
-        assertNull(gameData.listGames());
+        assertTrue(gameData.listGames().isEmpty());
+    }
+
+
+    @Test
+    @DisplayName("join game white")
+    public void joinGameAsWhite(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess UserData = new MemoryUserAccess(authData);
+        GameAccess gameData = new MemoryGameAccess(authData);
+        RegisterService registerService = new RegisterService(UserData);
+        GameService gameService = new GameService(authData, gameData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        int gameID = 0;
+        Gson gson = new Gson();
+        ChessGame gameJoined = null;
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            gameID = gameService.createGame("My test game", authResult.authToken());
+            System.out.println(gameService.listGames(authResult.authToken()));
+            String gameString = gameService.updateGame(gameID, authResult.authToken(), "WHITE");
+            //System.out.println(gameService.updateGame(gameID, authResult.authToken(), "BLACK"));
+            System.out.println(gameService.listGames(authResult.authToken()));
+            gameJoined = gson.fromJson(gameString, ChessGame.class);
+            
+            System.out.println(gameJoined);
+        } catch (DataAccessException ignored) {
+            fail("data access failure");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        } catch (UnauthorizedException e){
+            fail("unauthorized");
+        }
+        assertEquals(gameData.getGame(gameID).game(), gameJoined);
+        System.out.println();
+
     }
 
 

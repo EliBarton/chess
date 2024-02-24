@@ -18,8 +18,6 @@ public class GameService {
 
     public int createGame(String gameName, String authToken) throws UnauthorizedException {
         int gameID;
-        System.out.println(authToken);
-        System.out.println(authData.toString());
         if(authData.containsAuth(authToken)){
             gameID = gameData.createGame(gameName,  authToken);
         }else {
@@ -35,31 +33,51 @@ public class GameService {
         throw new UnauthorizedException("User not authorized");
     }
 
-    public String updateGame(int id, String authToken, String playerColor) throws UnauthorizedException, InvalidDataException, DataAccessException {
+    public String updateGame(int id, String authToken, String playerColor)
+            throws UnauthorizedException, InvalidDataException, DataAccessException {
+        checkForUpdateGameException(id, authToken, playerColor);
         Gson gson = new Gson();
+        System.out.println("Player color:            " + playerColor);
+        return null;
+//        if(!authData.containsAuth(authToken)) {
+//            throw new UnauthorizedException("User not authorized");
+//        } else if (gameData.getGame(id) == null) {
+//            throw new InvalidDataException("ID is invalid");
+//        }else if (playerColor == null || playerColor.isEmpty()) {
+//            return gson.toJson(gameData.updateGame(id, authToken, null));
+//        } else if (playerColor.equals("WHITE")){
+//            if (gameData.getGame(id).whiteUsername() == null){
+//                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
+//            } else{
+//                throw new DataAccessException("Colors taken");
+//            }
+//        } else if (playerColor.equals("BLACK")) {
+//            if (gameData.getGame(id).blackUsername() == null){
+//                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
+//            } else{
+//                throw new DataAccessException("Colors taken");
+//            }
+//        } else{
+//            throw new DataAccessException("Colors don't exist");
+//        }
+
+    }
+
+    private void checkForUpdateGameException(int id, String authToken, String playerColor)
+            throws UnauthorizedException, InvalidDataException, DataAccessException {
         if(!authData.containsAuth(authToken)) {
             throw new UnauthorizedException("User not authorized");
         } else if (gameData.getGame(id) == null) {
             throw new InvalidDataException("ID is invalid");
-        }else if (playerColor == null || playerColor.isEmpty()) {
-            return gson.toJson(gameData.updateGame(id, authToken, null));
-        } else if (playerColor.equals("WHITE")){
-            if (gameData.getGame(id).whiteUsername() == null){
-                System.out.println(gson.toJson(gameData.updateGame(id, authToken, playerColor)));
-                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
-            } else{
-                throw new DataAccessException("Colors taken");
+        } else if (gameData.getGame(id).whiteUsername() != null){
+            if (playerColor.equals("WHITE")){
+                throw new InvalidDataException("White is already taken");
             }
-        } else if (playerColor.equals("BLACK")) {
-            if (gameData.getGame(id).blackUsername() == null){
-                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
-            } else{
-                throw new DataAccessException("Colors taken");
+        }else if (gameData.getGame(id).blackUsername() != null) {
+            if (playerColor.equals("BLACK")) {
+                throw new InvalidDataException("Black is already taken");
             }
-        } else{
-            throw new DataAccessException("Colors don't exist");
         }
-
     }
 
 

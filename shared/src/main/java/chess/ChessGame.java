@@ -3,6 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -84,20 +85,6 @@ public class ChessGame {
             setTeamTurn(TeamColor.WHITE);
         }
 
-        /*for (ChessMove baseMove : baseMoves) {
-            currentBoard = gameBoard.clone();
-            try {
-                makeMove(baseMove);
-            }catch (InvalidMoveException e){
-                continue;
-            }
-            if (isInCheck(getTeamTurn())) {
-                System.out.println("king is in check by " + piece.getPieceType() + " at " + startPosition);
-                continue;
-            }
-            output.add(baseMove);
-            gameBoard = currentBoard.clone();
-        }*/
         return output;
     }
 
@@ -255,5 +242,18 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return turn == chessGame.turn && Objects.deepEquals(gameBoard, chessGame.gameBoard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, gameBoard);
     }
 }
