@@ -164,131 +164,89 @@ public class ChessPiece implements Cloneable {
             directions.add(new ChessPosition(startPos.getRow() + 1, startPos.getColumn()));
             if (startPos.getRow() == 2){
                 output.addAll(calculateMoves(startPos, board, directions, 2));
-                ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
-                referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
+                addValidMovesWhitePawn(startPos, board, output);
             } else if (startPos.getRow() == 7) {
                 ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.QUEEN));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.ROOK));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.BISHOP));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.KNIGHT));
-                        }
-                    }
-                }
+                addValidPromotionsBlack(startPos, board, output, referencePos);
                 referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.QUEEN));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.ROOK));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.BISHOP));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.KNIGHT));
-                        }
-                    }
-                }
-                output.addAll(calculateMoves(startPos, board, directions, 1));
+                addValidDiagMove(startPos, board, output, directions, referencePos);
             }else{
                 output.addAll(calculateMoves(startPos, board, directions, 1));
-                ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
-                referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
+                addValidMovesWhitePawn(startPos, board, output);
             }
         }else{
             directions.add(new ChessPosition(startPos.getRow() - 1, startPos.getColumn()));
             if (startPos.getRow() == 7){
                 output.addAll(calculateMoves(startPos, board, directions, 2));
-                ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
-                referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
+                addDiagLeftMovesBlackPawn(startPos, board, output);
             } else if (startPos.getRow() == 2) {
                 ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.QUEEN));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.ROOK));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.BISHOP));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.KNIGHT));
-                        }
-                    }
-                }
+                addValidPromotionsBlack(startPos, board, output, referencePos);
                 referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.QUEEN));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.ROOK));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.BISHOP));
-                            output.add(new ChessMove(startPos, referencePos.clone(), PieceType.KNIGHT));
-                        }
-                    }
-                }
-                output.addAll(calculateMoves(startPos, board, directions, 1));
+                addValidDiagMove(startPos, board, output, directions, referencePos);
             }else{
                 output.addAll(calculateMoves(startPos, board, directions, 1));
-                ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
-                referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
-                if (referencePos.isOnBoard()) {
-                    if (board.getPiece(referencePos) != null) {
-                        if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                            output.add(new ChessMove(startPos, referencePos.clone(), null));
-                        }
-                    }
-                }
+                addDiagLeftMovesBlackPawn(startPos, board, output);
             }
         }
 
         return output;
+    }
+
+    private void addValidMovesWhitePawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
+        ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
+        if (referencePos.isOnBoard()) {
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                    output.add(new ChessMove(startPos, referencePos.clone(), null));
+                }
+            }
+        }
+        referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
+        if (referencePos.isOnBoard()) {
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                    output.add(new ChessMove(startPos, referencePos.clone(), null));
+                }
+            }
+        }
+    }
+
+    private void addValidPromotionsBlack(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ChessPosition referencePos) {
+        if (referencePos.isOnBoard()) {
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                    output.add(new ChessMove(startPos, referencePos.clone(), PieceType.QUEEN));
+                    output.add(new ChessMove(startPos, referencePos.clone(), PieceType.ROOK));
+                    output.add(new ChessMove(startPos, referencePos.clone(), PieceType.BISHOP));
+                    output.add(new ChessMove(startPos, referencePos.clone(), PieceType.KNIGHT));
+                }
+            }
+        }
+    }
+
+    private void addDiagLeftMovesBlackPawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
+        ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
+        if (referencePos.isOnBoard()) {
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                    output.add(new ChessMove(startPos, referencePos.clone(), null));
+                }
+            }
+        }
+        referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
+        if (referencePos.isOnBoard()) {
+            if (board.getPiece(referencePos) != null) {
+                if (board.getPiece(referencePos).selfTeam != selfTeam) {
+                    output.add(new ChessMove(startPos, referencePos.clone(), null));
+                }
+            }
+        }
+    }
+
+    private void addValidDiagMove(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ArrayList<ChessPosition> directions, ChessPosition referencePos) {
+        addValidPromotionsBlack(startPos, board, output, referencePos);
+        output.addAll(calculateMoves(startPos, board, directions, 1));
     }
 
     public HashSet<ChessMove> calculateMoves(ChessPosition startPos, ChessBoard board, ArrayList<ChessPosition> directions, int max_distance){
@@ -325,20 +283,13 @@ public class ChessPiece implements Cloneable {
                 }else{
                     if (getTeamColor() == ChessGame.TeamColor.WHITE){
                         if (targetPos.rowPos == 8){
-                            output.add(new ChessMove(startPos, targetPos, PieceType.BISHOP));
-                            output.add(new ChessMove(startPos, targetPos, PieceType.QUEEN));
-                            output.add(new ChessMove(startPos, targetPos, PieceType.ROOK));
-                            output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
+                            addPromotionMoves(startPos, output, targetPos);
                             break;
                         }
                         output.add(new ChessMove(startPos, targetPos, null));
                     }else{
                         if (targetPos.rowPos == 1){
-                            output.add(new ChessMove(startPos, targetPos, PieceType.BISHOP));
-                            output.add(new ChessMove(startPos, targetPos, PieceType.QUEEN));
-                            output.add(new ChessMove(startPos, targetPos, PieceType.ROOK));
-                            output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
-                            break;
+                            addPromotionMoves(startPos, output, targetPos);
                         }
                         output.add(new ChessMove(startPos, targetPos, null));
                     }
@@ -351,6 +302,13 @@ public class ChessPiece implements Cloneable {
     return output;
     }
 
+    private void addPromotionMoves(ChessPosition startPos, HashSet<ChessMove> output, ChessPosition targetPos) {
+        output.add(new ChessMove(startPos, targetPos, PieceType.BISHOP));
+        output.add(new ChessMove(startPos, targetPos, PieceType.QUEEN));
+        output.add(new ChessMove(startPos, targetPos, PieceType.ROOK));
+        output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
+        return;
+    }
 
 
     public ArrayList<ChessPosition> getHorVerDirections(ChessPosition startPos){

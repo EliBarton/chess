@@ -123,7 +123,7 @@ public class CustomTests {
         } catch (DataAccessException e) {
         } catch (InvalidDataException e) {
         }
-        assertNull(authData.getAuth("Chessmaster").authToken());
+        assertNull(authData.getAuth("Chessmaster"));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class CustomTests {
             fail("invalid registration info");
         }
         assertNotNull(testUserData.getUser("Chessmaster"));
-        assertNull(authData.getAuth("Chessmaster").authToken());
+        assertNull(authData.getAuth("Chessmaster"));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class CustomTests {
             fail("invalid registration info");
         }
         assertNotNull(testUserData.getUser("Chessmaster"));
-        assertNull(authData.getAuth("Chessmaster").authToken());
+        assertNull(authData.getAuth("Chessmaster"));
     }
 
     @Test

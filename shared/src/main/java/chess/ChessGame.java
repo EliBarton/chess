@@ -76,10 +76,8 @@ public class ChessGame {
                     output.add(baseMove);
                 }
 
-                //System.out.println(gameBoard + "\n\n" + currentBoard);
             } catch (InvalidMoveException e) {
                 System.err.println(e);
-                //System.out.println(gameBoard + "\n\n" + currentBoard);
             }
             gameBoard = currentBoard.clone();
             setTeamTurn(TeamColor.WHITE);
@@ -138,9 +136,6 @@ public class ChessGame {
                 if (square != null){
 
                     if (square.getTeamColor() != teamColor){
-                        //System.out.println("It is " + teamColor + "'s turn.");
-                        //System.out.println(square.getTeamColor() + " is attempting to attack the king");
-                        //System.out.println(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
                         enemyEndMoves.add(square.pieceMoves(gameBoard, new ChessPosition(i+1, k+1)));
                     }else{
                         if (square.getPieceType() == ChessPiece.PieceType.KING){
