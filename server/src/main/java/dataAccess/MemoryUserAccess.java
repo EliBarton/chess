@@ -35,13 +35,4 @@ public class MemoryUserAccess implements UserAccess {
         return null;
     }
 
-    @Override
-    public void removeUser(String username) {
-
-    }
-
-    @Override
-    public void updateUser(String username, UserData newUserData) {
-
-    }
 }

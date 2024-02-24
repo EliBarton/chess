@@ -3,37 +3,49 @@ package dataAccess;
 import model.UserData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthAccess implements AuthAccess {
 
-    HashMap<String, String> auths = new HashMap<>();
+    ArrayList<AuthResult> auths = new ArrayList<>();
 
 
     @Override
     public AuthResult createAuth(String username) {
         AuthResult result = new AuthResult(username, UUID.randomUUID().toString());
-        auths.put(result.username(), result.authToken());
+        auths.add(result);
+        System.out.println(auths);
         return result;
     }
 
     @Override
     public AuthResult getAuth(String username) {
-        return new AuthResult(username, auths.get(username));
+        for (AuthResult result : auths){
+            if (result.username().equals(username)){
+                return result;
+            }
+        }
+        return null;
     }
 
     @Override
     public Boolean containsAuth(String authToken) {
-        return auths.containsValue(authToken);
+        boolean authFound = false;
+        for (AuthResult result : auths){
+            if (result.authToken().equals(authToken)) {
+                authFound = true;
+                break;
+            }
+        }
+        return authFound;
     }
 
     @Override
     public String getUsernameByAuth(String authToken) {
-        for (Map.Entry<String, String> authInfo : auths.entrySet()){
-            if (authInfo.getValue().equals(authToken)){
-                return authInfo.getKey();
+        for (AuthResult result : auths){
+            if (result.authToken().equals(authToken)) {
+                return result.username();
             }
         }
         return "Error getting username";
@@ -46,7 +58,7 @@ public class MemoryAuthAccess implements AuthAccess {
 
     @Override
     public void deleteAuth(String authToken) {
-        auths.values().remove(authToken);
+        auths.removeIf(result -> result.authToken().equals(authToken));
     }
 
     @Override
