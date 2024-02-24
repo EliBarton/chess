@@ -2,11 +2,10 @@ package service;
 
 
 import dataAccess.AuthAccess;
-import dataAccess.DataAccessException;
-import dataAccess.InvalidDataException;
+import dataAccess.exceptions.DataAccessException;
+import dataAccess.exceptions.InvalidDataException;
 import dataAccess.UserAccess;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 
 public class RegisterService {
     private final UserAccess userData;

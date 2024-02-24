@@ -1,9 +1,10 @@
 package server;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
-import model.GameData;
+import dataAccess.exceptions.DataAccessException;
+import dataAccess.exceptions.InvalidDataException;
+import dataAccess.exceptions.UnauthorizedException;
 import model.UserData;
 import service.*;
 import spark.*;
@@ -70,10 +71,7 @@ public class Server {
         AuthAccess.AuthResult result;
         try{
             result = loginoutService.login(userData);
-        }catch (DataAccessException e){
-            res.status(401);
-            return gson.toJson(new errorMessage("Error: Login failed, " + e.getMessage()));
-        }catch (InvalidDataException e){
+        }catch (DataAccessException | InvalidDataException e){
             res.status(401);
             return gson.toJson(new errorMessage("Error: Login failed, " + e.getMessage()));
         }
