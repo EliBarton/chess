@@ -76,7 +76,6 @@ public class MemoryGameAccess implements GameAccess {
         for (int i = 0; i < games.size(); i++){
             if (games.get(i).gameID() == id){
                 games.set(i, game);
-                System.out.println(games);
                 return;
             }
         }

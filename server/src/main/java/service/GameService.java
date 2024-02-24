@@ -39,8 +39,6 @@ public class GameService {
 
         checkForUpdateGameExceptions(id, authToken, playerColor);
         Gson gson = new Gson();
-        System.out.println("Player color:            " + playerColor);
-        System.out.println("The game:            " + gameData.getGame(id));
 
         if (playerColor == null){
             return gson.toJson(gameData.updateGame(id, authToken, null));
@@ -52,27 +50,6 @@ public class GameService {
             return gson.toJson(gameData.updateGame(id, authToken, null));
         }
 
-//        if(!authData.containsAuth(authToken)) {
-//            throw new UnauthorizedException("User not authorized");
-//        } else if (gameData.getGame(id) == null) {
-//            throw new InvalidDataException("ID is invalid");
-//        }else if (playerColor == null || playerColor.isEmpty()) {
-//            return gson.toJson(gameData.updateGame(id, authToken, null));
-//        } else if (playerColor.equals("WHITE")){
-//            if (gameData.getGame(id).whiteUsername() == null){
-//                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
-//            } else{
-//                throw new DataAccessException("Colors taken");
-//            }
-//        } else if (playerColor.equals("BLACK")) {
-//            if (gameData.getGame(id).blackUsername() == null){
-//                return gson.toJson(gameData.updateGame(id, authToken, playerColor));
-//            } else{
-//                throw new DataAccessException("Colors taken");
-//            }
-//        } else{
-//            throw new DataAccessException("Colors don't exist");
-//        }
 
     }
 
@@ -88,7 +65,6 @@ public class GameService {
                 throw new InvalidDataException("White is already taken");
             }
         }else if (gameData.getGame(id).blackUsername() != null) {
-            System.out.println("This should be Null: " + playerColor);
             if (playerColor.equals("BLACK")) {
                 throw new InvalidDataException("Black is already taken");
             }

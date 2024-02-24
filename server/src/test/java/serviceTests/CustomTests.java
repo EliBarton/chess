@@ -3,7 +3,6 @@ package serviceTests;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
-import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import service.*;
@@ -316,16 +315,15 @@ public class CustomTests {
         GameService gameService = new GameService(authData, gameData);
         UserData testUser1 = new UserData("Chessmaster",
                 "Chess123", "bestatchess@yourmom.com");
+        UserData testUser2 = new UserData("Chessnovice",
+                "Chess123", "bestatathletics@yourmom.com");
         int gameID = 0;
         Gson gson = new Gson();
         ChessGame gameJoined = null;
         try {
             AuthAccess.AuthResult authResult = registerService.register(testUser1);
             gameID = gameService.createGame("My test game", authResult.authToken());
-            System.out.println(gameService.listGames(authResult.authToken()));
             String gameString = gameService.updateGame(gameID, authResult.authToken(), "BLACK");
-            //System.out.println(gameService.updateGame(gameID, authResult.authToken(), "BLACK"));
-            System.out.println(gameService.listGames(authResult.authToken()));
             gameJoined = gson.fromJson(gameString, ChessGame.class);
 
             System.out.println(gameJoined);
@@ -338,23 +336,19 @@ public class CustomTests {
         }
 
         try {
-            AuthAccess.AuthResult authResult = registerService.register(testUser1);
-            gameID = gameService.createGame("My test game", authResult.authToken());
-            System.out.println(gameService.listGames(authResult.authToken()));
+            AuthAccess.AuthResult authResult = registerService.register(testUser2);
             String gameString = gameService.updateGame(gameID, authResult.authToken(), "BLACK");
-            //System.out.println(gameService.updateGame(gameID, authResult.authToken(), "BLACK"));
-            System.out.println(gameService.listGames(authResult.authToken()));
             gameJoined = gson.fromJson(gameString, ChessGame.class);
 
             System.out.println(gameJoined);
-        } catch (DataAccessException ignored) {
-            fail("data access failure");
-        } catch (InvalidDataException e){
-            fail("invalid registration info");
+        } catch (DataAccessException e) {
+            fail(e.getMessage());
+        } catch (InvalidDataException ignored){
         } catch (UnauthorizedException e){
             fail("unauthorized");
         }
 
+        assertEquals(gameData.getGame(gameID).blackUsername(), "Chessmaster");
 
     }
 
