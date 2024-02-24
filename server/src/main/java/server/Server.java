@@ -15,7 +15,7 @@ public class Server {
     private final AuthAccess authData = new MemoryAuthAccess();
     private final UserAccess userData = new MemoryUserAccess(authData);
     private final GameAccess gameData = new MemoryGameAccess(authData);
-    private final ClearService clearService = new ClearService(userData);
+    private final ClearService clearService = new ClearService(userData, authData, gameData);
     private final RegisterService registerService = new RegisterService(userData);
     private final LoginoutService loginoutService = new LoginoutService(authData, userData);
     private final GameService gameService = new GameService(authData, gameData);

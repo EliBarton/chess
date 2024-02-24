@@ -45,9 +45,7 @@ public class ChessPosition implements Cloneable {
 
     public boolean isOnBoard(){
         if (rowPos > 0 && rowPos <= 8){
-            if (colPos > 0 && colPos <= 8){
-                return true;
-            }
+            return colPos > 0 && colPos <= 8;
         }
         return false;
     }

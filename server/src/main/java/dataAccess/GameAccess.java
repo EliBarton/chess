@@ -15,6 +15,8 @@ public interface GameAccess {
 
     ChessGame updateGame(int id, String authToken, String playerColor);
 
+    void clear();
+
     record GameIdResult(int gameID){}
 
     record JoinGameRequest(String playerColor, int gameID){}

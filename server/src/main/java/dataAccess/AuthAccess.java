@@ -12,6 +12,8 @@ public interface AuthAccess {
 
     String getUsernameByAuth(String authToken);
 
+    void clear();
+
     void deleteAuth(String authToken);
 
     record AuthRequest(String username){}

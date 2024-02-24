@@ -17,6 +17,7 @@ public class CustomTests {
     public void clearSuccess(){
         MemoryAuthAccess authData = new MemoryAuthAccess();
         UserAccess testUserData = new MemoryUserAccess(authData);
+        GameAccess gameData = new MemoryGameAccess(authData);
         UserData testUser1 = new UserData("Chessmaster",
                 "Chess123", "bestatchess@yourmom.com");
         UserData testUser2 = new UserData("Checkersdude",
@@ -27,7 +28,7 @@ public class CustomTests {
         testUserData.addUser(testUser2);
         testUserData.addUser(testUser3);
 
-        ClearService clearService = new ClearService(testUserData);
+        ClearService clearService = new ClearService(testUserData, authData, gameData);
         clearService.clear();
         assertNull(testUserData.getUser("Chessmaster"), "User was not deleted");
         assertNull(testUserData.getUser("Checkersdude"), "User was not deleted");
@@ -302,6 +303,58 @@ public class CustomTests {
         }
         assertEquals(gameData.getGame(gameID).game(), gameJoined);
         System.out.println();
+
+    }
+
+    @Test
+    @DisplayName("join game black twice")
+    public void joinGameSpotTaken(){
+        MemoryAuthAccess authData = new MemoryAuthAccess();
+        UserAccess UserData = new MemoryUserAccess(authData);
+        GameAccess gameData = new MemoryGameAccess(authData);
+        RegisterService registerService = new RegisterService(UserData);
+        GameService gameService = new GameService(authData, gameData);
+        UserData testUser1 = new UserData("Chessmaster",
+                "Chess123", "bestatchess@yourmom.com");
+        int gameID = 0;
+        Gson gson = new Gson();
+        ChessGame gameJoined = null;
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            gameID = gameService.createGame("My test game", authResult.authToken());
+            System.out.println(gameService.listGames(authResult.authToken()));
+            String gameString = gameService.updateGame(gameID, authResult.authToken(), "BLACK");
+            //System.out.println(gameService.updateGame(gameID, authResult.authToken(), "BLACK"));
+            System.out.println(gameService.listGames(authResult.authToken()));
+            gameJoined = gson.fromJson(gameString, ChessGame.class);
+
+            System.out.println(gameJoined);
+        } catch (DataAccessException ignored) {
+            fail("data access failure");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        } catch (UnauthorizedException e){
+            fail("unauthorized");
+        }
+
+        try {
+            AuthAccess.AuthResult authResult = registerService.register(testUser1);
+            gameID = gameService.createGame("My test game", authResult.authToken());
+            System.out.println(gameService.listGames(authResult.authToken()));
+            String gameString = gameService.updateGame(gameID, authResult.authToken(), "BLACK");
+            //System.out.println(gameService.updateGame(gameID, authResult.authToken(), "BLACK"));
+            System.out.println(gameService.listGames(authResult.authToken()));
+            gameJoined = gson.fromJson(gameString, ChessGame.class);
+
+            System.out.println(gameJoined);
+        } catch (DataAccessException ignored) {
+            fail("data access failure");
+        } catch (InvalidDataException e){
+            fail("invalid registration info");
+        } catch (UnauthorizedException e){
+            fail("unauthorized");
+        }
+
 
     }
 

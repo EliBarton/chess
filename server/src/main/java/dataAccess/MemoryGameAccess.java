@@ -67,12 +67,16 @@ public class MemoryGameAccess implements GameAccess {
         return game;
     }
 
+    @Override
+    public void clear() {
+        games.clear();
+    }
+
     private void setGame(int id, GameData game){
         for (int i = 0; i < games.size(); i++){
             if (games.get(i).gameID() == id){
-                games.remove(i);
-                games.set(i-1, game);
-                System.out.println(games.size());
+                games.set(i, game);
+                System.out.println(games);
                 return;
             }
         }

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 public class GameService {
 
-    private AuthAccess authData;
-    private GameAccess gameData;
+    private final AuthAccess authData;
+    private final GameAccess gameData;
 
     public GameService(AuthAccess authData, GameAccess gameData) {
         this.authData = authData;

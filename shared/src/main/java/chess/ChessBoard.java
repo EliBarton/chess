@@ -34,7 +34,7 @@ public class ChessBoard implements Cloneable {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return (ChessPiece) board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow()-1][position.getColumn()-1];
         //throw new RuntimeException("Not implemented");
     }
 
