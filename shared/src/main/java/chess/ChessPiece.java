@@ -226,21 +226,9 @@ public class ChessPiece implements Cloneable {
 
     private void addDiagLeftMovesBlackPawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
         ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
-        if (referencePos.isOnBoard()) {
-            if (board.getPiece(referencePos) != null) {
-                if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                    output.add(new ChessMove(startPos, referencePos.clone(), null));
-                }
-            }
-        }
+        extracted(startPos, board, output, referencePos);
         referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
-        if (referencePos.isOnBoard()) {
-            if (board.getPiece(referencePos) != null) {
-                if (board.getPiece(referencePos).selfTeam != selfTeam) {
-                    output.add(new ChessMove(startPos, referencePos.clone(), null));
-                }
-            }
-        }
+        extracted(startPos, board, output, referencePos);
     }
 
     private void addValidDiagMove(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ArrayList<ChessPosition> directions, ChessPosition referencePos) {
