@@ -3,11 +3,30 @@ package dataAccess;
 import dataAccess.exceptions.DataAccessException;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class SqlAuthAccess implements AuthAccess{
+
+    public SqlAuthAccess() throws DataAccessException {
+        configureDatabase();
+    }
+
     @Override
     public AuthResult createAuth(String username) {
-        return null;
+        AuthResult result = new AuthResult(username, UUID.randomUUID().toString());
+        var statement = "INSERT INTO auth (username, authToken) VALUES ('"
+                + result.username() + "', '" + result.authToken() + "')";
+        System.out.println(statement);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     @Override

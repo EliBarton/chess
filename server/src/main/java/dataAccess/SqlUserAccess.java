@@ -35,7 +35,7 @@ public class SqlUserAccess implements UserAccess{
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return authData.createAuth(user.username());
     }
 
     @Override
