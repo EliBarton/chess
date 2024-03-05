@@ -68,13 +68,13 @@ public class SqlGameAccess implements GameAccess {
                 `white_username` varchar(256),
                 `black_username` varchar(256),
                 `game_name` varchar(256) NOT NULL,
-                `game` varchar(1000) NOT NULL,
+                `game` text NOT NULL,
                 PRIMARY KEY (`id`),
                 INDEX(game_id),
                 INDEX(white_username),
                 INDEX(black_username),
                 INDEX(game_name),
-                INDEX(game)
+                INDEX(game(255))
                 )
                 """
     };
