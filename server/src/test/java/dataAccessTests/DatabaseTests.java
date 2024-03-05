@@ -3,6 +3,7 @@ package dataAccessTests;
 import dataAccess.*;
 import dataAccess.exceptions.DataAccessException;
 import model.UserData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ public class DatabaseTests {
             AuthAccess authAccess = new SqlAuthAccess();
             UserAccess userAccess = new SqlUserAccess(authAccess);
             GameAccess gameAccess = new SqlGameAccess(authAccess);
-            clearAll(authAccess, userAccess, gameAccess);
+            clearAll();
             String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
             AuthAccess.AuthResult actual = authAccess.getAuth("Chessmaster");
             System.out.println(actual.authToken());
@@ -54,7 +55,28 @@ public class DatabaseTests {
 
     }
 
-    private void clearAll(AuthAccess authAccess, UserAccess userAccess, GameAccess gameAccess){
+    @Test
+    @DisplayName("Get Auth Test")
+    public void containsAuthTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            AuthAccess.AuthResult actual = authAccess.getAuth("Chessmaster");
+            assertTrue(authAccess.containsAuth(authToken));
+            System.out.println(actual.authToken());
+            assertEquals(authToken, actual.authToken());
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+
+    }
+
+    @BeforeEach
+    public void clearAll() throws DataAccessException {
+        AuthAccess authAccess = new SqlAuthAccess();
+        UserAccess userAccess = new SqlUserAccess(authAccess);
+        GameAccess gameAccess = new SqlGameAccess(authAccess);
         authAccess.clear();
         userAccess.clear();
         gameAccess.clear();
