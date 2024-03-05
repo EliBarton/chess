@@ -36,4 +36,18 @@ public class DatabaseTests {
         }
     }
 
+    @Test
+    @DisplayName("Get Auth Test")
+    public void getAuthTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            authAccess.getAuth("Chessmaster");
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
 }

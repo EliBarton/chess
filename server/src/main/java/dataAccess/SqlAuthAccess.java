@@ -16,22 +16,17 @@ public class SqlAuthAccess implements AuthAccess{
         AuthResult result = new AuthResult(username, UUID.randomUUID().toString());
         var statement = "INSERT INTO auth (username, authToken) VALUES ('"
                 + result.username() + "', '" + result.authToken() + "')";
-        System.out.println(statement);
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.updateDatabase(statement);
         return result;
     }
 
+
+
     @Override
     public AuthResult getAuth(String username) {
-        return null;
+        var statement = "SELECT authToken FROM auth WHERE username = " + username + ";";
+        String auth = (String) DatabaseManager.queryDatabase(statement);
+        return new AuthResult(username, auth);
     }
 
     @Override

@@ -12,7 +12,6 @@ public class SqlUserAccess implements UserAccess{
     public SqlUserAccess(AuthAccess authAccess) throws DataAccessException {
         this.authData = authAccess;
         configureDatabase();
-        printTable();
     }
 
     @Override
@@ -25,16 +24,7 @@ public class SqlUserAccess implements UserAccess{
 
         var statement = "INSERT INTO user (username, password, email) VALUES ('"
                 + user.username() + "', '" + user.password() + "', '" + user.email() + "')";
-        System.out.println(statement);
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.updateDatabase(statement);
         return authData.createAuth(user.username());
     }
 

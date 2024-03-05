@@ -26,16 +26,7 @@ public class SqlGameAccess implements GameAccess {
         String newGame = new Gson().toJson(new ChessGame());
         var statement = "INSERT INTO game (game_id, white_username, black_username, game_name, game) VALUES ('"
                 + gameID + "', null, null, '" + gameName + "', '" + newGame + "')";
-        System.out.println(statement);
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseManager.updateDatabase(statement);
 
         return 0;
     }

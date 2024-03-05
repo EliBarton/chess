@@ -81,4 +81,33 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
     }
+
+    public static Object updateDatabase(String statement) {
+        System.out.println(statement);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                return preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Object queryDatabase(String statement) {
+        System.out.println(statement);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                try(var rs = preparedStatement.executeQuery()){
+                    return rs;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
