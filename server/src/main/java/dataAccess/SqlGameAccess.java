@@ -62,16 +62,16 @@ public class SqlGameAccess implements GameAccess {
         columnNames.add("black_username");
         columnNames.add("game_name");
         columnNames.add("chess_game");
-        ArrayList<String> output = new ArrayList<>();
+        ArrayList<String> row = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 try(var rs = preparedStatement.executeQuery()){
                     while (rs.next()) {
                         for (String name : columnNames) {
-                            output.add(rs.getString(name));
+                            row.add(rs.getString(name));
                         }
-                        System.out.println(output);
-                        output.clear();
+                        serializedGames.add(new SerializedGameData(Integer.parseInt(row.get(0)), row.get(1), row.get(2), row.get(3), row.get(4)));
+                        row.clear();
                     }
                 }
             }
@@ -81,9 +81,7 @@ public class SqlGameAccess implements GameAccess {
             throw new RuntimeException(e);
         }
 
-
-
-        return null;
+        return serializedGames;
     }
 
     @Override

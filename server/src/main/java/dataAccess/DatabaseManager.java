@@ -84,7 +84,6 @@ public class DatabaseManager {
     }
 
     public static Object updateDatabase(String statement) {
-        System.out.println(statement);
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 return preparedStatement.executeUpdate();
