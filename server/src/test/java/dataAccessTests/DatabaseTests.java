@@ -69,7 +69,20 @@ public class DatabaseTests {
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
+    }
 
+    @Test
+    @DisplayName("Get Username By Auth Test")
+    public void getUserByAuthTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            AuthAccess.AuthResult actual = authAccess.getAuth("Chessmaster");
+            assertEquals("Chessmaster", authAccess.getUsernameByAuth(authToken));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
     }
 
     @BeforeEach

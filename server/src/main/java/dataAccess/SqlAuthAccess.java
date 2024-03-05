@@ -52,7 +52,8 @@ public class SqlAuthAccess implements AuthAccess{
 
     @Override
     public String getUsernameByAuth(String authToken) {
-        return null;
+        var statement = "SELECT username FROM auth WHERE authToken = '" + authToken + "'";
+        return DatabaseManager.queryDatabaseString(statement, "username");
     }
 
     @Override
