@@ -36,8 +36,13 @@ public class SqlUserAccess implements UserAccess{
         columnNames.add("username");
         columnNames.add("password");
         columnNames.add("email");
-        ArrayList<String> authToken = DatabaseManager.queryDatabaseStringArray(statement, columnNames);
-        return new UserData(authToken.get(0), authToken.get(1), authToken.get(2));
+        ArrayList<String> user = DatabaseManager.queryDatabaseStringArray(statement, columnNames);
+        System.out.println(user);
+        if (user.size() == 0){
+            return null;
+        }else {
+            return new UserData(user.get(0), user.get(1), user.get(2));
+        }
     }
 
     private final String[] createStatements = {

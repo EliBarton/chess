@@ -13,9 +13,20 @@ import java.util.ArrayList;
 
 
 public class Server {
-    private final AuthAccess authData = new MemoryAuthAccess();
-    private final UserAccess userData = new MemoryUserAccess(authData);
-    private final GameAccess gameData = new MemoryGameAccess(authData);
+    private final AuthAccess authData;
+    private final UserAccess userData;
+    private final GameAccess gameData;
+
+    {
+        try {
+            authData = new SqlAuthAccess();
+            userData = new SqlUserAccess(authData);
+            gameData = new SqlGameAccess(authData);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private final ClearService clearService = new ClearService(userData, authData, gameData);
     private final RegisterService registerService = new RegisterService(userData);
     private final LoginoutService loginoutService = new LoginoutService(authData, userData);
@@ -95,7 +106,9 @@ public class Server {
     private Object createGame(Request req, Response res) {
         Gson gson = new Gson();
         String auth = req.headers("Authorization");
-        String gameName = req.body();
+        GameAccess.CreateGameRequest createGameRequest = gson.fromJson(req.body(), GameAccess.CreateGameRequest.class);
+        String gameName = createGameRequest.gameName();
+        System.out.println(gameName);
         GameAccess.GameIdResult result;
         try{
             result = new GameAccess.GameIdResult(gameService.createGame(gameName, auth));

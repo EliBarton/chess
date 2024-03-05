@@ -20,6 +20,7 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public int createGame(String gameName, String authToken) {
+        System.out.println(gameName);
         Random rand = new Random();
         int gameID = rand.nextInt(9999);
         String newGame = new Gson().toJson(new ChessGame());
@@ -70,7 +71,8 @@ public class SqlGameAccess implements GameAccess {
                         for (String name : columnNames) {
                             row.add(rs.getString(name));
                         }
-                        serializedGames.add(new SerializedGameData(Integer.parseInt(row.get(0)), row.get(1), row.get(2), row.get(3), row.get(4)));
+                        serializedGames.add(new SerializedGameData(Integer.parseInt(row.get(0)), row.get(1), row.get(2),
+                                row.get(3), row.get(4)));
                         row.clear();
                     }
                 }

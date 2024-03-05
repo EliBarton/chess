@@ -19,6 +19,8 @@ public interface GameAccess {
 
     record GameIdResult(int gameID){}
 
+    record CreateGameRequest(String gameName){}
+
     record JoinGameRequest(String playerColor, int gameID){}
 
     record SerializedGameData(int gameID, String whiteUsername, String blackUsername,

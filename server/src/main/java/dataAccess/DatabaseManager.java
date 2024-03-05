@@ -119,12 +119,10 @@ public class DatabaseManager {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 try(var rs = preparedStatement.executeQuery()){
-                    if (rs.next()) {
+                    while (rs.next()) {
                         for (String name : columnNames) {
                             output.add(rs.getString(name));
                         }
-                    }else{
-                        return null;
                     }
                 }
             }
