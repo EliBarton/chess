@@ -95,12 +95,16 @@ public class DatabaseManager {
         }
     }
 
-    public static Object queryDatabase(String statement) {
+    public static String queryDatabaseString(String statement, String columnName) {
         System.out.println(statement);
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 try(var rs = preparedStatement.executeQuery()){
-                    return rs;
+                    if (rs.next()) {
+                        return rs.getString(columnName);
+                    }else{
+                        return null;
+                    }
                 }
             }
         } catch (SQLException e) {

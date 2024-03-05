@@ -16,11 +16,14 @@ public class SqlUserAccess implements UserAccess{
 
     @Override
     public void clear() {
-
+        var statement = "TRUNCATE TABLE user";
+        DatabaseManager.updateDatabase(statement);
     }
 
     @Override
     public AuthAccess.AuthResult addUser(UserData user) {
+
+
 
         var statement = "INSERT INTO user (username, password, email) VALUES ('"
                 + user.username() + "', '" + user.password() + "', '" + user.email() + "')";

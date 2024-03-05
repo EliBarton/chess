@@ -24,9 +24,9 @@ public class SqlAuthAccess implements AuthAccess{
 
     @Override
     public AuthResult getAuth(String username) {
-        var statement = "SELECT authToken FROM auth WHERE username = " + username + ";";
-        String auth = (String) DatabaseManager.queryDatabase(statement);
-        return new AuthResult(username, auth);
+        var statement = "SELECT authToken FROM auth WHERE username = '" + username + "';";
+        String authToken = DatabaseManager.queryDatabaseString(statement, "authToken");
+        return new AuthResult(username, authToken);
     }
 
     @Override
@@ -41,7 +41,8 @@ public class SqlAuthAccess implements AuthAccess{
 
     @Override
     public void clear() {
-
+        var statement = "TRUNCATE TABLE auth";
+        DatabaseManager.updateDatabase(statement);
     }
 
     @Override

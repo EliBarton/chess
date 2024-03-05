@@ -42,12 +42,21 @@ public class DatabaseTests {
         try {
             AuthAccess authAccess = new SqlAuthAccess();
             UserAccess userAccess = new SqlUserAccess(authAccess);
-            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
             GameAccess gameAccess = new SqlGameAccess(authAccess);
-            authAccess.getAuth("Chessmaster");
+            clearAll(authAccess, userAccess, gameAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            AuthAccess.AuthResult actual = authAccess.getAuth("Chessmaster");
+            System.out.println(actual.authToken());
+            assertEquals(authToken, actual.authToken());
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
+
     }
 
+    private void clearAll(AuthAccess authAccess, UserAccess userAccess, GameAccess gameAccess){
+        authAccess.clear();
+        userAccess.clear();
+        gameAccess.clear();
+    }
 }

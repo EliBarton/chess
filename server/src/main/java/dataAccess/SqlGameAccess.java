@@ -48,7 +48,8 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public void clear() {
-
+        var statement = "TRUNCATE TABLE game";
+        DatabaseManager.updateDatabase(statement);
     }
 
     private final String[] createStatements = {
