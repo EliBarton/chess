@@ -3,6 +3,7 @@ package dataAccess;
 import dataAccess.exceptions.DataAccessException;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class DatabaseManager {
@@ -102,6 +103,45 @@ public class DatabaseManager {
                 try(var rs = preparedStatement.executeQuery()){
                     if (rs.next()) {
                         return rs.getString(columnName);
+                    }else{
+                        return null;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static ArrayList<String> queryDatabaseStringArray(String statement, ArrayList<String> columnNames) {
+        System.out.println(statement);
+        ArrayList<String> output = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                try(var rs = preparedStatement.executeQuery()){
+                    if (rs.next()) {
+                        for (String name : columnNames) {
+                            output.add(rs.getString(name));
+                        }
+                    }else{
+                        return null;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return output;
+    }
+    public static Boolean queryDatabaseExists(String statement) {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                try(var rs = preparedStatement.executeQuery()){
+                    if (rs.next()) {
+                        return rs.getBoolean(1);
                     }else{
                         return null;
                     }

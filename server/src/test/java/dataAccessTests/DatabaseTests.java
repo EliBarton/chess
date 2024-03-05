@@ -24,6 +24,21 @@ public class DatabaseTests {
     }
 
     @Test
+    @DisplayName("Get User Test")
+    public void getUserTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            UserData expected = new UserData("Chessmaster", "chesspassword", "mom@yourmom.com");
+            userAccess.addUser(expected);
+            assertEquals(expected, userAccess.getUser("Chessmaster"));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+
+    @Test
     @DisplayName("New Game Test")
     public void createGameTest(){
         try {
@@ -84,6 +99,41 @@ public class DatabaseTests {
             fail("Failed in creating database:" + e);
         }
     }
+
+    @Test
+    @DisplayName("Remove Auth Test")
+    public void removeAuthTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            authAccess.deleteAuth(authToken);
+            assertEquals(new AuthAccess.AuthResult("Chessmaster", null), authAccess.getAuth("Chessmaster"));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("All clear Test")
+    public void clearAllTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            var statement = "SELECT EXISTS(SELECT * FROM auth)";
+            assertFalse(DatabaseManager.queryDatabaseExists(statement));
+            statement = "SELECT EXISTS(SELECT * FROM user)";
+            assertFalse(DatabaseManager.queryDatabaseExists(statement));
+            statement = "SELECT EXISTS(SELECT * FROM game)";
+            assertFalse(DatabaseManager.queryDatabaseExists(statement));
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 
     @BeforeEach
     public void clearAll() throws DataAccessException {

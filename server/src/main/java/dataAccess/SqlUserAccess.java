@@ -4,6 +4,7 @@ import dataAccess.exceptions.DataAccessException;
 import model.UserData;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class SqlUserAccess implements UserAccess{
 
@@ -22,9 +23,6 @@ public class SqlUserAccess implements UserAccess{
 
     @Override
     public AuthAccess.AuthResult addUser(UserData user) {
-
-
-
         var statement = "INSERT INTO user (username, password, email) VALUES ('"
                 + user.username() + "', '" + user.password() + "', '" + user.email() + "')";
         DatabaseManager.updateDatabase(statement);
@@ -33,7 +31,13 @@ public class SqlUserAccess implements UserAccess{
 
     @Override
     public UserData getUser(String username) {
-        return null;
+        var statement = "SELECT username, password, email FROM user WHERE username = '" + username + "';";
+        ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.add("username");
+        columnNames.add("password");
+        columnNames.add("email");
+        ArrayList<String> authToken = DatabaseManager.queryDatabaseStringArray(statement, columnNames);
+        return new UserData(authToken.get(0), authToken.get(1), authToken.get(2));
     }
 
     private final String[] createStatements = {

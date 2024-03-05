@@ -5,6 +5,8 @@ import dataAccess.exceptions.DataAccessException;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import static dataAccess.DatabaseManager.*;
+
 public class SqlAuthAccess implements AuthAccess{
 
     public SqlAuthAccess() throws DataAccessException {
@@ -33,22 +35,10 @@ public class SqlAuthAccess implements AuthAccess{
     public Boolean containsAuth(String authToken) {
         var statement = "SELECT EXISTS(SELECT authToken FROM auth WHERE authToken = '" + authToken + "')";
         System.out.println(statement);
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                try(var rs = preparedStatement.executeQuery()){
-                    if (rs.next()) {
-                        return rs.getBoolean(1);
-                    }else{
-                        return null;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return queryDatabaseExists(statement);
     }
+
+
 
     @Override
     public String getUsernameByAuth(String authToken) {
@@ -64,7 +54,8 @@ public class SqlAuthAccess implements AuthAccess{
 
     @Override
     public void deleteAuth(String authToken) {
-
+        var statement = "DELETE FROM auth WHERE authToken = '" + authToken + "'";
+        DatabaseManager.updateDatabase(statement);
     }
 
     private final String[] createStatements = {
