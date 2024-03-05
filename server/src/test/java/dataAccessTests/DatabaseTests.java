@@ -71,6 +71,22 @@ public class DatabaseTests {
     }
 
     @Test
+    @DisplayName("Join Game Test")
+    public void joinGameTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            int id = gameAccess.createGame("My new chess game", authToken);
+            gameAccess.updateGame(id, authToken, "WHITE");
+            System.out.println(gameAccess.getGame(id));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
     @DisplayName("List Games Test")
     public void listGamesTest(){
         try {

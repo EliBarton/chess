@@ -86,7 +86,32 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public ChessGame updateGame(int id, String authToken, String playerColor) {
-        return null;
+        Gson gson = new Gson();
+        GameData gameData = getGame(id);
+        ChessGame game = gameData.game();
+        String username = authData.getUsernameByAuth(authToken);
+
+        if (playerColor != null) {
+            if (playerColor.equals("WHITE")) {
+
+                var statement = """
+                        UPDATE game SET white_username = '""" + username + """
+                        ', chess_game = '""" + gson.toJson(game) + """
+                        ' WHERE game_id = '""" + id + "'";
+                DatabaseManager.updateDatabase(statement);
+
+            } else if (playerColor.equals("BLACK")) {
+                var statement = """
+                        UPDATE game SET black_username = '
+                        """ + username + """
+                        ', chess_game = '
+                        """ + gson.toJson(game) + """
+                        ' WHERE game_id = '""" + id + "'";
+                DatabaseManager.updateDatabase(statement);
+            }
+
+        }
+        return game;
     }
 
     @Override
