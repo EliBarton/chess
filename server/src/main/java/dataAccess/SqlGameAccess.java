@@ -20,24 +20,69 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public int createGame(String gameName, String authToken) {
-        //Still need to check if authtoken is correct...
         Random rand = new Random();
         int gameID = rand.nextInt(9999);
         String newGame = new Gson().toJson(new ChessGame());
-        var statement = "INSERT INTO game (game_id, white_username, black_username, game_name, game) VALUES ('"
+        var statement = "INSERT INTO game (game_id, white_username, black_username, game_name, chess_game) VALUES ('"
                 + gameID + "', null, null, '" + gameName + "', '" + newGame + "')";
         DatabaseManager.updateDatabase(statement);
 
-        return 0;
+        return gameID;
     }
 
     @Override
     public GameData getGame(int id) {
-        return null;
+        var statement = """
+            SELECT game_id, white_username, black_username, game_name, chess_game
+            FROM game
+            WHERE game_id = '
+            """ + id + "'";
+        ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.add("game_id");
+        columnNames.add("white_username");
+        columnNames.add("black_username");
+        columnNames.add("game_name");
+        columnNames.add("chess_game");
+        ArrayList<String> gameData = DatabaseManager.queryDatabaseStringArray(statement, columnNames);
+        int gameID = Integer.parseInt(gameData.get(0));
+        Gson gson = new Gson();
+        ChessGame chessGame = gson.fromJson(gameData.get(4), ChessGame.class);
+        return new GameData(gameID, gameData.get(1), gameData.get(2), gameData.get(3), chessGame);
     }
 
     @Override
     public ArrayList<SerializedGameData> listGames() {
+        Gson gson = new Gson();
+        ArrayList<SerializedGameData> serializedGames = new ArrayList<>();
+        var statement = "SELECT * from game";
+        System.out.println(statement);
+        ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.add("game_id");
+        columnNames.add("white_username");
+        columnNames.add("black_username");
+        columnNames.add("game_name");
+        columnNames.add("chess_game");
+        ArrayList<String> output = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                try(var rs = preparedStatement.executeQuery()){
+                    while (rs.next()) {
+                        for (String name : columnNames) {
+                            output.add(rs.getString(name));
+                        }
+                        System.out.println(output);
+                        output.clear();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
         return null;
     }
 
@@ -60,13 +105,13 @@ public class SqlGameAccess implements GameAccess {
                 `white_username` varchar(256),
                 `black_username` varchar(256),
                 `game_name` varchar(256) NOT NULL,
-                `game` text NOT NULL,
+                `chess_game` text NOT NULL,
                 PRIMARY KEY (`id`),
                 INDEX(game_id),
                 INDEX(white_username),
                 INDEX(black_username),
                 INDEX(game_name),
-                INDEX(game(255))
+                INDEX(chess_game(255))
                 )
                 """
     };

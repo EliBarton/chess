@@ -1,7 +1,9 @@
 package dataAccessTests;
 
+import chess.ChessGame;
 import dataAccess.*;
 import dataAccess.exceptions.DataAccessException;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +41,23 @@ public class DatabaseTests {
 
 
     @Test
-    @DisplayName("New Game Test")
+    @DisplayName("Get Game Test")
+    public void getGameTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            int gameID = gameAccess.createGame("My new chess game", authToken);
+            assertEquals(
+                    new GameData(gameID, null, null, "My new chess game", new ChessGame()),
+                    gameAccess.getGame(gameID));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+    @Test
+    @DisplayName("Create Game Test")
     public void createGameTest(){
         try {
             AuthAccess authAccess = new SqlAuthAccess();
