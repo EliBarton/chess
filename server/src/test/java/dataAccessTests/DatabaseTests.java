@@ -53,7 +53,7 @@ public class DatabaseTests {
     }
 
     @Test
-    @DisplayName("Get Nonexistant User Test")
+    @DisplayName("Get Nonexistent User Test")
     public void getNullUserTest(){
         try {
             AuthAccess authAccess = new SqlAuthAccess();
@@ -83,6 +83,22 @@ public class DatabaseTests {
             fail("Failed in creating database:" + e);
         }
     }
+
+    @Test
+    @DisplayName("Get Nonexistent Game Test")
+    public void getNullGameTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            gameAccess.createGame("My new chess game", authToken);
+            assertNull(gameAccess.getGame(12));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
     @Test
     @DisplayName("Create Game Test")
     public void createGameTest(){
