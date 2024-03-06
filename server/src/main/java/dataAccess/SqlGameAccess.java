@@ -97,6 +97,9 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public ChessGame updateGame(int id, String authToken, String playerColor) {
+        if (!authData.containsAuth(authToken) || getGame(id) == null){
+            return null;
+        }
         Gson gson = new Gson();
         GameData gameData = getGame(id);
         ChessGame game = gameData.game();

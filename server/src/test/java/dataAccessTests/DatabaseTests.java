@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseTests {
@@ -151,10 +153,12 @@ public class DatabaseTests {
             String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
             GameAccess gameAccess = new SqlGameAccess(authAccess);
             int id = gameAccess.createGame("My new chess game", authToken);
-            gameAccess.updateGame(id, authToken, "WHITE");
+            assertNull(gameAccess.updateGame(0, authToken, "WHITE"));
+
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
+
     }
 
     @Test
@@ -177,6 +181,20 @@ public class DatabaseTests {
     }
 
     @Test
+    @DisplayName("List No Games Test")
+    public void listNoGamesTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            assertEquals(new ArrayList<String>(), gameAccess.listGames());
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
     @DisplayName("Get Auth Test")
     public void getAuthTest(){
         try {
@@ -191,11 +209,26 @@ public class DatabaseTests {
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
-
     }
 
     @Test
-    @DisplayName("Get Auth Test")
+    @DisplayName("Get Auth Bad Username Test")
+    public void getAuthBadTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            clearAll();
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            AuthAccess.AuthResult actual = authAccess.getAuth("Chessmasta");
+            assertNull(actual.authToken());
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("Contains Auth Test")
     public void containsAuthTest(){
         try {
             AuthAccess authAccess = new SqlAuthAccess();
@@ -205,6 +238,20 @@ public class DatabaseTests {
             assertTrue(authAccess.containsAuth(authToken));
             System.out.println(actual.authToken());
             assertEquals(authToken, actual.authToken());
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("Contains Auth Nonexistent Auth Test")
+    public void containsAuthBadTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            AuthAccess.AuthResult actual = authAccess.getAuth("Chessmaster");
+            assertFalse(authAccess.containsAuth("1234"));
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
@@ -225,6 +272,20 @@ public class DatabaseTests {
     }
 
     @Test
+    @DisplayName("Get Username By Bad Auth Test")
+    public void getUserByBadAuthTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            AuthAccess.AuthResult actual = authAccess.getAuth("Chessmaster");
+            assertNull(authAccess.getUsernameByAuth("1234"));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
     @DisplayName("Remove Auth Test")
     public void removeAuthTest(){
         try {
@@ -233,6 +294,20 @@ public class DatabaseTests {
             String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
             authAccess.deleteAuth(authToken);
             assertEquals(new AuthAccess.AuthResult("Chessmaster", null), authAccess.getAuth("Chessmaster"));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("Remove Nonexistent Auth Test")
+    public void removeNullAuthTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            authAccess.deleteAuth("1234");
+            assertEquals(new AuthAccess.AuthResult("Chessmaster", authToken), authAccess.getAuth("Chessmaster"));
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
