@@ -19,7 +19,20 @@ public class DatabaseTests {
         try {
             AuthAccess authAccess = new SqlAuthAccess();
             UserAccess userAccess = new SqlUserAccess(authAccess);
-            userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com"));
+            assertNotNull(userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("Duplicate User Test")
+    public void userDuplicateTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            userAccess.addUser(new UserData("Chessmaster", "wonka", "mom@yourmom.com"));
+            assertNull(userAccess.addUser(new UserData("Chessmaster", "wonkas", "moms@yourmom.com")));
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }

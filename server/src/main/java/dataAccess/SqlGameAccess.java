@@ -20,14 +20,17 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public int createGame(String gameName, String authToken) {
-        System.out.println(gameName);
         Random rand = new Random();
         int gameID = rand.nextInt(9999);
         String newGame = new Gson().toJson(new ChessGame());
-        var statement = "INSERT INTO game (game_id, white_username, black_username, game_name, chess_game) VALUES ('"
-                + gameID + "', null, null, '" + gameName + "', '" + newGame + "')";
+        String statement;
+        if (gameName != null) {
+            statement = "INSERT INTO game (game_id, white_username, black_username, game_name, chess_game) VALUES ('"
+                    + gameID + "', null, null, '" + gameName.replace("'", "''") + "', '" + newGame + "')";
+        }else{
+            return 0;
+        }
         DatabaseManager.updateDatabase(statement);
-
         return gameID;
     }
 
@@ -45,10 +48,13 @@ public class SqlGameAccess implements GameAccess {
         columnNames.add("game_name");
         columnNames.add("chess_game");
         ArrayList<String> gameData = DatabaseManager.queryDatabaseStringArray(statement, columnNames);
-        int gameID = Integer.parseInt(gameData.get(0));
-        Gson gson = new Gson();
-        ChessGame chessGame = gson.fromJson(gameData.get(4), ChessGame.class);
-        return new GameData(gameID, gameData.get(1), gameData.get(2), gameData.get(3), chessGame);
+        if (!gameData.isEmpty()) {
+            int gameID = Integer.parseInt(gameData.get(0));
+            Gson gson = new Gson();
+            ChessGame chessGame = gson.fromJson(gameData.get(4), ChessGame.class);
+            return new GameData(gameID, gameData.get(1), gameData.get(2), gameData.get(3), chessGame);
+        }
+        return null;
     }
 
     @Override
@@ -98,16 +104,15 @@ public class SqlGameAccess implements GameAccess {
 
                 var statement = """
                         UPDATE game SET white_username = '""" + username + """
-                        ', chess_game = '""" + gson.toJson(game) + """
-                        ' WHERE game_id = '""" + id + "'";
+                        ', chess_game = '""" + gson.toJson(game) +
+                        """
+                                ' WHERE game_id = '""" + id + "'";
                 DatabaseManager.updateDatabase(statement);
 
             } else if (playerColor.equals("BLACK")) {
                 var statement = """
-                        UPDATE game SET black_username = '
-                        """ + username + """
-                        ', chess_game = '
-                        """ + gson.toJson(game) + """
+                        UPDATE game SET black_username = '""" + username + """
+                        ', chess_game = '""" + gson.toJson(game) + """
                         ' WHERE game_id = '""" + id + "'";
                 DatabaseManager.updateDatabase(statement);
             }

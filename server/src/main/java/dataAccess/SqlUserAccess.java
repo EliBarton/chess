@@ -1,6 +1,7 @@
 package dataAccess;
 
 import dataAccess.exceptions.DataAccessException;
+import dataAccess.exceptions.InvalidDataException;
 import model.UserData;
 
 import java.sql.SQLException;
@@ -23,6 +24,9 @@ public class SqlUserAccess implements UserAccess{
 
     @Override
     public AuthAccess.AuthResult addUser(UserData user) {
+        if (getUser(user.username()) != null){
+            return null;
+        }
         var statement = "INSERT INTO user (username, password, email) VALUES ('"
                 + user.username() + "', '" + user.password() + "', '" + user.email() + "')";
         DatabaseManager.updateDatabase(statement);
