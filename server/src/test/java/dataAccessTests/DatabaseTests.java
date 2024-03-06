@@ -107,7 +107,21 @@ public class DatabaseTests {
             UserAccess userAccess = new SqlUserAccess(authAccess);
             String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
             GameAccess gameAccess = new SqlGameAccess(authAccess);
-            gameAccess.createGame("My new chess game", authToken);
+            assertNotEquals(0, gameAccess.createGame("My new chess game", authToken));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("Unauthorized Create Game Test")
+    public void createUnauthorizedGameTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            assertEquals(0, gameAccess.createGame("My new chess game", "12435"));
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }
@@ -122,8 +136,22 @@ public class DatabaseTests {
             String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
             GameAccess gameAccess = new SqlGameAccess(authAccess);
             int id = gameAccess.createGame("My new chess game", authToken);
+            assertNotNull(gameAccess.updateGame(id, authToken, "WHITE"));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
+    @Test
+    @DisplayName("Join Game Bad ID Test")
+    public void joinGameBadIDTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            String authToken = userAccess.addUser(new UserData("Chessmaster", "chesspassword", "mom@yourmom.com")).authToken();
+            GameAccess gameAccess = new SqlGameAccess(authAccess);
+            int id = gameAccess.createGame("My new chess game", authToken);
             gameAccess.updateGame(id, authToken, "WHITE");
-            System.out.println(gameAccess.getGame(id));
         } catch (DataAccessException e) {
             fail("Failed in creating database:" + e);
         }

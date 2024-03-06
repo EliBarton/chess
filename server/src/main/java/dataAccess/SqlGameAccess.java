@@ -20,6 +20,9 @@ public class SqlGameAccess implements GameAccess {
 
     @Override
     public int createGame(String gameName, String authToken) {
+        if (!authData.containsAuth(authToken)){
+            return 0;
+        }
         Random rand = new Random();
         int gameID = rand.nextInt(9999);
         String newGame = new Gson().toJson(new ChessGame());
