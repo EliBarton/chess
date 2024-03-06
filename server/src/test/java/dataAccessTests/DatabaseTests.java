@@ -52,6 +52,20 @@ public class DatabaseTests {
         }
     }
 
+    @Test
+    @DisplayName("Get Nonexistant User Test")
+    public void getNullUserTest(){
+        try {
+            AuthAccess authAccess = new SqlAuthAccess();
+            UserAccess userAccess = new SqlUserAccess(authAccess);
+            UserData expected = new UserData("Chessmaster", "chesspassword", "mom@yourmom.com");
+            userAccess.addUser(expected);
+            assertNull(userAccess.getUser("Chessmasta"));
+        } catch (DataAccessException e) {
+            fail("Failed in creating database:" + e);
+        }
+    }
+
 
     @Test
     @DisplayName("Get Game Test")
