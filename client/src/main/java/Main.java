@@ -12,10 +12,12 @@ public class Main {
     }
 
     public static void startMenu(){
+        System.out.println("\n");
         System.out.println("1. Login");
         System.out.println("2. Register");
         System.out.println("3. Quit");
         System.out.println("4. Help");
+        System.out.println("\n");
         int input = reader.nextInt();
 
         switch (input){
@@ -53,12 +55,14 @@ public class Main {
     }
 
     public static void postLoginMenu(){
+        System.out.println("\n");
         System.out.println("1. Create Game");
         System.out.println("2. List Games");
         System.out.println("3. Join Game");
         System.out.println("4. Join Game as Observer");
         System.out.println("5. Logout");
         System.out.println("6. Help");
+        System.out.println("\n");
         int input = reader.nextInt();
 
         switch (input){
