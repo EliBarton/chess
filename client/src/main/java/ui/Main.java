@@ -1,3 +1,5 @@
+package ui;
+
 import chess.*;
 
 import java.util.Scanner;
