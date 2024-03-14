@@ -32,6 +32,7 @@ public class Main {
         System.out.println("Enter your password: ");
         String password = reader.next();
         // if username or password is invalid, say so
+        postLoginMenu();
 
     }
 
@@ -43,12 +44,54 @@ public class Main {
         System.out.println("Enter your email: ");
         String email = reader.next();
         // if username or password or email is invalid, say so
+        postLoginMenu();
     }
 
     private static void printHelp(){
-        System.out.println("Here are the options:");
+        System.out.println("Here are the options; type the number:");
         startMenu();
     }
 
+    public static void postLoginMenu(){
+        System.out.println("1. Create Game");
+        System.out.println("2. List Games");
+        System.out.println("3. Join Game");
+        System.out.println("4. Join Game as Observer");
+        System.out.println("5. Logout");
+        System.out.println("6. Help");
+        int input = reader.nextInt();
 
+        switch (input){
+            case 1 -> createGamePrompt();
+            case 2 -> listGamesPrompt();
+            case 3 -> joinGamePrompt();
+            case 4 -> joinGameObserverPrompt();
+            case 5 -> logoutPrompt();
+            case 6 -> printHelp();
+        }
+    }
+
+    private static void createGamePrompt(){
+        System.out.println("Enter game name: ");
+        String gameName = reader.next();
+    }
+
+    private static void listGamesPrompt(){
+        System.out.println("Current games:");
+        //List games
+    }
+
+    private static void joinGamePrompt(){
+        System.out.println("Enter the number representing the game you want to join: ");
+        //join game
+    }
+
+    private static void joinGameObserverPrompt(){
+        System.out.println("Enter the number representing the game you want to observe: ");
+        //join game as observer
+    }
+
+    private static void logoutPrompt(){
+        startMenu();
+    }
 }
