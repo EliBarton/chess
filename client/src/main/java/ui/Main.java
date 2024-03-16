@@ -80,6 +80,7 @@ public class Main {
     private static void createGamePrompt(){
         System.out.println("Enter game name: ");
         String gameName = reader.next();
+        GameBoard.draw();
     }
 
     private static void listGamesPrompt(){
