@@ -23,25 +23,33 @@ public class GameBoard {
     public static void draw(){
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        drawBlack();
         drawWhite(out);
+        System.out.println();
+        drawBlack(out);
+
     }
 
     private static void drawWhite(PrintStream out){
-        drawBoard(out);
+        drawBoard(out, 1);
     }
 
-    private static void drawBlack(){
-
+    private static void drawBlack(PrintStream out){
+        drawBoard(out, -1);
     }
 
-    private static void drawBoard(PrintStream out){
+    private static void drawBoard(PrintStream out, int side){
         drawColumnNames(out);
 
-        for (int row = 0; row < BOARD_SIZE; ++row){
-            out.print("\u2003" + row + "\u2003");
-            drawRowSquares(out, row);
-            out.print("\u2003" + row + "\u2003");
+        for (int row = 0; Math.abs(row) < Math.abs((BOARD_SIZE) * side); row += side){
+            int realRow;
+            if (side == 1){
+                realRow = row;
+            }else{
+                realRow = row + BOARD_SIZE-1;
+            }
+            out.print("\u2003" + (realRow + 1) + "\u2003");
+            drawRowSquares(out, realRow, side);
+            out.print("\u2003" + (realRow + 1) + "\u2003");
             out.println();
         }
         drawColumnNames(out);
@@ -56,19 +64,26 @@ public class GameBoard {
         out.println(EMPTY);
     }
 
-    private static void drawRowSquares(PrintStream out, int row) {
+    private static void drawRowSquares(PrintStream out, int row, int side) {
+
         baseBoard.resetBoard();
-        for (int column = 0; column < BOARD_SIZE; ++column){
-            if ((row +column) % 2 == 1) {
+        for (int column = 0; Math.abs(column) < Math.abs(BOARD_SIZE * side); column += side){
+            int realColumn;
+            if (side == 1){
+                realColumn = column;
+            }else{
+                realColumn = column + BOARD_SIZE-1;
+            }
+            if ((row +realColumn) % 2 == 1) {
                 out.print(SET_BG_COLOR_DARK_GREY);}
             else{
                 out.print(SET_BG_COLOR_LIGHT_GREY);}
-            if (baseBoard.getPiece(new ChessPosition(row + 1, column+1)) == null){
+            if (baseBoard.getPiece(new ChessPosition(row + 1, realColumn+1)) == null){
                 out.print(EMPTY_SQUARE);
             }else {
                 if (baseBoard.getPiece(
-                        new ChessPosition(row + 1, column + 1)).getTeamColor() == ChessGame.TeamColor.WHITE){
-                    switch (baseBoard.getPiece(new ChessPosition(row + 1, column + 1)).getPieceType()) {
+                        new ChessPosition(row + 1, realColumn + 1)).getTeamColor() == ChessGame.TeamColor.WHITE){
+                    switch (baseBoard.getPiece(new ChessPosition(row + 1, realColumn + 1)).getPieceType()) {
                         case ChessPiece.PieceType.PAWN -> out.print(WHITE_PAWN);
                         case ChessPiece.PieceType.QUEEN -> out.print(WHITE_QUEEN);
                         case ChessPiece.PieceType.KING -> out.print(WHITE_KING);
@@ -77,7 +92,7 @@ public class GameBoard {
                         case ChessPiece.PieceType.ROOK -> out.print(WHITE_ROOK);
                     }
                 } else {
-                    switch (baseBoard.getPiece(new ChessPosition(row + 1, column + 1)).getPieceType()) {
+                    switch (baseBoard.getPiece(new ChessPosition(row + 1, realColumn + 1)).getPieceType()) {
                         case ChessPiece.PieceType.PAWN -> out.print(BLACK_PAWN);
                         case ChessPiece.PieceType.QUEEN -> out.print(BLACK_QUEEN);
                         case ChessPiece.PieceType.KING -> out.print(BLACK_KING);
