@@ -3,16 +3,21 @@ package clientTests;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.GameBoard;
+import ui.ServerFacade;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
+    private static ServerFacade serverFacade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(0);
+        var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
     }
 
@@ -30,6 +35,31 @@ public class ServerFacadeTests {
     @Test
     public void drawRow(){
         GameBoard.draw();
+    }
+
+    @Test
+    public void createGame(){
+        try{
+            serverFacade = new ServerFacade("http://localhost:8080");
+            serverFacade.createGame();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    @Test
+    public void registerTest(){
+        try{
+            serverFacade = new ServerFacade("http://localhost:8080");
+            serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

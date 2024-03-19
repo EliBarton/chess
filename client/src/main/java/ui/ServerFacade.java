@@ -12,8 +12,14 @@ import java.util.Map;
 
 public class ServerFacade {
 
+    private final String serverUrl;
+
+    public ServerFacade(String url) {
+        serverUrl = url;
+    }
+
     public void createGame() throws IOException, URISyntaxException {
-        ClientCommunicator.createGame();
+        ClientCommunicator.createGame(serverUrl);
     }
 
     public void listGames(){
@@ -24,16 +30,16 @@ public class ServerFacade {
 
     }
 
-    public void login(){
-
+    public void login(String username, String password) throws IOException, URISyntaxException {
+        ClientCommunicator.login(serverUrl, username, password);
     }
 
     public void logout(){
 
     }
 
-    public void register(){
-
+    public void register(String username, String password, String email) throws IOException, URISyntaxException {
+        ClientCommunicator.register(serverUrl, username, password, email);
     }
 
 }
