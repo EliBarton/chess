@@ -1,14 +1,9 @@
 package ui;
 
-import com.google.gson.Gson;
+import dataAccess.AuthAccess;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 public class ServerFacade {
 
@@ -18,8 +13,8 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void createGame() throws IOException, URISyntaxException {
-        ClientCommunicator.createGame(serverUrl);
+    public void createGame(String gameName, String auth) throws IOException, URISyntaxException {
+        ClientCommunicator.createGame(serverUrl, gameName, auth);
     }
 
     public void listGames(){
@@ -30,16 +25,16 @@ public class ServerFacade {
 
     }
 
-    public void login(String username, String password) throws IOException, URISyntaxException {
-        ClientCommunicator.login(serverUrl, username, password);
+    public AuthAccess.AuthResult login(String username, String password) throws IOException, URISyntaxException {
+        return ClientCommunicator.login(serverUrl, username, password);
     }
 
     public void logout(){
 
     }
 
-    public void register(String username, String password, String email) throws IOException, URISyntaxException {
-        ClientCommunicator.register(serverUrl, username, password, email);
+    public AuthAccess.AuthResult register(String username, String password, String email) throws IOException, URISyntaxException {
+        return ClientCommunicator.register(serverUrl, username, password, email);
     }
 
 }

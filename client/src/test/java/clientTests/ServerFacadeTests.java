@@ -1,5 +1,6 @@
 package clientTests;
 
+import dataAccess.AuthAccess;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.GameBoard;
@@ -41,7 +42,8 @@ public class ServerFacadeTests {
     public void createGame(){
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
-            serverFacade.createGame();
+            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            serverFacade.createGame("Test Game", authResult.authToken());
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -53,7 +55,7 @@ public class ServerFacadeTests {
     public void registerTest(){
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
-            serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+            AuthAccess.AuthResult authResult = serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
