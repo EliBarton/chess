@@ -80,7 +80,7 @@ public class Main {
     private static void createGamePrompt(){
         System.out.println("Enter game name: ");
         String gameName = reader.next();
-        GameBoard.draw();
+        //create game
     }
 
     private static void listGamesPrompt(){
@@ -91,11 +91,13 @@ public class Main {
     private static void joinGamePrompt(){
         System.out.println("Enter the number representing the game you want to join: ");
         //join game
+        GameBoard.draw();
     }
 
     private static void joinGameObserverPrompt(){
         System.out.println("Enter the number representing the game you want to observe: ");
         //join game as observer
+        GameBoard.draw();
     }
 
     private static void logoutPrompt(){
