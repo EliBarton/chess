@@ -29,8 +29,8 @@ public class ServerFacade {
         return ClientCommunicator.login(serverUrl, username, password);
     }
 
-    public void logout(){
-
+    public void logout(String auth) throws IOException, URISyntaxException {
+        ClientCommunicator.logout(serverUrl, auth);
     }
 
     public AuthAccess.AuthResult register(String username, String password, String email) throws IOException, URISyntaxException {

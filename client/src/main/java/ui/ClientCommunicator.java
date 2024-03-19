@@ -57,6 +57,7 @@ public class ClientCommunicator {
         http.setRequestMethod("POST");
         http.setDoOutput(true);
         http.addRequestProperty("Content-Type", "application/json");
+
         UserAccess.LoginRequest loginRequest = new UserAccess.LoginRequest(username, password);
         String reqData = gson.toJson(loginRequest);
         try (OutputStream reqBody = http.getOutputStream()) {
@@ -73,8 +74,22 @@ public class ClientCommunicator {
         }
     }
 
-    public static void logout(){
+    public static void logout(String serverUrl, String auth) throws IOException, URISyntaxException {
+        URI uri = new URI(serverUrl + "/session");
+        Gson gson = new Gson();
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("DELETE");
+        http.setDoOutput(true);
+        http.addRequestProperty("Content-Type", "application/json");
+        http.addRequestProperty("Authorization", auth);
+        // Make the request
+        http.connect();
 
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            System.out.println(gson.fromJson(inputStreamReader, Map.class));
+        }
     }
 
     public static AuthAccess.AuthResult register(String serverUrl, String username, String password, String email) throws IOException, URISyntaxException {

@@ -64,4 +64,18 @@ public class ServerFacadeTests {
 
     }
 
+    @Test
+    public void logoutTest(){
+        try{
+            serverFacade = new ServerFacade("http://localhost:8080");
+            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            serverFacade.logout(authResult.authToken());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
