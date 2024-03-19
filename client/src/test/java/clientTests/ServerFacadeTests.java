@@ -78,4 +78,18 @@ public class ServerFacadeTests {
 
     }
 
+    @Test
+    public void listGamesTest(){
+        try{
+            serverFacade = new ServerFacade("http://localhost:8080");
+            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            System.out.println(serverFacade.listGames(authResult.authToken()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }

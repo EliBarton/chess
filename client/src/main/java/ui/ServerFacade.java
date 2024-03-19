@@ -1,6 +1,7 @@
 package ui;
 
 import dataAccess.AuthAccess;
+import dataAccess.GameAccess;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -17,8 +18,8 @@ public class ServerFacade {
         ClientCommunicator.createGame(serverUrl, gameName, auth);
     }
 
-    public void listGames(){
-
+    public GameAccess.ListGamesResult listGames(String auth) throws URISyntaxException, IOException {
+        return ClientCommunicator.listGames(serverUrl, auth);
     }
 
     public void joinGame(){

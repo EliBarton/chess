@@ -42,8 +42,23 @@ public class ClientCommunicator {
         }
     }
 
-    public static void listGames(){
+    public static GameAccess.ListGamesResult listGames(String serverUrl, String auth) throws URISyntaxException, IOException {
+        URI uri = new URI(serverUrl + "/game");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("GET");
+        http.setDoOutput(true);
+        http.addRequestProperty("Content-Type", "application/json");
+        http.addRequestProperty("Authorization", auth);
 
+
+        // Make the request
+        http.connect();
+
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            return new Gson().fromJson(inputStreamReader, GameAccess.ListGamesResult.class);
+        }
     }
 
     public static void joinGame(){
