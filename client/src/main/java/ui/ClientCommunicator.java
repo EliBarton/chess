@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.AuthAccess;
 import dataAccess.GameAccess;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class ClientCommunicator {
 
-    public static void createGame(String serverUrl, String gameName, String auth) throws IOException, URISyntaxException {
+    public static int createGame(String serverUrl, String gameName, String auth) throws IOException, URISyntaxException {
         URI uri = new URI(serverUrl + "/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod("POST");
@@ -38,7 +39,8 @@ public class ClientCommunicator {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            System.out.println(new Gson().fromJson(inputStreamReader, Map.class));
+            GameAccess.GameIdResult result = new Gson().fromJson(inputStreamReader, GameAccess.GameIdResult.class);
+            return result.gameID();
         }
     }
 
@@ -61,8 +63,30 @@ public class ClientCommunicator {
         }
     }
 
-    public static void joinGame(){
+    public static ChessGame joinGame(String serverUrl, String auth, String color, int gameID) throws IOException, URISyntaxException {
 
+        URI uri = new URI(serverUrl + "/game");
+        Gson gson = new Gson();
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("PUT");
+        http.setDoOutput(true);
+        http.addRequestProperty("Content-Type", "application/json");
+        http.addRequestProperty("Authorization", auth);
+
+        GameAccess.JoinGameRequest joinGameRequest = new GameAccess.JoinGameRequest(color, gameID);
+        String reqData = gson.toJson(joinGameRequest);
+        try (OutputStream reqBody = http.getOutputStream()) {
+            reqBody.write(reqData.getBytes());
+        }
+        // Make the request
+        http.connect();
+
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            ChessGame game = gson.fromJson(inputStreamReader, ChessGame.class);
+            return game;
+        }
     }
 
     public static AuthAccess.AuthResult login(String serverUrl, String username, String password) throws IOException, URISyntaxException {

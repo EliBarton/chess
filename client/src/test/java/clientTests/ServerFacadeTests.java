@@ -92,4 +92,19 @@ public class ServerFacadeTests {
 
     }
 
+    @Test
+    public void joinGameTest(){
+        try{
+            serverFacade = new ServerFacade("http://localhost:8080");
+            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            int id = serverFacade.createGame("Test Game", authResult.authToken());
+            System.out.println(serverFacade.joinGame(authResult.authToken(), "WHITE", id));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
