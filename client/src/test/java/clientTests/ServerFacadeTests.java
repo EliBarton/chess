@@ -115,6 +115,22 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void logoutTestNotLoggedIn(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            try {
+                serverFacade = new ServerFacade("http://localhost:8080");
+                AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+                serverFacade.logout(authResult.authToken());
+                serverFacade.logout(authResult.authToken());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
     public void listGamesTest(){
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
