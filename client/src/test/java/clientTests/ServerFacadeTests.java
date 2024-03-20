@@ -56,18 +56,19 @@ public class ServerFacadeTests {
 
     @Test
     public void createGameBadAuth(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
-            Assertions.assertThrows(IOException.class, () ->
-                    serverFacade.createGame("Test Game", "authResult.authToken()"));
+
+            serverFacade.createGame("Test Game", "1234");
         } catch (IOException e) {
 
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-
+        });
     }
     @Test
     public void registerTest(){
@@ -81,6 +82,21 @@ public class ServerFacadeTests {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    public void registerTestAlreadyExists(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            try {
+                serverFacade = new ServerFacade("http://localhost:8080");
+                AuthAccess.AuthResult authResult = serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+                serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Test
