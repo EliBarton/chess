@@ -149,7 +149,7 @@ public class ClientCommunicator {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            System.out.println(gson.fromJson(inputStreamReader, Map.class));
+            //System.out.println(gson.fromJson(inputStreamReader, Map.class));
             AuthAccess.AuthResult auth = gson.fromJson(gson.fromJson(inputStreamReader, Map.class).toString(), AuthAccess.AuthResult.class);
             return auth;
         }

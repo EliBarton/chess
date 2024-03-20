@@ -2,6 +2,7 @@ package clientTests;
 
 import dataAccess.AuthAccess;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.function.Executable;
 import server.Server;
 import ui.GameBoard;
 import ui.ServerFacade;
@@ -43,8 +44,25 @@ public class ServerFacadeTests {
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
-            serverFacade.createGame("Test Game", authResult.authToken());
+            int gameID = serverFacade.createGame("Test Game", authResult.authToken());
+            Assertions.assertNotEquals(0, gameID);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Test
+    public void createGameBadAuth(){
+        try{
+            serverFacade = new ServerFacade("http://localhost:8080");
+            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            Assertions.assertThrows(IOException.class, () ->
+                    serverFacade.createGame("Test Game", "authResult.authToken()"));
+        } catch (IOException e) {
+
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -56,6 +74,7 @@ public class ServerFacadeTests {
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+            Assertions.assertNotNull(authResult);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -70,6 +89,7 @@ public class ServerFacadeTests {
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             serverFacade.logout(authResult.authToken());
+            Assertions.assertThrows(IOException.class,() -> serverFacade.listGames(authResult.authToken()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -84,6 +104,7 @@ public class ServerFacadeTests {
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             System.out.println(serverFacade.listGames(authResult.authToken()));
+            Assertions.assertNotNull(serverFacade.listGames(authResult.authToken()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -98,7 +119,7 @@ public class ServerFacadeTests {
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             int id = serverFacade.createGame("Test Game", authResult.authToken());
-            System.out.println(serverFacade.joinGame(authResult.authToken(), "WHITE", id));
+            Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -106,5 +127,6 @@ public class ServerFacadeTests {
         }
 
     }
+
 
 }

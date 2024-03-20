@@ -1,11 +1,17 @@
 package ui;
 
 import chess.*;
+import dataAccess.GameAccess;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class Main {
     public static Scanner reader = new Scanner(System.in);
+    public static ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+
+    private static String auth;
     public static void main(String[] args) {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
@@ -36,6 +42,13 @@ public class Main {
         System.out.println("Enter your password: ");
         String password = reader.next();
         // if username or password is invalid, say so
+        try {
+            auth = serverFacade.login(username, password).authToken();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         postLoginMenu();
 
     }
@@ -48,6 +61,13 @@ public class Main {
         System.out.println("Enter your email: ");
         String email = reader.next();
         // if username or password or email is invalid, say so
+        try{
+            auth = serverFacade.register(username, password, email).authToken();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         postLoginMenu();
     }
 
@@ -78,29 +98,75 @@ public class Main {
     }
 
     private static void createGamePrompt(){
+        reader.nextLine();
         System.out.println("Enter game name: ");
-        String gameName = reader.next();
-        //create game
+        String gameName = reader.nextLine();
+        try{
+            serverFacade.createGame(gameName, auth);
+            System.out.println("Game '" + gameName + "' created.");
+            postLoginMenu();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void listGamesPrompt(){
         System.out.println("Current games:");
-        //List games
+        try {
+            GameAccess.ListGamesResult result = serverFacade.listGames(auth);
+            for (GameAccess.SerializedGameData game : result.games()){
+                System.out.println(game.gameID() + " - " + game.gameName());
+                System.out.println("White: " + game.whiteUsername() + "   Black: " + game.blackUsername());
+                System.out.println();
+            }
+            postLoginMenu();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void joinGamePrompt(){
         System.out.println("Enter the number representing the game you want to join: ");
-        //join game
-        GameBoard.draw();
+        int gameID = reader.nextInt();
+        System.out.println("Enter the color you want to play as, WHITE or BLACK");
+        String color = reader.next();
+        try{
+            serverFacade.joinGame(auth, color, gameID);
+            GameBoard.draw();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private static void joinGameObserverPrompt(){
         System.out.println("Enter the number representing the game you want to observe: ");
-        //join game as observer
-        GameBoard.draw();
+        int gameID = reader.nextInt();
+        try{
+            serverFacade.joinGame(auth, null, gameID);
+            GameBoard.draw();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private static void logoutPrompt(){
-        startMenu();
+        try{
+            serverFacade.logout(auth);
+            System.out.println("You have been logged out.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
