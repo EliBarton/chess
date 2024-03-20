@@ -45,9 +45,11 @@ public class Main {
         try {
             auth = serverFacade.login(username, password).authToken();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error logging in: " + e.getMessage());
+            postLoginMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            startMenu();
         }
         postLoginMenu();
 
