@@ -155,4 +155,20 @@ public class ClientCommunicator {
         }
     }
 
+    public static void clear(String serverUrl) throws IOException, URISyntaxException {
+        Gson gson = new Gson();
+        URI uri = new URI(serverUrl + "/db");
+        HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
+        http.setRequestMethod("DELETE");
+        http.setDoOutput(true);
+        http.addRequestProperty("Content-Type", "application/json");
+        // Make the request
+        http.connect();
+
+        // Output the response body
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+        }
+    }
+
 }

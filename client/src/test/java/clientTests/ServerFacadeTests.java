@@ -2,7 +2,6 @@ package clientTests;
 
 import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
-import dataAccessTests.DatabaseTests;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.GameBoard;
@@ -18,14 +17,12 @@ public class ServerFacadeTests {
     private static ServerFacade serverFacade;
 
     @BeforeAll
-    public static void init() {
+    public static void init() throws IOException, URISyntaxException {
         server = new Server();
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
-        try {
-            new DatabaseTests().clearAll();
-        } catch (DataAccessException ignored) {
-        }
+        serverFacade = new ServerFacade("http://localhost:8080");
+        serverFacade.clear();
     }
 
     @AfterAll

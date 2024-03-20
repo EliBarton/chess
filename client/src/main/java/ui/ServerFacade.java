@@ -39,4 +39,7 @@ public class ServerFacade {
         return ClientCommunicator.register(serverUrl, username, password, email);
     }
 
+    public void clear() throws IOException, URISyntaxException {
+        ClientCommunicator.clear(serverUrl);
+    }
 }
