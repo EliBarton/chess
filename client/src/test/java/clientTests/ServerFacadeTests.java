@@ -1,8 +1,9 @@
 package clientTests;
 
 import dataAccess.AuthAccess;
+import dataAccess.exceptions.DataAccessException;
+import dataAccessTests.DatabaseTests;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.function.Executable;
 import server.Server;
 import ui.GameBoard;
 import ui.ServerFacade;
@@ -21,6 +22,10 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
+        try {
+            new DatabaseTests().clearAll();
+        } catch (DataAccessException ignored) {
+        }
     }
 
     @AfterAll
@@ -89,8 +94,8 @@ public class ServerFacadeTests {
         Assertions.assertThrows(RuntimeException.class, () -> {
             try {
                 serverFacade = new ServerFacade("http://localhost:8080");
-                AuthAccess.AuthResult authResult = serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
-                serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+                AuthAccess.AuthResult authResult = serverFacade.register("Testuser2", "Testpassword", "fakeemail@yourmom.com");
+                serverFacade.register("Testuser2", "Testpassword", "fakeemail@yourmom.com");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (URISyntaxException e) {
@@ -135,6 +140,7 @@ public class ServerFacadeTests {
         try{
             serverFacade = new ServerFacade("http://localhost:8080");
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+
             System.out.println(serverFacade.listGames(authResult.authToken()));
             Assertions.assertNotNull(serverFacade.listGames(authResult.authToken()));
         } catch (IOException e) {
@@ -143,6 +149,22 @@ public class ServerFacadeTests {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    public void listGamesTestBadAuth(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            try {
+                serverFacade = new ServerFacade("http://localhost:8080");
+                AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+                serverFacade.logout(authResult.authToken());
+                System.out.println(serverFacade.listGames(authResult.authToken()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Test
@@ -158,6 +180,23 @@ public class ServerFacadeTests {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    public void joinGameTestBadAuth(){
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            try {
+                serverFacade = new ServerFacade("http://localhost:8080");
+                AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+                int id = serverFacade.createGame("Test Game", authResult.authToken());
+                serverFacade.logout(authResult.authToken());
+                Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 
