@@ -32,7 +32,7 @@ public class Main {
             case 1 -> loginPrompt();
             case 2 -> registerPrompt();
             case 3 -> {}
-            case 4 -> printHelp();
+            case 4 -> printHelpStart();
         }
     }
 
@@ -64,16 +64,23 @@ public class Main {
         try{
             auth = serverFacade.register(username, password, email).authToken();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error with your registration: " + e.getMessage());
+            startMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            startMenu();
         }
         postLoginMenu();
     }
 
-    private static void printHelp(){
+    private static void printHelpStart(){
         System.out.println("Here are the options; type the number:");
         startMenu();
+    }
+
+    private static void printHelpPostLogin(){
+        System.out.println("Here are the options; type the number:");
+        postLoginMenu();
     }
 
     public static void postLoginMenu(){
@@ -93,7 +100,7 @@ public class Main {
             case 3 -> joinGamePrompt();
             case 4 -> joinGameObserverPrompt();
             case 5 -> logoutPrompt();
-            case 6 -> printHelp();
+            case 6 -> printHelpPostLogin();
         }
     }
 
@@ -106,9 +113,11 @@ public class Main {
             System.out.println("Game '" + gameName + "' created.");
             postLoginMenu();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error creating your game: " + e.getMessage());
+            postLoginMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            postLoginMenu();
         }
     }
 
@@ -123,9 +132,11 @@ public class Main {
             }
             postLoginMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error listing the games: " + e.getMessage());
+            postLoginMenu();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            postLoginMenu();
         }
     }
 
@@ -138,9 +149,11 @@ public class Main {
             serverFacade.joinGame(auth, color, gameID);
             GameBoard.draw();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error joining the game: " + e.getMessage());
+            postLoginMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            postLoginMenu();
         }
 
     }
@@ -152,9 +165,11 @@ public class Main {
             serverFacade.joinGame(auth, null, gameID);
             GameBoard.draw();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error observing the game: " + e.getMessage());
+            postLoginMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            postLoginMenu();
         }
 
     }
@@ -164,9 +179,11 @@ public class Main {
             serverFacade.logout(auth);
             System.out.println("You have been logged out.");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was an error logging out: " + e.getMessage());
+            postLoginMenu();
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem accessing the server: " + e.getMessage());
+            postLoginMenu();
         }
     }
 }
