@@ -44,14 +44,14 @@ public class Main {
         // if username or password is invalid, say so
         try {
             auth = serverFacade.login(username, password).authToken();
+            postLoginMenu();
         } catch (IOException e) {
             System.out.println("There was an error logging in: " + e.getMessage());
-            postLoginMenu();
+            startMenu();
         } catch (URISyntaxException e) {
             System.out.println("There was a problem accessing the server: " + e.getMessage());
             startMenu();
         }
-        postLoginMenu();
 
     }
 
@@ -180,6 +180,7 @@ public class Main {
         try{
             serverFacade.logout(auth);
             System.out.println("You have been logged out.");
+            startMenu();
         } catch (IOException e) {
             System.out.println("There was an error logging out: " + e.getMessage());
             postLoginMenu();
