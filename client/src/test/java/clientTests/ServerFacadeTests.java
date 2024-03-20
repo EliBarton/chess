@@ -21,7 +21,7 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() throws IOException, URISyntaxException {
         server = new Server();
-        var portTemp = server.run(8080);
+        var portTemp = server.run(0);
         port = portTemp;
         System.out.println("Started test HTTP server on " + port);
         serverFacade = new ServerFacade("http://localhost:" + port);
