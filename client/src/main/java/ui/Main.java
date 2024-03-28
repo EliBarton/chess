@@ -164,7 +164,7 @@ public class Main {
         System.out.println("Enter the number representing the game you want to observe: ");
         int gameID = reader.nextInt();
         try{
-            serverFacade.joinGame(auth, null, gameID);
+            serverFacade.joinGame(auth, "", gameID);
             GameBoard.draw();
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
