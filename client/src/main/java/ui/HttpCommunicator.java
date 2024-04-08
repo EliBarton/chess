@@ -16,7 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-public class ClientCommunicator {
+public class HttpCommunicator {
 
     public static int createGame(String serverUrl, String gameName, String auth) throws IOException, URISyntaxException {
         URI uri = new URI(serverUrl + "/game");

@@ -17,6 +17,8 @@ public class Server {
     private final UserAccess userData;
     private final GameAccess gameData;
 
+    private final WebSocket websocket;
+
     {
         try {
             authData = new SqlAuthAccess();
@@ -31,6 +33,11 @@ public class Server {
     private final RegisterService registerService = new RegisterService(userData);
     private final LoginoutService loginoutService = new LoginoutService(authData, userData);
     private final GameService gameService = new GameService(authData, gameData);
+
+    public Server() {
+        this.websocket = new WebSocket();
+    }
+
     private record errorMessage(String message){}
     public int run(int desiredPort) {
         Spark.port(desiredPort);

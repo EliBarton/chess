@@ -20,12 +20,16 @@ public class GameBoard {
 
     private static final String[] columnNames = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h "};
 
-    public static void draw(){
+    public static void draw(ChessGame.TeamColor color){
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        drawWhite(out);
+        if (color == ChessGame.TeamColor.BLACK) {
+            drawBlack(out);
+        }else{
+            drawWhite(out);
+        }
         System.out.println();
-        drawBlack(out);
+
 
     }
 

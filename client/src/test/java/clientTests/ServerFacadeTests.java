@@ -1,5 +1,6 @@
 package clientTests;
 
+import chess.ChessGame;
 import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
@@ -41,7 +42,7 @@ public class ServerFacadeTests {
 
     @Test
     public void drawRow(){
-        GameBoard.draw();
+        GameBoard.draw(ChessGame.TeamColor.WHITE);
     }
 
     @Test

@@ -149,7 +149,14 @@ public class Main {
         String color = reader.next();
         try{
             serverFacade.joinGame(auth, color, gameID);
-            gameplayMenu();
+            if (color.equals("BLACK")){
+                gameplayMenu(ChessGame.TeamColor.BLACK);
+            } else if (color.equals("WHITE")) {
+                gameplayMenu(ChessGame.TeamColor.WHITE);
+            }else{
+                throw new IOException("Invalid Color");
+            }
+
         } catch (IOException e) {
             System.out.println("There was an error joining the game: " + e.getMessage());
             postLoginMenu();
@@ -165,7 +172,7 @@ public class Main {
         int gameID = reader.nextInt();
         try{
             serverFacade.joinGame(auth, "", gameID);
-            gameplayMenu();
+            gameplayMenu(null);
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();
@@ -190,8 +197,9 @@ public class Main {
         }
     }
 
-    private static void gameplayMenu(){
-        GameBoard.draw();
+    private static void gameplayMenu(ChessGame.TeamColor color){
+
+        GameBoard.draw(color);
         System.out.println("1. Redraw Board");
         System.out.println("2. Leave Game");
         System.out.println("3. Make Move");
@@ -202,17 +210,17 @@ public class Main {
         int input = reader.nextInt();
 
         switch (input){
-            case 1 -> gameplayMenu();
-            case 2 -> gameplayMenu();
-            case 3 -> gameplayMenu();
-            case 4 -> gameplayMenu();
-            case 5 -> gameplayMenu();
-            case 6 -> printHelpGameplay();
+            case 1 -> gameplayMenu(color);
+            case 2 -> gameplayMenu(color);
+            case 3 -> gameplayMenu(color);
+            case 4 -> gameplayMenu(color);
+            case 5 -> gameplayMenu(color);
+            case 6 -> printHelpGameplay(color);
         }
     }
 
-    private static void printHelpGameplay(){
+    private static void printHelpGameplay(ChessGame.TeamColor color){
         System.out.println("Here are the options; type the number:");
-        gameplayMenu();
+        gameplayMenu(color);
     }
 }

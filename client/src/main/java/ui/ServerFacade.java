@@ -16,30 +16,30 @@ public class ServerFacade {
     }
 
     public int createGame(String gameName, String auth) throws IOException, URISyntaxException {
-        return ClientCommunicator.createGame(serverUrl, gameName, auth);
+        return HttpCommunicator.createGame(serverUrl, gameName, auth);
     }
 
     public GameAccess.ListGamesResult listGames(String auth) throws URISyntaxException, IOException {
-        return ClientCommunicator.listGames(serverUrl, auth);
+        return HttpCommunicator.listGames(serverUrl, auth);
     }
 
     public ChessGame joinGame(String auth, String color, int gameID) throws IOException, URISyntaxException {
-        return ClientCommunicator.joinGame(serverUrl, auth, color, gameID);
+        return HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
     }
 
     public AuthAccess.AuthResult login(String username, String password) throws IOException, URISyntaxException {
-        return ClientCommunicator.login(serverUrl, username, password);
+        return HttpCommunicator.login(serverUrl, username, password);
     }
 
     public void logout(String auth) throws IOException, URISyntaxException {
-        ClientCommunicator.logout(serverUrl, auth);
+        HttpCommunicator.logout(serverUrl, auth);
     }
 
     public AuthAccess.AuthResult register(String username, String password, String email) throws IOException, URISyntaxException {
-        return ClientCommunicator.register(serverUrl, username, password, email);
+        return HttpCommunicator.register(serverUrl, username, password, email);
     }
 
     public void clear() throws IOException, URISyntaxException {
-        ClientCommunicator.clear(serverUrl);
+        HttpCommunicator.clear(serverUrl);
     }
 }
