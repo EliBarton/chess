@@ -199,5 +199,20 @@ public class Main {
         System.out.println("5. Highlight Legal Moves");
         System.out.println("6. Help");
         System.out.println("\n");
+        int input = reader.nextInt();
+
+        switch (input){
+            case 1 -> gameplayMenu();
+            case 2 -> gameplayMenu();
+            case 3 -> gameplayMenu();
+            case 4 -> gameplayMenu();
+            case 5 -> gameplayMenu();
+            case 6 -> printHelpGameplay();
+        }
+    }
+
+    private static void printHelpGameplay(){
+        System.out.println("Here are the options; type the number:");
+        gameplayMenu();
     }
 }
