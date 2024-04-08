@@ -149,7 +149,7 @@ public class Main {
         String color = reader.next();
         try{
             serverFacade.joinGame(auth, color, gameID);
-            GameBoard.draw();
+            gameplayMenu();
         } catch (IOException e) {
             System.out.println("There was an error joining the game: " + e.getMessage());
             postLoginMenu();
@@ -165,7 +165,7 @@ public class Main {
         int gameID = reader.nextInt();
         try{
             serverFacade.joinGame(auth, "", gameID);
-            GameBoard.draw();
+            gameplayMenu();
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();
@@ -188,5 +188,16 @@ public class Main {
             System.out.println("There was a problem accessing the server: " + e.getMessage());
             postLoginMenu();
         }
+    }
+
+    private static void gameplayMenu(){
+        GameBoard.draw();
+        System.out.println("1. Redraw Board");
+        System.out.println("2. Leave Game");
+        System.out.println("3. Make Move");
+        System.out.println("4. Resign");
+        System.out.println("5. Highlight Legal Moves");
+        System.out.println("6. Help");
+        System.out.println("\n");
     }
 }
