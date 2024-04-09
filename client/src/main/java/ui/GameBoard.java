@@ -2,6 +2,7 @@ package ui;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 
 import chess.*;
 import ui.EscapeSequences.*;
@@ -13,46 +14,40 @@ public class GameBoard {
     private static final int BOARD_SIZE = 8;
     private static final int SQUARE_SIZE = 1;
 
-    private static final ChessBoard baseBoard = new ChessBoard();
-
     private static final String[] columnNames = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h "};
 
-    public static void draw(ChessGame.TeamColor color){
+    public static void draw(ChessGame.TeamColor color, ChessBoard board){
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         if (color == ChessGame.TeamColor.BLACK) {
-            drawBlack(out);
+            drawBlack(out, board);
         }else{
-            drawWhite(out);
+            drawWhite(out, board);
         }
         System.out.println();
 
     }
 
-    private static void drawWhite(PrintStream out){
-        drawBoard(out, 1);
+    private static void drawWhite(PrintStream out, ChessBoard board){
+        drawBoard(out, 1, board);
     }
 
-    private static void drawBlack(PrintStream out){
-        drawBoard(out, -1);
+    private static void drawBlack(PrintStream out, ChessBoard board){
+        drawBoard(out, -1, board);
     }
 
-    public static void makeMove(ChessMove move) throws InvalidMoveException {
-        baseBoard.makeMove(move);
-    }
-
-    private static void drawBoard(PrintStream out, int side){
+    private static void drawBoard(PrintStream out, int side, ChessBoard board){
         drawColumnNames(out);
 
-        for (int row = 0; Math.abs(row) < Math.abs((BOARD_SIZE) * side); row += side){
+        for (int row = 0; Math.abs(row) < Math.abs((BOARD_SIZE) * side); row -= side){
             int realRow;
             if (side == 1){
-                realRow = row;
-            }else{
                 realRow = row + BOARD_SIZE-1;
+            }else{
+                realRow = row;
             }
             out.print("\u2003" + (realRow + 1) + "\u2003");
-            drawRowSquares(out, realRow, side);
+            drawRowSquares(out, -realRow + BOARD_SIZE-1, side, board);
             out.print("\u2003" + (realRow + 1) + "\u2003");
             out.println();
         }
@@ -68,26 +63,25 @@ public class GameBoard {
         out.println(EMPTY);
     }
 
-    private static void drawRowSquares(PrintStream out, int row, int side) {
+    private static void drawRowSquares(PrintStream out, int row, int side, ChessBoard board) {
 
-        baseBoard.resetBoard();
         for (int column = 0; Math.abs(column) < Math.abs(BOARD_SIZE * side); column += side){
             int realColumn;
-            if (side == 1){
-                realColumn = column;
-            }else{
+            if (side == -1){
                 realColumn = column + BOARD_SIZE-1;
+            }else{
+                realColumn = column;
             }
             if ((row +realColumn) % 2 == 1) {
                 out.print(SET_BG_COLOR_DARK_GREY);}
             else{
                 out.print(SET_BG_COLOR_LIGHT_GREY);}
-            if (baseBoard.getPiece(new ChessPosition(row + 1, realColumn+1)) == null){
+            if (board.getPiece(new ChessPosition(row + 1, realColumn+1)) == null){
                 out.print(EMPTY_SQUARE);
             }else {
-                if (baseBoard.getPiece(
+                if (board.getPiece(
                         new ChessPosition(row + 1, realColumn + 1)).getTeamColor() == ChessGame.TeamColor.WHITE){
-                    switch (baseBoard.getPiece(new ChessPosition(row + 1, realColumn + 1)).getPieceType()) {
+                    switch (board.getPiece(new ChessPosition(row + 1, realColumn + 1)).getPieceType()) {
                         case ChessPiece.PieceType.PAWN -> out.print(WHITE_PAWN);
                         case ChessPiece.PieceType.QUEEN -> out.print(WHITE_QUEEN);
                         case ChessPiece.PieceType.KING -> out.print(WHITE_KING);
@@ -96,7 +90,7 @@ public class GameBoard {
                         case ChessPiece.PieceType.ROOK -> out.print(WHITE_ROOK);
                     }
                 } else {
-                    switch (baseBoard.getPiece(new ChessPosition(row + 1, realColumn + 1)).getPieceType()) {
+                    switch (board.getPiece(new ChessPosition(row + 1, realColumn + 1)).getPieceType()) {
                         case ChessPiece.PieceType.PAWN -> out.print(BLACK_PAWN);
                         case ChessPiece.PieceType.QUEEN -> out.print(BLACK_QUEEN);
                         case ChessPiece.PieceType.KING -> out.print(BLACK_KING);

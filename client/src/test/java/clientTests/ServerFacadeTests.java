@@ -1,5 +1,6 @@
 package clientTests;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
@@ -42,7 +43,7 @@ public class ServerFacadeTests {
 
     @Test
     public void drawRow(){
-        GameBoard.draw(ChessGame.TeamColor.WHITE);
+        GameBoard.draw(ChessGame.TeamColor.WHITE, new ChessBoard());
     }
 
     @Test

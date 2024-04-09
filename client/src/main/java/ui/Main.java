@@ -149,11 +149,10 @@ public class Main {
         System.out.println("Enter the color you want to play as, WHITE or BLACK");
         String color = reader.next();
         try{
-            serverFacade.joinGame(auth, color, gameID);
             if (color.equals("BLACK")){
-                gameplayMenu(ChessGame.TeamColor.BLACK);
+                gameplayMenu(ChessGame.TeamColor.BLACK, serverFacade.joinGame(auth, color, gameID));
             } else if (color.equals("WHITE")) {
-                gameplayMenu(ChessGame.TeamColor.WHITE);
+                gameplayMenu(ChessGame.TeamColor.WHITE, serverFacade.joinGame(auth, color, gameID));
             }else{
                 throw new IOException("Invalid Color");
             }
@@ -172,8 +171,7 @@ public class Main {
         System.out.println("Enter the number representing the game you want to observe: ");
         int gameID = reader.nextInt();
         try{
-            serverFacade.joinGame(auth, "", gameID);
-            gameplayMenu(null);
+            gameplayMenu(null, serverFacade.joinGame(auth, "", gameID));
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();
@@ -198,9 +196,9 @@ public class Main {
         }
     }
 
-    private static void gameplayMenu(ChessGame.TeamColor color){
+    private static void gameplayMenu(ChessGame.TeamColor color, ChessGame game){
 
-        GameBoard.draw(color);
+        GameBoard.draw(color, game.getBoard());
         System.out.println("1. Redraw Board");
         System.out.println("2. Leave Game");
         System.out.println("3. Make Move");
@@ -211,18 +209,18 @@ public class Main {
         int input = reader.nextInt();
 
         switch (input){
-            case 1 -> gameplayMenu(color);
+            case 1 -> gameplayMenu(color, game);
             case 2 -> leaveGame();
-            case 3 -> makeMove();
-            case 4 -> gameplayMenu(color);
-            case 5 -> gameplayMenu(color);
-            case 6 -> printHelpGameplay(color);
+            case 3 -> makeMovePrompt(color, game);
+            case 4 -> gameplayMenu(color, game);
+            case 5 -> gameplayMenu(color, game);
+            case 6 -> printHelpGameplay(color, game);
         }
     }
 
-    private static void printHelpGameplay(ChessGame.TeamColor color){
+    private static void printHelpGameplay(ChessGame.TeamColor color, ChessGame game){
         System.out.println("Here are the options; type the number:");
-        gameplayMenu(color);
+        gameplayMenu(color, game);
     }
 
     private static void leaveGame(){
@@ -230,7 +228,7 @@ public class Main {
         postLoginMenu();
     }
 
-    private static void makeMove(){
+    private static void makeMovePrompt(ChessGame.TeamColor color, ChessGame game){
         System.out.println("Enter the position of the piece that you want to move:");
         String selectedPieceInput = reader.next();
         ChessPosition startPos = convertToChessPosition(selectedPieceInput);
@@ -238,19 +236,23 @@ public class Main {
         System.out.println("Enter the position you want to move the piece to:");
         String moveToInput = reader.next();
         ChessPosition endPos = convertToChessPosition(moveToInput);
+        ChessMove move = new ChessMove(startPos, endPos, null);
 
         try {
-            GameBoard.makeMove(new ChessMove(startPos, endPos, null));
+            if (game.validMoves(startPos).contains(move)){
+                game.makeMove(move);
+            }
         } catch (InvalidMoveException e) {
             System.out.println("Error: Move Invalid. Try again.");
-            makeMove();
         }
+        gameplayMenu(color, game);
     }
 
+    // Converts the user's input into a Chess Position
     private static ChessPosition convertToChessPosition(String moveString){
         char columnChar = moveString.charAt(0);
-        int row = columnChar - 'a' + 1;
-        int column = moveString.charAt(1);
+        int column = columnChar - 'a' + 1;
+        int row = Integer.parseInt(moveString.substring(1));
         return new ChessPosition(row, column);
     }
 }

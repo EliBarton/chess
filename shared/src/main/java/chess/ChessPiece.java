@@ -166,7 +166,7 @@ public class ChessPiece implements Cloneable {
                 addValidMovesWhitePawn(startPos, board, output);
             } else if (startPos.getRow() == 7) {
                 ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
-                addValidPromotionsBlack(startPos, board, output, referencePos);
+                addValidDiagMove(startPos, board, output, directions, referencePos);
                 referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
                 addValidDiagMove(startPos, board, output, directions, referencePos);
             }else{
@@ -177,15 +177,15 @@ public class ChessPiece implements Cloneable {
             directions.add(new ChessPosition(startPos.getRow() - 1, startPos.getColumn()));
             if (startPos.getRow() == 7){
                 output.addAll(calculateMoves(startPos, board, directions, 2));
-                addDiagLeftMovesBlackPawn(startPos, board, output);
+                addValidMovesBlackPawn(startPos, board, output);
             } else if (startPos.getRow() == 2) {
                 ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
-                addValidPromotionsBlack(startPos, board, output, referencePos);
+                addValidDiagMove(startPos, board, output, directions, referencePos);
                 referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
                 addValidDiagMove(startPos, board, output, directions, referencePos);
             }else{
                 output.addAll(calculateMoves(startPos, board, directions, 1));
-                addDiagLeftMovesBlackPawn(startPos, board, output);
+                addValidMovesBlackPawn(startPos, board, output);
             }
         }
 
@@ -195,15 +195,26 @@ public class ChessPiece implements Cloneable {
     private void addValidMovesWhitePawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
         ChessPosition referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()+1);
         if (referencePos.isOnBoard()) {
-            extracted(startPos, board, output, referencePos);
+            addCloneMove(startPos, board, output, referencePos);
         }
         referencePos = new ChessPosition(startPos.getRow()+1, startPos.getColumn()-1);
         if (referencePos.isOnBoard()) {
-            extracted(startPos, board, output, referencePos);
+            addCloneMove(startPos, board, output, referencePos);
         }
     }
 
-    private void extracted(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ChessPosition referencePos) {
+    private void addValidMovesBlackPawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
+        ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
+        if (referencePos.isOnBoard()) {
+            addCloneMove(startPos, board, output, referencePos);
+        }
+        referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
+        if (referencePos.isOnBoard()) {
+            addCloneMove(startPos, board, output, referencePos);
+        }
+    }
+
+    private void addCloneMove(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ChessPosition referencePos) {
         if (board.getPiece(referencePos) != null) {
             if (board.getPiece(referencePos).selfTeam != selfTeam) {
                 output.add(new ChessMove(startPos, referencePos.clone(), null));
@@ -211,7 +222,7 @@ public class ChessPiece implements Cloneable {
         }
     }
 
-    private void addValidPromotionsBlack(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ChessPosition referencePos) {
+    private void addValidPromotions(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ChessPosition referencePos) {
         if (referencePos.isOnBoard()) {
             if (board.getPiece(referencePos) != null) {
                 if (board.getPiece(referencePos).selfTeam != selfTeam) {
@@ -224,15 +235,9 @@ public class ChessPiece implements Cloneable {
         }
     }
 
-    private void addDiagLeftMovesBlackPawn(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output) {
-        ChessPosition referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()+1);
-        extracted(startPos, board, output, referencePos);
-        referencePos = new ChessPosition(startPos.getRow()-1, startPos.getColumn()-1);
-        extracted(startPos, board, output, referencePos);
-    }
 
     private void addValidDiagMove(ChessPosition startPos, ChessBoard board, HashSet<ChessMove> output, ArrayList<ChessPosition> directions, ChessPosition referencePos) {
-        addValidPromotionsBlack(startPos, board, output, referencePos);
+        addValidPromotions(startPos, board, output, referencePos);
         output.addAll(calculateMoves(startPos, board, directions, 1));
     }
 
