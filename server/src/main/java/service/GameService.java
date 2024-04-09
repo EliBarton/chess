@@ -62,13 +62,15 @@ public class GameService {
         } else if (gameData.getGame(id) == null) {
             throw new DataAccessException("ID is invalid");
         }
-        if (gameData.getGame(id).whiteUsername() != null){
-            if (playerColor.equals("WHITE")){
-                throw new InvalidDataException("White is already taken");
-            }
-        }else if (gameData.getGame(id).blackUsername() != null) {
-            if (playerColor.equals("BLACK")) {
-                throw new InvalidDataException("Black is already taken");
+        if (playerColor != null) {
+            if (gameData.getGame(id).whiteUsername() != null) {
+                if (playerColor.equals("WHITE")) {
+                    throw new InvalidDataException("White is already taken");
+                }
+            } else if (gameData.getGame(id).blackUsername() != null) {
+                if (playerColor.equals("BLACK")) {
+                    throw new InvalidDataException("Black is already taken");
+                }
             }
         }
     }

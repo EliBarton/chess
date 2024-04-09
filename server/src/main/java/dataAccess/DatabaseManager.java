@@ -96,7 +96,6 @@ public class DatabaseManager {
     }
 
     public static String queryDatabaseString(String statement, String columnName) {
-        System.out.println(statement);
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 try(var rs = preparedStatement.executeQuery()){
@@ -114,7 +113,6 @@ public class DatabaseManager {
         }
     }
     public static ArrayList<String> queryDatabaseStringArray(String statement, ArrayList<String> columnNames) {
-        System.out.println(statement);
         ArrayList<String> output = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {

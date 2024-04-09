@@ -3,10 +3,7 @@ package ui;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import ui.EscapeSequences.*;
 
 import static ui.EscapeSequences.*;
@@ -30,7 +27,6 @@ public class GameBoard {
         }
         System.out.println();
 
-
     }
 
     private static void drawWhite(PrintStream out){
@@ -39,6 +35,10 @@ public class GameBoard {
 
     private static void drawBlack(PrintStream out){
         drawBoard(out, -1);
+    }
+
+    public static void makeMove(ChessMove move) throws InvalidMoveException {
+        baseBoard.makeMove(move);
     }
 
     private static void drawBoard(PrintStream out, int side){

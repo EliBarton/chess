@@ -11,6 +11,7 @@ public class Main {
     public static Scanner reader = new Scanner(System.in);
     public static ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
 
+
     private static String auth;
     public static void main(String[] args) {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -211,8 +212,8 @@ public class Main {
 
         switch (input){
             case 1 -> gameplayMenu(color);
-            case 2 -> gameplayMenu(color);
-            case 3 -> gameplayMenu(color);
+            case 2 -> leaveGame();
+            case 3 -> makeMove();
             case 4 -> gameplayMenu(color);
             case 5 -> gameplayMenu(color);
             case 6 -> printHelpGameplay(color);
@@ -222,5 +223,34 @@ public class Main {
     private static void printHelpGameplay(ChessGame.TeamColor color){
         System.out.println("Here are the options; type the number:");
         gameplayMenu(color);
+    }
+
+    private static void leaveGame(){
+        System.out.println("You have left the game");
+        postLoginMenu();
+    }
+
+    private static void makeMove(){
+        System.out.println("Enter the position of the piece that you want to move:");
+        String selectedPieceInput = reader.next();
+        ChessPosition startPos = convertToChessPosition(selectedPieceInput);
+
+        System.out.println("Enter the position you want to move the piece to:");
+        String moveToInput = reader.next();
+        ChessPosition endPos = convertToChessPosition(moveToInput);
+
+        try {
+            GameBoard.makeMove(new ChessMove(startPos, endPos, null));
+        } catch (InvalidMoveException e) {
+            System.out.println("Error: Move Invalid. Try again.");
+            makeMove();
+        }
+    }
+
+    private static ChessPosition convertToChessPosition(String moveString){
+        char columnChar = moveString.charAt(0);
+        int row = columnChar - 'a' + 1;
+        int column = moveString.charAt(1);
+        return new ChessPosition(row, column);
     }
 }
