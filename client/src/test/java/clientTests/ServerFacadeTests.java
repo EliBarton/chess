@@ -2,6 +2,7 @@ package clientTests;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPosition;
 import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
@@ -43,7 +44,10 @@ public class ServerFacadeTests {
 
     @Test
     public void drawRow(){
-        GameBoard.draw(ChessGame.TeamColor.WHITE, new ChessBoard());
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        GameBoard.draw(ChessGame.TeamColor.WHITE, board);
+        System.out.println(board.getPiece(new ChessPosition(1, 1)));
     }
 
     @Test

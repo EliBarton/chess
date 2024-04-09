@@ -37,7 +37,7 @@ public class GameBoard {
     }
 
     private static void drawBoard(PrintStream out, int side, ChessBoard board){
-        drawColumnNames(out);
+        drawColumnNames(out, side);
 
         for (int row = 0; Math.abs(row) < Math.abs((BOARD_SIZE) * side); row -= side){
             int realRow;
@@ -51,14 +51,18 @@ public class GameBoard {
             out.print("\u2003" + (realRow + 1) + "\u2003");
             out.println();
         }
-        drawColumnNames(out);
+        drawColumnNames(out, side);
     }
 
-    private static void drawColumnNames(PrintStream out) {
+    private static void drawColumnNames(PrintStream out, int side) {
         out.print(SET_BG_COLOR_BLACK);
         out.print(EMPTY);
-        for (int column = 0; column < BOARD_SIZE; ++column){
-            out.print(columnNames[column]);
+        for (int column = 0; Math.abs(column) < Math.abs(BOARD_SIZE * side); column += side){
+            if (side == -1){
+                out.print(columnNames[column + BOARD_SIZE-1]);
+            }else{
+                out.print(columnNames[column]);
+            }
         }
         out.println(EMPTY);
     }

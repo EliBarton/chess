@@ -239,8 +239,10 @@ public class Main {
         ChessMove move = new ChessMove(startPos, endPos, null);
 
         try {
-            if (game.validMoves(startPos).contains(move)){
+            if (game.validMoves(startPos) != null && game.validMoves(startPos).contains(move)){
                 game.makeMove(move);
+            } else{
+                throw new InvalidMoveException();
             }
         } catch (InvalidMoveException e) {
             System.out.println("Error: Move Invalid. Try again.");
