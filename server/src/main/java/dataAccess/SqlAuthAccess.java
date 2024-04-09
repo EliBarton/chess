@@ -34,7 +34,6 @@ public class SqlAuthAccess implements AuthAccess{
     @Override
     public Boolean containsAuth(String authToken) {
         var statement = "SELECT EXISTS(SELECT authToken FROM auth WHERE authToken = '" + authToken + "')";
-        System.out.println(statement);
         return queryDatabaseExists(statement);
     }
 

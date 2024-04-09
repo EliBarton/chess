@@ -65,7 +65,6 @@ public class SqlGameAccess implements GameAccess {
         Gson gson = new Gson();
         ArrayList<SerializedGameData> serializedGames = new ArrayList<>();
         var statement = "SELECT * from game";
-        System.out.println(statement);
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("game_id");
         columnNames.add("white_username");

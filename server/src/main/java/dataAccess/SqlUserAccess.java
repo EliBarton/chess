@@ -41,7 +41,6 @@ public class SqlUserAccess implements UserAccess{
         columnNames.add("password");
         columnNames.add("email");
         ArrayList<String> user = DatabaseManager.queryDatabaseStringArray(statement, columnNames);
-        System.out.println(user);
         if (user.size() == 0){
             return null;
         }else {
@@ -67,21 +66,4 @@ public class SqlUserAccess implements UserAccess{
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.configureDatabase(createStatements);
     }
-
-    private void printTable() {
-        try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM user";
-            try (var ps = conn.prepareStatement(statement)) {
-                try (var rs = ps.executeQuery()) {
-                    System.out.println(ps);
-                    if (rs.next()) {
-                        System.out.println(rs);
-                    }
-                }
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
     }
