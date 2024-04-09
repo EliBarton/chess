@@ -47,7 +47,7 @@ public class GameBoard {
                 realRow = row;
             }
             out.print("\u2003" + (realRow + 1) + "\u2003");
-            drawRowSquares(out, -realRow + BOARD_SIZE-1, side, board);
+            drawRowSquares(out, realRow, side, board);
             out.print("\u2003" + (realRow + 1) + "\u2003");
             out.println();
         }

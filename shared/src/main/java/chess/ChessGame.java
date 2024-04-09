@@ -155,11 +155,9 @@ public class ChessGame {
         for (ChessPosition endPos : enemyEndPositions){
             //System.out.println(endPos + " " + kingPos);
             if (endPos.equals(kingPos)){
-                System.out.println("king is in check");
                 return true;
             }
         }
-        System.out.println("The king is not in check at " + kingPos);
         return false;
     }
 

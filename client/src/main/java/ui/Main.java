@@ -236,7 +236,7 @@ public class Main {
         System.out.println("Enter the position you want to move the piece to:");
         String moveToInput = reader.next();
         ChessPosition endPos = convertToChessPosition(moveToInput);
-        ChessMove move = new ChessMove(startPos, endPos, null);
+        ChessMove move = checkForPromotion(new ChessMove(startPos, endPos, null), game);
 
         try {
             if (game.validMoves(startPos) != null && game.validMoves(startPos).contains(move)){
@@ -256,5 +256,44 @@ public class Main {
         int column = columnChar - 'a' + 1;
         int row = Integer.parseInt(moveString.substring(1));
         return new ChessPosition(row, column);
+    }
+
+    private static ChessMove checkForPromotion(ChessMove move, ChessGame game){
+        ChessPosition startPos = move.getStartPosition();
+        ChessPiece piece = game.getBoard().getPiece(startPos);
+        if (piece != null && piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                if (startPos.getRow() == 7){
+                    return choosePromotionMenu(move);
+                }
+            } else{
+                if (startPos.getRow() == 2){
+                    return choosePromotionMenu(move);
+                }
+            }
+
+        }
+        return move;
+    }
+
+    private static ChessMove choosePromotionMenu(ChessMove move){
+        System.out.println("You get to promote your pawn! What do you want to promote it to?");
+        System.out.println("1. Queen");
+        System.out.println("2. Rook");
+        System.out.println("3. Bishop");
+        System.out.println("4. Knight");
+
+        System.out.println("\n");
+        int input = reader.nextInt();
+
+        ChessMove newMove;
+
+        switch (input) {
+            case 2 -> newMove = new ChessMove(move.getStartPosition(), move.getEndPosition(), ChessPiece.PieceType.ROOK);
+            case 3 -> newMove = new ChessMove(move.getStartPosition(), move.getEndPosition(), ChessPiece.PieceType.BISHOP);
+            case 4 -> newMove = new ChessMove(move.getStartPosition(), move.getEndPosition(), ChessPiece.PieceType.KNIGHT);
+            default -> newMove = new ChessMove(move.getStartPosition(), move.getEndPosition(), ChessPiece.PieceType.QUEEN);
+        }
+        return newMove;
     }
 }

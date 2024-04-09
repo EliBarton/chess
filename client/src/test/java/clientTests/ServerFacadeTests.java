@@ -1,8 +1,6 @@
 package clientTests;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPosition;
+import chess.*;
 import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
@@ -48,6 +46,21 @@ public class ServerFacadeTests {
         board.resetBoard();
         GameBoard.draw(ChessGame.TeamColor.WHITE, board);
         System.out.println(board.getPiece(new ChessPosition(1, 1)));
+    }
+
+    @Test
+    public void gameTest(){
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        GameBoard.draw(ChessGame.TeamColor.WHITE, board);
+        ChessPosition startPos = new ChessPosition(2, 1);
+        System.out.println(board.getPiece(startPos));
+        try {
+            board.makeMove(new ChessMove(startPos, new ChessPosition(3, 1), null));
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
+        }
+        GameBoard.draw(ChessGame.TeamColor.WHITE, board);
     }
 
     @Test
