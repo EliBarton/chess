@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import dataAccess.AuthAccess;
 import dataAccess.GameAccess;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -23,7 +24,8 @@ public class ServerFacade {
         return HttpCommunicator.listGames(serverUrl, auth);
     }
 
-    public ChessGame joinGame(String auth, String color, int gameID) throws IOException, URISyntaxException {
+    public ChessGame joinGame(String auth, String color, int gameID) throws Exception {
+        WebsocketCommunicator.send(UserGameCommand.CommandType.JOIN_PLAYER, auth);
         return HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
     }
 

@@ -23,7 +23,7 @@ public class WebsocketCommunicator extends Endpoint {
         });
     }
 
-    public void send(UserGameCommand.CommandType commandType, String authToken) throws Exception {
+    public static void send(UserGameCommand.CommandType commandType, String authToken) throws Exception {
 
     }
 

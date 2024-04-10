@@ -164,6 +164,8 @@ public class Main {
         } catch (URISyntaxException e) {
             System.out.println("There was a problem accessing the server: " + e.getMessage());
             postLoginMenu();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -179,6 +181,8 @@ public class Main {
         } catch (URISyntaxException e) {
             System.out.println("There was a problem accessing the server: " + e.getMessage());
             postLoginMenu();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }
