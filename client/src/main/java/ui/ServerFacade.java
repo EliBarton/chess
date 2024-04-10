@@ -12,7 +12,9 @@ public class ServerFacade {
 
     private final String serverUrl;
 
-    public ServerFacade(String url) {
+    WebsocketCommunicator ws = new WebsocketCommunicator();
+
+    public ServerFacade(String url) throws Exception {
         serverUrl = url;
     }
 
@@ -25,11 +27,11 @@ public class ServerFacade {
     }
 
     public ChessGame joinGame(String auth, String color, int gameID) throws Exception {
-        WebsocketCommunicator.send(UserGameCommand.CommandType.JOIN_PLAYER, auth);
         return HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
     }
 
-    public AuthAccess.AuthResult login(String username, String password) throws IOException, URISyntaxException {
+    public AuthAccess.AuthResult login(String username, String password) throws Exception {
+        ws.send("Test Message");
         return HttpCommunicator.login(serverUrl, username, password);
     }
 

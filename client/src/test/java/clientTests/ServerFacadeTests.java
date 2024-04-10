@@ -21,7 +21,7 @@ public class ServerFacadeTests {
     private static int port;
 
     @BeforeAll
-    public static void init() throws IOException, URISyntaxException {
+    public static void init() throws Exception {
         server = new Server();
         var portTemp = server.run(0);
         port = portTemp;
@@ -75,6 +75,8 @@ public class ServerFacadeTests {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -105,6 +107,8 @@ public class ServerFacadeTests {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -134,6 +138,8 @@ public class ServerFacadeTests {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -166,6 +172,8 @@ public class ServerFacadeTests {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 

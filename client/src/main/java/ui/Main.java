@@ -10,7 +10,15 @@ import java.util.Scanner;
 
 public class Main {
     public static Scanner reader = new Scanner(System.in);
-    public static ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+    public static ServerFacade serverFacade;
+
+    static {
+        try {
+            serverFacade = new ServerFacade("http://localhost:8080");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     private static String auth;
@@ -53,6 +61,8 @@ public class Main {
         } catch (URISyntaxException e) {
             System.out.println("There was a problem accessing the server: " + e.getMessage());
             startMenu();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }

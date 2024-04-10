@@ -23,8 +23,9 @@ public class WebsocketCommunicator extends Endpoint {
         });
     }
 
-    public static void send(UserGameCommand.CommandType commandType, String authToken) throws Exception {
-
+    public void send(String msg) throws Exception {
+        this.session.getBasicRemote().sendText(msg);
     }
+
 
 }
