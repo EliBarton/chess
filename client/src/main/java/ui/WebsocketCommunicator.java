@@ -1,10 +1,13 @@
 package ui;
 
 import com.google.gson.Gson;
+import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.net.URI;
+
+import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
 
 public class WebsocketCommunicator extends Endpoint {
     @Override
@@ -26,6 +29,11 @@ public class WebsocketCommunicator extends Endpoint {
 
     public void send(UserGameCommand msg) throws Exception {
         this.session.getBasicRemote().sendText(new Gson().toJson(msg));
+    }
+
+    public void joinGame(String auth, String color, int gameID){
+        UserGameCommand joinMessage = new JoinPlayer(auth, gameID, color);
+        joinMessage.setCommandType(JOIN_PLAYER);
     }
 
 

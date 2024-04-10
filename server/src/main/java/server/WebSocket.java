@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
+import service.GameService;
 import spark.Spark;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -12,9 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocket {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
+    private final GameService gameService;
+
+    public WebSocket(GameService gameService) {
+        this.gameService = gameService;
+    }
+
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) throws Exception {
-        System.out.printf("Received: %s", msg);
+        //System.out.printf("Received: %s", msg);
         UserGameCommand command = readJson(msg);
 
         var conn = getConnection(command.authToken, session);
@@ -33,7 +40,7 @@ public class WebSocket {
     }
 
     private server.Connection getConnection(String authToken, Session session) {
-        return new Connection();
+        return connections.get(authToken);
     }
 
     private UserGameCommand readJson(String msg) {
@@ -42,6 +49,7 @@ public class WebSocket {
     }
 
     public void join(Connection c, String msg){
+        System.out.println("A request to join the game was received: " + msg);
 
     }
 

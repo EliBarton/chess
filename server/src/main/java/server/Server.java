@@ -35,7 +35,7 @@ public class Server {
     private final GameService gameService = new GameService(authData, gameData);
 
     public Server() {
-        this.websocket = new WebSocket();
+        this.websocket = new WebSocket(gameService);
     }
 
     private record errorMessage(String message){}

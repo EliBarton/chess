@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import dataAccess.AuthAccess;
 import dataAccess.GameAccess;
+import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class ServerFacade {
 
     private final String serverUrl;
 
-    WebsocketCommunicator ws = new WebsocketCommunicator();
+    WebsocketCommunicator ws;
 
     public ServerFacade(String url) throws Exception {
         serverUrl = url;
@@ -29,10 +30,10 @@ public class ServerFacade {
     }
 
     public ChessGame joinGame(String auth, String color, int gameID) throws Exception {
-        UserGameCommand message = new UserGameCommand(auth);
-        message.setCommandType(JOIN_PLAYER);
-        ws.send(message);
-        return HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
+        ChessGame game = HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
+        ws = new WebsocketCommunicator();
+        ws.joinGame(auth, color, gameID);
+        return game;
     }
 
     public AuthAccess.AuthResult login(String username, String password) throws Exception {
