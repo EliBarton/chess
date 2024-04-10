@@ -5,6 +5,7 @@ import dataAccess.GameAccess;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
@@ -150,9 +151,9 @@ public class Main {
         String color = reader.next();
         try{
             if (color.equals("BLACK")){
-                gameplayMenu(ChessGame.TeamColor.BLACK, serverFacade.joinGame(auth, color, gameID));
+                gameplayMenu(ChessGame.TeamColor.BLACK, serverFacade.joinGame(auth, color, gameID), null);
             } else if (color.equals("WHITE")) {
-                gameplayMenu(ChessGame.TeamColor.WHITE, serverFacade.joinGame(auth, color, gameID));
+                gameplayMenu(ChessGame.TeamColor.WHITE, serverFacade.joinGame(auth, color, gameID), null);
             }else{
                 throw new IOException("Invalid Color");
             }
@@ -171,7 +172,7 @@ public class Main {
         System.out.println("Enter the number representing the game you want to observe: ");
         int gameID = reader.nextInt();
         try{
-            gameplayMenu(null, serverFacade.joinGame(auth, "", gameID));
+            gameplayMenu(null, serverFacade.joinGame(auth, "", gameID), null);
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();
@@ -196,9 +197,9 @@ public class Main {
         }
     }
 
-    private static void gameplayMenu(ChessGame.TeamColor color, ChessGame game){
+    private static void gameplayMenu(ChessGame.TeamColor color, ChessGame game, HashSet<ChessMove> highlightedMoves){
 
-        GameBoard.draw(color, game.getBoard());
+        GameBoard.draw(color, game.getBoard(), highlightedMoves);
         System.out.println("1. Redraw Board");
         System.out.println("2. Leave Game");
         System.out.println("3. Make Move");
@@ -209,18 +210,18 @@ public class Main {
         int input = reader.nextInt();
 
         switch (input){
-            case 1 -> gameplayMenu(color, game);
+            case 1 -> gameplayMenu(color, game, null);
             case 2 -> leaveGame();
             case 3 -> makeMovePrompt(color, game);
-            case 4 -> gameplayMenu(color, game);
-            case 5 -> gameplayMenu(color, game);
+            case 4 -> gameplayMenu(color, game, null);
+            case 5 -> highlightMovesPrompt(color, game);
             case 6 -> printHelpGameplay(color, game);
         }
     }
 
     private static void printHelpGameplay(ChessGame.TeamColor color, ChessGame game){
         System.out.println("Here are the options; type the number:");
-        gameplayMenu(color, game);
+        gameplayMenu(color, game, null);
     }
 
     private static void leaveGame(){
@@ -247,7 +248,7 @@ public class Main {
         } catch (InvalidMoveException e) {
             System.out.println("Error: Move Invalid. Try again.");
         }
-        gameplayMenu(color, game);
+        gameplayMenu(color, game, null);
     }
 
     // Converts the user's input into a Chess Position
@@ -296,4 +297,15 @@ public class Main {
         }
         return newMove;
     }
+
+    private static void highlightMovesPrompt(ChessGame.TeamColor color, ChessGame game){
+        System.out.println("Enter the position of the piece to highlight the moves of:");
+        String selectedPieceInput = reader.next();
+        ChessPosition piecePos = convertToChessPosition(selectedPieceInput);
+
+        HashSet<ChessMove> pieceMoves = (HashSet<ChessMove>) game.validMoves(piecePos);
+
+        gameplayMenu(color, game, pieceMoves);
+    }
+
 }

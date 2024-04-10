@@ -2,6 +2,7 @@ package ui;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import chess.*;
@@ -16,27 +17,34 @@ public class GameBoard {
 
     private static final String[] columnNames = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h "};
 
-    public static void draw(ChessGame.TeamColor color, ChessBoard board){
+    public static void draw(ChessGame.TeamColor color, ChessBoard board,  HashSet<ChessMove> highlightedMoves){
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         if (color == ChessGame.TeamColor.BLACK) {
-            drawBlack(out, board);
+            drawBlack(out, board, highlightedMoves);
         }else{
-            drawWhite(out, board);
+            drawWhite(out, board, highlightedMoves);
         }
         System.out.println();
 
     }
 
-    private static void drawWhite(PrintStream out, ChessBoard board){
-        drawBoard(out, 1, board);
+    private static void drawWhite(PrintStream out, ChessBoard board,  HashSet<ChessMove> highlightedMoves){
+        drawBoard(out, 1, board, highlightedMoves);
     }
 
-    private static void drawBlack(PrintStream out, ChessBoard board){
-        drawBoard(out, -1, board);
+    private static void drawBlack(PrintStream out, ChessBoard board,  HashSet<ChessMove> highlightedMoves){
+        drawBoard(out, -1, board, highlightedMoves);
     }
 
-    private static void drawBoard(PrintStream out, int side, ChessBoard board){
+    private static void drawBoard(PrintStream out, int side, ChessBoard board, HashSet<ChessMove> highlightedMoves){
+        ArrayList<ChessPosition> highlightedSquares = null;
+        ChessPosition startSquare = null;
+        if (highlightedMoves != null) {
+            highlightedSquares = getHighlightEndPositions(highlightedMoves);
+            startSquare = getHighlightStartPosition(highlightedMoves);
+        }
+
         drawColumnNames(out, side);
 
         for (int row = 0; Math.abs(row) < Math.abs((BOARD_SIZE) * side); row -= side){
@@ -47,11 +55,23 @@ public class GameBoard {
                 realRow = row;
             }
             out.print("\u2003" + (realRow + 1) + "\u2003");
-            drawRowSquares(out, realRow, side, board);
+            drawRowSquares(out, realRow, side, board, startSquare, highlightedSquares);
             out.print("\u2003" + (realRow + 1) + "\u2003");
             out.println();
         }
         drawColumnNames(out, side);
+    }
+
+    private static ArrayList<ChessPosition> getHighlightEndPositions(HashSet<ChessMove> highlightedMoves){
+        ArrayList<ChessPosition> output = new ArrayList<>();
+        highlightedMoves.forEach(move -> output.add(move.getEndPosition()));
+        return output;
+    }
+
+    private static ChessPosition getHighlightStartPosition(HashSet<ChessMove> highlightedMoves){
+        ArrayList<ChessPosition> output = new ArrayList<>();
+        highlightedMoves.forEach(move -> output.add(move.getStartPosition()));
+        return output.getFirst();
     }
 
     private static void drawColumnNames(PrintStream out, int side) {
@@ -67,7 +87,7 @@ public class GameBoard {
         out.println(EMPTY);
     }
 
-    private static void drawRowSquares(PrintStream out, int row, int side, ChessBoard board) {
+    private static void drawRowSquares(PrintStream out, int row, int side, ChessBoard board, ChessPosition startSquare, ArrayList<ChessPosition> highlightSquares) {
 
         for (int column = 0; Math.abs(column) < Math.abs(BOARD_SIZE * side); column += side){
             int realColumn;
@@ -76,10 +96,23 @@ public class GameBoard {
             }else{
                 realColumn = column;
             }
-            if ((row +realColumn) % 2 == 1) {
-                out.print(SET_BG_COLOR_DARK_GREY);}
-            else{
-                out.print(SET_BG_COLOR_LIGHT_GREY);}
+            if (startSquare == null || highlightSquares == null) {
+                if ((row + realColumn) % 2 == 1) {
+                    out.print(SET_BG_COLOR_DARK_GREY);
+                } else {
+                    out.print(SET_BG_COLOR_LIGHT_GREY);
+                }
+            } else {
+                if (startSquare != null) {
+                    if (startSquare.getRow() == row && startSquare.getColumn() == realColumn){
+                        out.print(SET_BG_COLOR_DARK_GREEN);
+                    }
+                } else if (highlightSquares != null) {
+                    if (highlightSquares.contains(new ChessPosition(row, realColumn))){
+                        out.print(SET_BG_COLOR_GREEN);
+                    }
+                }
+            }
             if (board.getPiece(new ChessPosition(row + 1, realColumn+1)) == null){
                 out.print(EMPTY_SQUARE);
             }else {
