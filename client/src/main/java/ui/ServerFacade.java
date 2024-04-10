@@ -8,6 +8,8 @@ import webSocketMessages.userCommands.UserGameCommand;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
+
 public class ServerFacade {
 
     private final String serverUrl;
@@ -27,11 +29,13 @@ public class ServerFacade {
     }
 
     public ChessGame joinGame(String auth, String color, int gameID) throws Exception {
+        UserGameCommand message = new UserGameCommand(auth);
+        message.setCommandType(JOIN_PLAYER);
+        ws.send(message);
         return HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
     }
 
     public AuthAccess.AuthResult login(String username, String password) throws Exception {
-        ws.send("Test Message");
         return HttpCommunicator.login(serverUrl, username, password);
     }
 

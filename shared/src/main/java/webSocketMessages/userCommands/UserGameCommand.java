@@ -22,6 +22,10 @@ public class UserGameCommand {
         RESIGN
     }
 
+    public void setCommandType(CommandType commandType) {
+        this.commandType = commandType;
+    }
+
     protected CommandType commandType;
 
     public final String authToken;
