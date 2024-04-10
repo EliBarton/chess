@@ -96,22 +96,22 @@ public class GameBoard {
             }else{
                 realColumn = column;
             }
-            if (startSquare == null || highlightSquares == null) {
-                if ((row + realColumn) % 2 == 1) {
-                    out.print(SET_BG_COLOR_DARK_GREY);
-                } else {
-                    out.print(SET_BG_COLOR_LIGHT_GREY);
-                }
+            if ((row + realColumn) % 2 == 1) {
+                out.print(SET_BG_COLOR_DARK_GREY);
             } else {
-                if (startSquare != null) {
-                    if (startSquare.getRow() == row && startSquare.getColumn() == realColumn){
+                out.print(SET_BG_COLOR_LIGHT_GREY);
+            }
+            if (startSquare != null) {
+                if (startSquare.getRow() - 1 == row && startSquare.getColumn() - 1 == realColumn){
+                    out.print(SET_BG_COLOR_MAGENTA);
+                }
+            }
+            if (highlightSquares != null) {
+                highlightSquares.forEach(square -> {
+                    if (square.getRow() - 1 == row && square.getColumn() - 1 == realColumn){
                         out.print(SET_BG_COLOR_DARK_GREEN);
                     }
-                } else if (highlightSquares != null) {
-                    if (highlightSquares.contains(new ChessPosition(row, realColumn))){
-                        out.print(SET_BG_COLOR_GREEN);
-                    }
-                }
+                });
             }
             if (board.getPiece(new ChessPosition(row + 1, realColumn+1)) == null){
                 out.print(EMPTY_SQUARE);
