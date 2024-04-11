@@ -32,8 +32,10 @@ public class ServerFacade {
     }
 
     public void joinGame(String auth, String color, int gameID, String name) throws Exception {
+        HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
         ws = new WebsocketCommunicator(websocketUrl, observer);
         ws.joinGame(auth, color, gameID, name);
+
     }
 
     public AuthResult login(String username, String password) throws Exception {

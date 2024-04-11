@@ -196,7 +196,7 @@ public class WebSocket {
     }
 
     public void resign(WebSocketSession c, String msg) throws IOException {
-        Resign resign = (Resign) readJson(msg, Resign.class);
+        Leave resign = (Leave) readJson(msg, Leave.class);
         String myName = gameService.getAuthData().getUsernameByAuth(resign.authToken);
         resign.setName(myName);
         try {

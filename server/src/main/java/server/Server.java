@@ -38,7 +38,7 @@ public class Server {
         this.websocket = new WebSocket(gameService);
     }
 
-    private record errorMessage(String message){}
+    private record ErrorMessage(String message){}
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -68,10 +68,10 @@ public class Server {
         }
         catch (DataAccessException e){
             res.status(403);
-            return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Registration failed, " + e.getMessage()));
         }catch (InvalidDataException e){
             res.status(400);
-            return gson.toJson(new errorMessage("Error: Registration failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Registration failed, " + e.getMessage()));
         }
 
         return gson.toJson(result);
@@ -93,7 +93,7 @@ public class Server {
             result = loginoutService.login(userData);
         }catch (DataAccessException | InvalidDataException e){
             res.status(401);
-            return gson.toJson(new errorMessage("Error: Login failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Login failed, " + e.getMessage()));
         }
         return gson.toJson(result);
     }
@@ -107,7 +107,7 @@ public class Server {
         }catch (DataAccessException | InvalidDataException e){
             System.out.println("Error: Logout failed, " + e.getMessage());
             res.status(401);
-            return gson.toJson(new errorMessage("Error: Logout failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Logout failed, " + e.getMessage()));
         }
         return gson.toJson(res.body());
     }
@@ -125,7 +125,7 @@ public class Server {
         }catch (UnauthorizedException e){
             System.out.println(e.getMessage());
             res.status(401);
-            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Create game failed, " + e.getMessage()));
         }
         return gson.toJson(result);
     }
@@ -139,7 +139,7 @@ public class Server {
             games = gameService.listGames(auth);
         }catch (UnauthorizedException e){
             res.status(401);
-            return gson.toJson(new errorMessage("Error: Create game failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Create game failed, " + e.getMessage()));
         }
         GameAccess.ListGamesResult result = new GameAccess.ListGamesResult("games", games);
         return gson.toJson(result);
@@ -154,13 +154,13 @@ public class Server {
             game = gameService.updateGame(joinRequest.gameID(), auth, joinRequest.playerColor());
         }catch (UnauthorizedException e){
             res.status(401);
-            return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Update game failed, " + e.getMessage()));
         } catch (InvalidDataException e) {
             res.status(403);
-            return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Update game failed, " + e.getMessage()));
         } catch (DataAccessException e){
             res.status(400);
-            return gson.toJson(new errorMessage("Error: Update game failed, " + e.getMessage()));
+            return gson.toJson(new ErrorMessage("Error: Update game failed, " + e.getMessage()));
         }
         return game;
     }

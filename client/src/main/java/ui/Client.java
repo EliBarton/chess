@@ -15,7 +15,7 @@ public class Client implements ServerMessageObserver{
     public static Scanner reader = new Scanner(System.in);
     public static ServerFacade serverFacade;
 
-
+    private static boolean awaitingMessage = false;
 
     public void init(){
         try {
@@ -164,7 +164,12 @@ public class Client implements ServerMessageObserver{
 
         try{
             serverFacade.joinGame(auth, color, gameID, name);
-
+            awaitingMessage = true;
+            while (awaitingMessage){
+                if (!awaitingMessage){
+                    break;
+                }
+            }
         } catch (IOException e) {
             System.out.println("There was an error joining the game: " + e.getMessage());
             postLoginMenu();
@@ -172,10 +177,12 @@ public class Client implements ServerMessageObserver{
             System.out.println("There was a problem accessing the server: " + e.getMessage());
             postLoginMenu();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("There was a problem: " + e.getMessage());
+            postLoginMenu();
         }
 
     }
+
 
     private static void joinGameObserverPrompt(){
         System.out.println("Enter the number representing the game you want to observe: ");
@@ -322,11 +329,13 @@ public class Client implements ServerMessageObserver{
     @Override
     public void notify(ServerMessage message) {
         System.out.println(message.getServerMessageType() + ", Message received at client");
+
         switch (message.getServerMessageType()) {
             case NOTIFICATION -> displayNotification(((Notification) message).getMessage());
             case ERROR -> displayError(((Error) message).getErrorMessage());
             case LOAD_GAME -> loadGame(((LoadGame) message).getGame());
         }
+        awaitingMessage = false;
     }
 
     private void displayNotification(String message){
