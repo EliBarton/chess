@@ -17,13 +17,9 @@ record CreateGameRequest(String gameName){}
 record GameIdResult(int gameID){}
 record JoinGameRequest(String playerColor, int gameID){}
 
-record SerializedGameData(int gameID, String whiteUsername, String blackUsername,
-                          String gameName, String game){}
-
 record ListGamesResult(String message, ArrayList<SerializedGameData> games){}
 
 
-record AuthResult(String username, String authToken){}
 record LoginRequest(String username, String password) {}
 public class HttpCommunicator {
 

@@ -5,12 +5,11 @@ import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
-import ui.GameBoard;
-import ui.ServerFacade;
-import ui.ServerMessageObserver;
+import ui.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 
@@ -22,6 +21,18 @@ public class ServerFacadeTests {
     private static ServerMessageObserver observer;
 
     private static int port;
+    record CreateGameRequest(String gameName){}
+    record GameIdResult(int gameID){}
+    record JoinGameRequest(String playerColor, int gameID){}
+
+    record SerializedGameData(int gameID, String whiteUsername, String blackUsername,
+                              String gameName, String game){}
+
+    record ListGamesResult(String message, ArrayList<ui.SerializedGameData> games){}
+
+
+    record AuthResult(String username, String authToken){}
+    record LoginRequest(String username, String password) {}
 
     @BeforeAll
     public static void init() throws Exception {
@@ -71,7 +82,7 @@ public class ServerFacadeTests {
     public void createGame(){
         try{
             serverFacade = new ServerFacade("http://localhost:" + port, observer);
-            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             int gameID = serverFacade.createGame("Test Game", authResult.authToken());
             Assertions.assertNotEquals(0, gameID);
         } catch (IOException e) {
@@ -89,7 +100,7 @@ public class ServerFacadeTests {
         Assertions.assertThrows(RuntimeException.class, () -> {
         try{
             serverFacade = new ServerFacade("http://localhost:" + port, observer);
-            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
 
             serverFacade.createGame("Test Game", "1234");
         } catch (IOException e) {
@@ -104,7 +115,7 @@ public class ServerFacadeTests {
     public void registerTest(){
         try{
             serverFacade = new ServerFacade("http://localhost:" + port, observer);
-            AuthAccess.AuthResult authResult = serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
+            ui.AuthResult authResult = serverFacade.register("Testuser1", "Testpassword", "fakeemail@yourmom.com");
             Assertions.assertNotNull(authResult);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -121,7 +132,7 @@ public class ServerFacadeTests {
         Assertions.assertThrows(RuntimeException.class, () -> {
             try {
                 serverFacade = new ServerFacade("http://localhost:" + port, observer);
-                AuthAccess.AuthResult authResult = serverFacade.register("Testuser2", "Testpassword", "fakeemail@yourmom.com");
+                ui.AuthResult authResult = serverFacade.register("Testuser2", "Testpassword", "fakeemail@yourmom.com");
                 serverFacade.register("Testuser2", "Testpassword", "fakeemail@yourmom.com");
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -135,7 +146,7 @@ public class ServerFacadeTests {
     public void logoutTest(){
         try{
             serverFacade = new ServerFacade("http://localhost:" + port, observer);
-            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             serverFacade.logout(authResult.authToken());
             Assertions.assertThrows(IOException.class,() -> serverFacade.listGames(authResult.authToken()));
         } catch (IOException e) {
@@ -153,7 +164,7 @@ public class ServerFacadeTests {
         Assertions.assertThrows(RuntimeException.class, () -> {
             try {
                 serverFacade = new ServerFacade("http://localhost:" + port, observer);
-                AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+                ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
                 serverFacade.logout(authResult.authToken());
                 serverFacade.logout(authResult.authToken());
             } catch (IOException e) {
@@ -168,7 +179,7 @@ public class ServerFacadeTests {
     public void listGamesTest(){
         try{
             serverFacade = new ServerFacade("http://localhost:" + port, observer);
-            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
 
             System.out.println(serverFacade.listGames(authResult.authToken()));
             Assertions.assertNotNull(serverFacade.listGames(authResult.authToken()));
@@ -187,7 +198,7 @@ public class ServerFacadeTests {
         Assertions.assertThrows(RuntimeException.class, () -> {
             try {
                 serverFacade = new ServerFacade("http://localhost:" + port, observer);
-                AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+                ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
                 serverFacade.logout(authResult.authToken());
                 System.out.println(serverFacade.listGames(authResult.authToken()));
             } catch (IOException e) {
@@ -202,9 +213,10 @@ public class ServerFacadeTests {
     public void joinGameTest(){
         try{
             serverFacade = new ServerFacade("http://localhost:" + port, observer);
-            AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+            ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             int id = serverFacade.createGame("Test Game", authResult.authToken());
-            Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id, "Testuser1"));
+            serverFacade.joinGame(authResult.authToken(), "WHITE", id, "Testuser1");
+            Assertions.assertNotNull(id);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -220,10 +232,11 @@ public class ServerFacadeTests {
         Assertions.assertThrows(RuntimeException.class, () -> {
             try {
                 serverFacade = new ServerFacade("http://localhost:" + port, observer);
-                AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
+                ui.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
                 int id = serverFacade.createGame("Test Game", authResult.authToken());
                 serverFacade.logout(authResult.authToken());
-                Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id, "Testuser1"));
+                serverFacade.joinGame(authResult.authToken(), "WHITE", id, "Testuser1");
+                Assertions.assertNotNull(id);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (URISyntaxException e) {
