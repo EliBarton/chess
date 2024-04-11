@@ -15,7 +15,7 @@ public class WebsocketCommunicator extends Endpoint {
 
     }
     public Session session;
-    public WebsocketCommunicator() throws Exception{
+    public WebsocketCommunicator(String url) throws Exception{
         URI uri = new URI("ws://localhost:8080/connect");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
@@ -31,9 +31,10 @@ public class WebsocketCommunicator extends Endpoint {
         this.session.getBasicRemote().sendText(new Gson().toJson(msg));
     }
 
-    public void joinGame(String auth, String color, int gameID){
+    public void joinGame(String auth, String color, int gameID) throws Exception {
         UserGameCommand joinMessage = new JoinPlayer(auth, gameID, color);
         joinMessage.setCommandType(JOIN_PLAYER);
+        send(joinMessage);
     }
 
 

@@ -14,7 +14,7 @@ public class Main {
 
     static {
         try {
-            serverFacade = new ServerFacade("http://localhost:8080");
+            serverFacade = new ServerFacade("localhost:8080");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

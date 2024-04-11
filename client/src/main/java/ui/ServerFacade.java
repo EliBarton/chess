@@ -14,11 +14,13 @@ import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PL
 public class ServerFacade {
 
     private final String serverUrl;
+    private final String websocketUrl;
 
     WebsocketCommunicator ws;
 
     public ServerFacade(String url) throws Exception {
-        serverUrl = url;
+        serverUrl = "http://" + url;
+        websocketUrl = "ws://" + url + "/connect";
     }
 
     public int createGame(String gameName, String auth) throws IOException, URISyntaxException {
@@ -31,7 +33,7 @@ public class ServerFacade {
 
     public ChessGame joinGame(String auth, String color, int gameID) throws Exception {
         ChessGame game = HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
-        ws = new WebsocketCommunicator();
+        ws = new WebsocketCommunicator(websocketUrl);
         ws.joinGame(auth, color, gameID);
         return game;
     }
