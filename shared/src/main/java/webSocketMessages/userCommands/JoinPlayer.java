@@ -26,10 +26,6 @@ public class JoinPlayer extends UserGameCommand {
         return playerColor;
     }
 
-    public void setPlayerColor(String playerColor) {
-        this.playerColor = playerColor;
-    }
-
     public String getName() {
         return name;
     }
