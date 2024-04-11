@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -7,6 +8,8 @@ import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.common.WebSocketSession;
 import service.GameService;
 import spark.Spark;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
@@ -29,22 +32,27 @@ public class WebSocket {
     }
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String msg) throws Exception {
+    public void onMessage(Session session, String msg) throws IOException {
         //System.out.printf("Received: %s", msg);
         UserGameCommand command = readJson(msg, UserGameCommand.class);
 
-        var conn = getSession(session);
-        if (conn != null) {
-            switch (command.getCommandType()) {
-                case JOIN_PLAYER -> join((WebSocketSession) conn, msg);
-                case JOIN_OBSERVER -> observe((WebSocketSession) conn, msg);
-                case MAKE_MOVE -> move((WebSocketSession) conn, msg);
-                case LEAVE -> leave((WebSocketSession) conn, msg);
-                case RESIGN -> resign((WebSocketSession) conn, msg);
+            var conn = getSession(session);
+            if (conn != null) {
+                try {
+                    switch (command.getCommandType()) {
+                        case JOIN_PLAYER -> join((WebSocketSession) conn, msg);
+                        case JOIN_OBSERVER -> observe((WebSocketSession) conn, msg);
+                        case MAKE_MOVE -> move((WebSocketSession) conn, msg);
+                        case LEAVE -> leave((WebSocketSession) conn, msg);
+                        case RESIGN -> resign((WebSocketSession) conn, msg);
+                    }
+                } catch (IOException e) {
+                    sendError(e.getMessage(), conn);
+                }
+            } else {
+                Connection.sendError(session.getRemote(), "unknown user");
             }
-        } else {
-            Connection.sendError(session.getRemote(), "unknown user");
-        }
+
 
     }
 
@@ -59,7 +67,8 @@ public class WebSocket {
         JoinPlayer joinPlayer = (JoinPlayer) readJson(msg, JoinPlayer.class);
         Connection connection = new Connection(joinPlayer.getName(), joinPlayer.authToken, c);
         connections.add(connection);
-        sendMessage(joinPlayer.getGameID(), joinPlayer.getName() + " has joined the game.", joinPlayer.authToken);
+        sendGame(joinPlayer.getGameID(), joinPlayer.authToken);
+        broadcastMessage(joinPlayer.getGameID(), joinPlayer.getName() + " has joined the game.", joinPlayer.authToken);
     }
 
     public void observe(WebSocketSession c, String msg){
@@ -105,14 +114,37 @@ public class WebSocket {
         return null;
     }
 
-    private void sendMessage(int gameID, String msg, String authToken) throws IOException {
+    private void sendNotification(int gameID, String msg, String authToken) throws IOException {
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, msg);
-        for (Session session : sessions){
-            session.getRemote().sendString(new Gson().toJson(notification));
+        for (Connection connection : connections){
+            if (connection.authToken.equals(authToken)){
+                connection.session.getRemote().sendString(new Gson().toJson(notification));
+            }
         }
     }
 
-    private void broadcastMessage(int gameID, String msg, String exceptThisAuthToken){
+    private void sendGame(int gameID, String authToken) throws IOException {
+        ChessGame game = gameService.getGameData().getGame(gameID).game();
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, game);
+        for (Connection connection : connections){
+            if (connection.authToken.equals(authToken)){
+                connection.session.getRemote().sendString(new Gson().toJson(loadGame));
+            }
+        }
+    }
+
+    private void broadcastMessage(int gameID, String msg, String exceptThisAuthToken) throws IOException {
+        var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, msg);
+        for (Connection connection : connections){
+            if (!connection.authToken.equals(exceptThisAuthToken)){
+                connection.session.getRemote().sendString(new Gson().toJson(notification));
+            }
+        }
+    }
+
+    private void sendError(String msg, Session session) throws IOException {
+        var error = new Error(ServerMessage.ServerMessageType.ERROR, msg);
+        session.getRemote().sendString(new Gson().toJson(error));
 
     }
 

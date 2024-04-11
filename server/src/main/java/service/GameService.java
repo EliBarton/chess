@@ -55,6 +55,10 @@ public class GameService {
 
     }
 
+    public GameAccess getGameData() {
+        return gameData;
+    }
+
     private void checkForUpdateGameExceptions(int id, String authToken, String playerColor)
             throws UnauthorizedException, InvalidDataException, DataAccessException {
         if(!authData.containsAuth(authToken)) {

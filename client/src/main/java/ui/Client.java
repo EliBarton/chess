@@ -2,6 +2,7 @@ package ui;
 
 import chess.*;
 import dataAccess.GameAccess;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 
@@ -26,6 +27,8 @@ public class Client implements ServerMessageObserver{
 
     private static String auth;
     private static String name = "";
+
+    private static ChessGame.TeamColor color = null;
 
     public static void startMenu(){
         System.out.println("\n");
@@ -327,12 +330,16 @@ public class Client implements ServerMessageObserver{
         switch (message.getServerMessageType()) {
             case NOTIFICATION -> displayNotification(((Notification) message).getMessage());
             //case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
-            // case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
+            case LOAD_GAME -> loadGame(((LoadGame) message).getGame());
         }
     }
 
     private void displayNotification(String message){
         System.out.println(message + ", The notification worked!");
+    }
+
+    private void loadGame(ChessGame game){
+        gameplayMenu(color, game, null);
     }
 
 }
