@@ -1,12 +1,16 @@
 package ui;
 
 import com.google.gson.Gson;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.net.URI;
+import java.util.logging.Logger;
 
 import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
 
@@ -25,7 +29,21 @@ public class WebsocketCommunicator extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
-                ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
+                Gson gson = new Gson();
+                ServerMessage msgOld = gson.fromJson(message, ServerMessage.class);
+                ServerMessage msg = null;
+                switch (msgOld.getServerMessageType()){
+                    case LOAD_GAME -> {
+                        msg = gson.fromJson(message, LoadGame.class);
+                    }
+                    case ERROR -> {
+                        msg = gson.fromJson(message, Error.class);
+                    }
+                    case NOTIFICATION -> {
+                        msg = gson.fromJson(message, Notification.class);
+                    }
+                }
+
                 observer.notify(msg);
             }
         });
