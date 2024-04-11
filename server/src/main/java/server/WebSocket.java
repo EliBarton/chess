@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import dataAccess.exceptions.DataAccessException;
 import dataAccess.exceptions.InvalidDataException;
 import dataAccess.exceptions.UnauthorizedException;
+import model.GameData;
 import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
@@ -16,10 +17,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -137,7 +135,7 @@ public class WebSocket {
             sendError("game has ended with a checkmate", c);
             return;
         }
-        if (game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(null)){
+        if (game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK) ){
             sendError("game has ended with a stalemate", c);
             return;
         }
@@ -171,11 +169,51 @@ public class WebSocket {
         }
     }
 
-    public void leave(WebSocketSession c, String msg){
+    public void leave(WebSocketSession c, String msg) throws IOException {
+        Leave leave = (Leave) readJson(msg, Leave.class);
+        String myName = gameService.getAuthData().getUsernameByAuth(leave.authToken);
+        leave.setName(myName);
+
+        String whiteUsername = gameService.getGameData().getGame(leave.getGameID()).whiteUsername();
+        if (whiteUsername.equals(myName)){
+            gameService.getGameData().getGame(leave.getGameID()).updateWhiteUsername(null);
+        }
+        String blackUsername = gameService.getGameData().getGame(leave.getGameID()).blackUsername();
+        if (blackUsername.equals(myName)){
+            gameService.getGameData().getGame(leave.getGameID()).updateBlackUsername(null);
+        }
+
+
+        sessions.remove(c);
+        for (Connection connection : connections){
+            if (connection.session.equals(c)){
+                connections.remove(connection);
+                break;
+            }
+        }
+        broadcastMessage(leave.getGameID(), leave.getName() + " has left the game.", leave.authToken);
 
     }
 
-    public void resign(WebSocketSession c, String msg){
+    public void resign(WebSocketSession c, String msg) throws IOException {
+        Resign resign = (Resign) readJson(msg, Resign.class);
+        String myName = gameService.getAuthData().getUsernameByAuth(resign.authToken);
+        resign.setName(myName);
+        try {
+            gameService.updateGame(resign.getGameID(), resign.authToken, null);
+        } catch (UnauthorizedException e) {
+            sendError("invalid", c);
+            return;
+        } catch (InvalidDataException e) {
+            sendError("invalid", c);
+            return;
+        } catch (DataAccessException e) {
+            sendError("invalid", c);
+            return;
+        }
+
+        sendNotification(resign.getGameID(), "you have resigned.", resign.authToken);
+        broadcastMessage(resign.getGameID(), resign.getName() + " has resigned.", resign.authToken);
 
     }
 
@@ -251,10 +289,6 @@ public class WebSocket {
         System.out.println("sent error" + msg);
         var error = new Error(ServerMessage.ServerMessageType.ERROR, msg);
         session.getRemote().sendString(new Gson().toJson(error));
-
-    }
-
-    private void isInGame(String authtoken, int gameID){
 
     }
 
