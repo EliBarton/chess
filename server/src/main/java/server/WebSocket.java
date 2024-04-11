@@ -129,6 +129,32 @@ public class WebSocket {
     public void move(WebSocketSession c, String msg) throws IOException {
         MakeMove makeMove = (MakeMove) readJson(msg, MakeMove.class);
         String myName = gameService.getAuthData().getUsernameByAuth(makeMove.authToken);
+        ChessGame.TeamColor currentTurn = gameService.getGameData().getGame(makeMove.getGameID()).game().getTeamTurn();
+
+        ChessGame game = gameService.getGameData().getGame(makeMove.getGameID()).game();
+
+        if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(null)){
+            sendError("game has ended with a checkmate", c);
+            return;
+        }
+        if (game.isInStalemate(ChessGame.TeamColor.WHITE) || game.isInStalemate(ChessGame.TeamColor.BLACK) || game.isInStalemate(null)){
+            sendError("game has ended with a stalemate", c);
+            return;
+        }
+
+        if (currentTurn == ChessGame.TeamColor.WHITE){
+            String whiteUsername = gameService.getGameData().getGame(makeMove.getGameID()).whiteUsername();
+            if (!whiteUsername.equals(myName)){
+                sendError("It's not your turn", c);
+                return;
+            }
+        }else{
+            String blackUsername = gameService.getGameData().getGame(makeMove.getGameID()).blackUsername();
+            if (!blackUsername.equals(myName)){
+                sendError("It's not your turn", c);
+                return;
+            }
+        }
 
         try {
             gameService.getGameData().getGame(makeMove.getGameID()).game().makeMove(makeMove.getMove());
@@ -137,8 +163,12 @@ public class WebSocket {
             return;
         }
 
-        sendGame(makeMove.getGameID(), makeMove.authToken);
+        updateGame(makeMove.getGameID(), makeMove.authToken);
         broadcastMessage(makeMove.getGameID(), myName + " made a move.", makeMove.authToken);
+        if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(null)){
+            broadcastMessage(makeMove.getGameID(), myName + " has won the game.", makeMove.authToken);
+            sendNotification(makeMove.getGameID(), "you have won the game.", makeMove.authToken);
+        }
     }
 
     public void leave(WebSocketSession c, String msg){
@@ -196,6 +226,16 @@ public class WebSocket {
         }
     }
 
+    private void updateGame(int gameID, String authToken) throws IOException {
+        ChessGame game = gameService.getGameData().getGame(gameID).game();
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, game);
+        for (Connection connection : connections){
+            if (connection.session.isOpen()) {
+                connection.session.getRemote().sendString(new Gson().toJson(loadGame));
+            }
+        }
+    }
+
     private void broadcastMessage(int gameID, String msg, String exceptThisAuthToken) throws IOException {
         var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, msg);
         for (Connection connection : connections){
@@ -211,6 +251,10 @@ public class WebSocket {
         System.out.println("sent error" + msg);
         var error = new Error(ServerMessage.ServerMessageType.ERROR, msg);
         session.getRemote().sendString(new Gson().toJson(error));
+
+    }
+
+    private void isInGame(String authtoken, int gameID){
 
     }
 
