@@ -1,6 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -22,6 +23,7 @@ public class WebsocketCommunicator extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
+                ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
                 System.out.println(message);
             }
         });

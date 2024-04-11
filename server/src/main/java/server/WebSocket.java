@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocket {
     public final HashSet<WebSocketSession> sessions = new HashSet<>();
 
+    public final HashSet<Connection> connections = new HashSet<>();
+
     private final GameService gameService;
 
     public WebSocket(GameService gameService) {
@@ -55,6 +57,8 @@ public class WebSocket {
     public void join(WebSocketSession c, String msg) throws IOException {
         System.out.println("A request to join the game was received: " + msg);
         JoinPlayer joinPlayer = (JoinPlayer) readJson(msg, JoinPlayer.class);
+        Connection connection = new Connection(joinPlayer.getName(), joinPlayer.authToken, c);
+        connections.add(connection);
         sendMessage(joinPlayer.getGameID(), joinPlayer.getName() + " has joined the game.", joinPlayer.authToken);
     }
 
@@ -87,8 +91,18 @@ public class WebSocket {
     }
 
     @OnWebSocketClose
-    public void onClose(Session session){
+    public void onClose(Session session, int number, String message){
         sessions.remove((WebSocketSession) session);
+
+    }
+
+    private Connection getConnection(Session session){
+        for (Connection connection : connections){
+            if (connection.session.equals(session)){
+                return connection;
+            }
+        }
+        return null;
     }
 
     private void sendMessage(int gameID, String msg, String authToken) throws IOException {
