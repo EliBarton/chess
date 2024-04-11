@@ -2,21 +2,23 @@ package ui;
 
 import chess.*;
 import dataAccess.GameAccess;
+import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Scanner;
 
-public class Main {
+public class Main implements ServerMessageObserver {
     public static Scanner reader = new Scanner(System.in);
     public static ServerFacade serverFacade;
 
 
 
-    static {
+    private void init(){
         try {
-            serverFacade = new ServerFacade("localhost:8080");
+            serverFacade = new ServerFacade("localhost:8080", this);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -26,6 +28,7 @@ public class Main {
     private static String auth;
     private static String name = "";
     public static void main(String[] args) {
+        //init();
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
         startMenu();
@@ -324,6 +327,19 @@ public class Main {
         HashSet<ChessMove> pieceMoves = (HashSet<ChessMove>) game.validMoves(piecePos);
 
         gameplayMenu(color, game, pieceMoves);
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case NOTIFICATION -> displayNotification(((Notification) message).getMessage());
+            //case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
+           // case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
+        }
+    }
+
+    private void displayNotification(String message){
+        System.out.println(message + ", The notification worked!");
     }
 
 }

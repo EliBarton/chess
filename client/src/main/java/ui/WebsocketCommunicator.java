@@ -16,7 +16,9 @@ public class WebsocketCommunicator extends Endpoint {
 
     }
     public Session session;
-    public WebsocketCommunicator(String url) throws Exception{
+    private ServerMessageObserver observer;
+    public WebsocketCommunicator(String url, ServerMessageObserver observer) throws Exception{
+        this.observer = observer;
         URI uri = new URI("ws://localhost:8080/connect");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
@@ -24,7 +26,7 @@ public class WebsocketCommunicator extends Endpoint {
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
                 ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
-                System.out.println(message);
+                observer.notify(msg);
             }
         });
     }

@@ -15,12 +15,14 @@ public class ServerFacade {
 
     private final String serverUrl;
     private final String websocketUrl;
+    private final ServerMessageObserver observer;
 
     WebsocketCommunicator ws;
 
-    public ServerFacade(String url) throws Exception {
+    public ServerFacade(String url, ServerMessageObserver observer) throws Exception {
         serverUrl = "http://" + url;
         websocketUrl = "ws://" + url + "/connect";
+        this.observer = observer;
     }
 
     public int createGame(String gameName, String auth) throws IOException, URISyntaxException {
@@ -33,7 +35,7 @@ public class ServerFacade {
 
     public ChessGame joinGame(String auth, String color, int gameID, String name) throws Exception {
         ChessGame game = HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
-        ws = new WebsocketCommunicator(websocketUrl);
+        ws = new WebsocketCommunicator(websocketUrl, observer);
         ws.joinGame(auth, color, gameID, name);
         return game;
     }
