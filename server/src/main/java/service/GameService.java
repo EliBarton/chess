@@ -59,6 +59,10 @@ public class GameService {
         return gameData;
     }
 
+    public AuthAccess getAuthData() {
+        return authData;
+    }
+
     private void checkForUpdateGameExceptions(int id, String authToken, String playerColor)
             throws UnauthorizedException, InvalidDataException, DataAccessException {
         if(!authData.containsAuth(authToken)) {
@@ -69,6 +73,7 @@ public class GameService {
         if (playerColor != null) {
             if (gameData.getGame(id).whiteUsername() != null) {
                 if (playerColor.equals("WHITE")) {
+                    System.out.println("White is already taken");
                     throw new InvalidDataException("White is already taken");
                 }
             } else if (gameData.getGame(id).blackUsername() != null) {

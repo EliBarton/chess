@@ -2,6 +2,7 @@ package ui;
 
 import chess.*;
 import dataAccess.GameAccess;
+import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -161,14 +162,9 @@ public class Client implements ServerMessageObserver{
         int gameID = reader.nextInt();
         System.out.println("Enter the color you want to play as, WHITE or BLACK");
         String color = reader.next();
+
         try{
-            if (color.equals("BLACK")){
-                gameplayMenu(ChessGame.TeamColor.BLACK, serverFacade.joinGame(auth, color, gameID, name), null);
-            } else if (color.equals("WHITE")) {
-                gameplayMenu(ChessGame.TeamColor.WHITE, serverFacade.joinGame(auth, color, gameID, name), null);
-            }else{
-                throw new IOException("Invalid Color");
-            }
+            serverFacade.joinGame(auth, color, gameID, name);
 
         } catch (IOException e) {
             System.out.println("There was an error joining the game: " + e.getMessage());
@@ -186,7 +182,7 @@ public class Client implements ServerMessageObserver{
         System.out.println("Enter the number representing the game you want to observe: ");
         int gameID = reader.nextInt();
         try{
-            gameplayMenu(null, serverFacade.joinGame(auth, "", gameID, name), null);
+            serverFacade.joinGame(auth, "", gameID, name);
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();
@@ -329,7 +325,7 @@ public class Client implements ServerMessageObserver{
         System.out.println(message.getServerMessageType() + ", Message received at client");
         switch (message.getServerMessageType()) {
             case NOTIFICATION -> displayNotification(((Notification) message).getMessage());
-            //case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
+            case ERROR -> displayError(((Error) message).getErrorMessage());
             case LOAD_GAME -> loadGame(((LoadGame) message).getGame());
         }
     }
@@ -340,6 +336,10 @@ public class Client implements ServerMessageObserver{
 
     private void loadGame(ChessGame game){
         gameplayMenu(color, game, null);
+    }
+
+    private void displayError(String errorMessage){
+        System.out.println("Error: " + errorMessage);
     }
 
 }

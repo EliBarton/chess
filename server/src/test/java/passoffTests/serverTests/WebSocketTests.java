@@ -589,6 +589,7 @@ public class WebSocketTests {
         joinRequest.gameID = gameID;
         joinRequest.playerColor = color;
         serverFacade.verifyJoinPlayer(joinRequest, user.authToken);
+        System.out.println(user.user + " joined the game " + gameID);
     }
 
     private Map<String, List<TestModels.TestMessage>> joinPlayer(String sendingUsername, String sendingAuth, int gameID,

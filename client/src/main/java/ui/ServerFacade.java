@@ -33,11 +33,9 @@ public class ServerFacade {
         return HttpCommunicator.listGames(serverUrl, auth);
     }
 
-    public ChessGame joinGame(String auth, String color, int gameID, String name) throws Exception {
-        ChessGame game = HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
+    public void joinGame(String auth, String color, int gameID, String name) throws Exception {
         ws = new WebsocketCommunicator(websocketUrl, observer);
         ws.joinGame(auth, color, gameID, name);
-        return game;
     }
 
     public AuthAccess.AuthResult login(String username, String password) throws Exception {
