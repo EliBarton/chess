@@ -12,6 +12,8 @@ public class Main {
     public static Scanner reader = new Scanner(System.in);
     public static ServerFacade serverFacade;
 
+
+
     static {
         try {
             serverFacade = new ServerFacade("localhost:8080");
@@ -22,6 +24,7 @@ public class Main {
 
 
     private static String auth;
+    private static String name = "";
     public static void main(String[] args) {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
@@ -49,6 +52,7 @@ public class Main {
     private static void loginPrompt(){
         System.out.println("Enter your username: ");
         String username = reader.next();
+        name = username;
         System.out.println("Enter your password: ");
         String password = reader.next();
         // if username or password is invalid, say so
@@ -161,9 +165,9 @@ public class Main {
         String color = reader.next();
         try{
             if (color.equals("BLACK")){
-                gameplayMenu(ChessGame.TeamColor.BLACK, serverFacade.joinGame(auth, color, gameID), null);
+                gameplayMenu(ChessGame.TeamColor.BLACK, serverFacade.joinGame(auth, color, gameID, name), null);
             } else if (color.equals("WHITE")) {
-                gameplayMenu(ChessGame.TeamColor.WHITE, serverFacade.joinGame(auth, color, gameID), null);
+                gameplayMenu(ChessGame.TeamColor.WHITE, serverFacade.joinGame(auth, color, gameID, name), null);
             }else{
                 throw new IOException("Invalid Color");
             }
@@ -184,7 +188,7 @@ public class Main {
         System.out.println("Enter the number representing the game you want to observe: ");
         int gameID = reader.nextInt();
         try{
-            gameplayMenu(null, serverFacade.joinGame(auth, "", gameID), null);
+            gameplayMenu(null, serverFacade.joinGame(auth, "", gameID, name), null);
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();

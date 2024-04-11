@@ -31,10 +31,10 @@ public class ServerFacade {
         return HttpCommunicator.listGames(serverUrl, auth);
     }
 
-    public ChessGame joinGame(String auth, String color, int gameID) throws Exception {
+    public ChessGame joinGame(String auth, String color, int gameID, String name) throws Exception {
         ChessGame game = HttpCommunicator.joinGame(serverUrl, auth, color, gameID);
         ws = new WebsocketCommunicator(websocketUrl);
-        ws.joinGame(auth, color, gameID);
+        ws.joinGame(auth, color, gameID, name);
         return game;
     }
 

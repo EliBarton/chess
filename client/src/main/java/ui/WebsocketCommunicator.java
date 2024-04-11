@@ -31,8 +31,8 @@ public class WebsocketCommunicator extends Endpoint {
         this.session.getBasicRemote().sendText(new Gson().toJson(msg));
     }
 
-    public void joinGame(String auth, String color, int gameID) throws Exception {
-        UserGameCommand joinMessage = new JoinPlayer(auth, gameID, color);
+    public void joinGame(String auth, String color, int gameID, String name) throws Exception {
+        UserGameCommand joinMessage = new JoinPlayer(auth, gameID, color, name);
         joinMessage.setCommandType(JOIN_PLAYER);
         send(joinMessage);
     }

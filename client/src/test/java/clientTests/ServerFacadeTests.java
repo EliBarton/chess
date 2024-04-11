@@ -201,7 +201,7 @@ public class ServerFacadeTests {
             serverFacade = new ServerFacade("http://localhost:" + port);
             AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
             int id = serverFacade.createGame("Test Game", authResult.authToken());
-            Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id));
+            Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id, "Testuser1"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {
@@ -220,7 +220,7 @@ public class ServerFacadeTests {
                 AuthAccess.AuthResult authResult = serverFacade.login("Testuser1", "Testpassword");
                 int id = serverFacade.createGame("Test Game", authResult.authToken());
                 serverFacade.logout(authResult.authToken());
-                Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id));
+                Assertions.assertNotNull(serverFacade.joinGame(authResult.authToken(), "WHITE", id, "Testuser1"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (URISyntaxException e) {
