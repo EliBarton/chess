@@ -1,8 +1,6 @@
 package ui;
 
 import chess.ChessGame;
-import dataAccess.AuthAccess;
-import dataAccess.GameAccess;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -29,7 +27,7 @@ public class ServerFacade {
         return HttpCommunicator.createGame(serverUrl, gameName, auth);
     }
 
-    public GameAccess.ListGamesResult listGames(String auth) throws URISyntaxException, IOException {
+    public ListGamesResult listGames(String auth) throws URISyntaxException, IOException {
         return HttpCommunicator.listGames(serverUrl, auth);
     }
 
@@ -38,7 +36,7 @@ public class ServerFacade {
         ws.joinGame(auth, color, gameID, name);
     }
 
-    public AuthAccess.AuthResult login(String username, String password) throws Exception {
+    public AuthResult login(String username, String password) throws Exception {
         return HttpCommunicator.login(serverUrl, username, password);
     }
 
@@ -46,7 +44,7 @@ public class ServerFacade {
         HttpCommunicator.logout(serverUrl, auth);
     }
 
-    public AuthAccess.AuthResult register(String username, String password, String email) throws IOException, URISyntaxException {
+    public AuthResult register(String username, String password, String email) throws IOException, URISyntaxException {
         return HttpCommunicator.register(serverUrl, username, password, email);
     }
 

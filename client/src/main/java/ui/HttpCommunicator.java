@@ -2,9 +2,6 @@ package ui;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import dataAccess.AuthAccess;
-import dataAccess.GameAccess;
-import dataAccess.UserAccess;
 import model.UserData;
 
 import java.io.IOException;
@@ -14,8 +11,20 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Map;
+record CreateGameRequest(String gameName){}
+record GameIdResult(int gameID){}
+record JoinGameRequest(String playerColor, int gameID){}
 
+record SerializedGameData(int gameID, String whiteUsername, String blackUsername,
+                          String gameName, String game){}
+
+record ListGamesResult(String message, ArrayList<SerializedGameData> games){}
+
+
+record AuthResult(String username, String authToken){}
+record LoginRequest(String username, String password) {}
 public class HttpCommunicator {
 
     public static int createGame(String serverUrl, String gameName, String auth) throws IOException, URISyntaxException {
@@ -25,7 +34,7 @@ public class HttpCommunicator {
         http.setDoOutput(true);
         http.addRequestProperty("Content-Type", "application/json");
         http.addRequestProperty("Authorization", auth);
-        GameAccess.CreateGameRequest createGameRequest = new GameAccess.CreateGameRequest(gameName);
+        CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
 
         String reqData = new Gson().toJson(createGameRequest);
         try (OutputStream reqBody = http.getOutputStream()) {
@@ -39,12 +48,12 @@ public class HttpCommunicator {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            GameAccess.GameIdResult result = new Gson().fromJson(inputStreamReader, GameAccess.GameIdResult.class);
+            GameIdResult result = new Gson().fromJson(inputStreamReader, GameIdResult.class);
             return result.gameID();
         }
     }
 
-    public static GameAccess.ListGamesResult listGames(String serverUrl, String auth) throws URISyntaxException, IOException {
+    public static ListGamesResult listGames(String serverUrl, String auth) throws URISyntaxException, IOException {
         URI uri = new URI(serverUrl + "/game");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod("GET");
@@ -59,7 +68,7 @@ public class HttpCommunicator {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            return new Gson().fromJson(inputStreamReader, GameAccess.ListGamesResult.class);
+            return new Gson().fromJson(inputStreamReader, ListGamesResult.class);
         }
     }
 
@@ -73,7 +82,7 @@ public class HttpCommunicator {
         http.addRequestProperty("Content-Type", "application/json");
         http.addRequestProperty("Authorization", auth);
 
-        GameAccess.JoinGameRequest joinGameRequest = new GameAccess.JoinGameRequest(color, gameID);
+        JoinGameRequest joinGameRequest = new JoinGameRequest(color, gameID);
         String reqData = gson.toJson(joinGameRequest);
         try (OutputStream reqBody = http.getOutputStream()) {
             reqBody.write(reqData.getBytes());
@@ -89,7 +98,7 @@ public class HttpCommunicator {
         }
     }
 
-    public static AuthAccess.AuthResult login(String serverUrl, String username, String password) throws IOException, URISyntaxException {
+    public static AuthResult login(String serverUrl, String username, String password) throws IOException, URISyntaxException {
         URI uri = new URI(serverUrl + "/session");
         Gson gson = new Gson();
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
@@ -97,7 +106,7 @@ public class HttpCommunicator {
         http.setDoOutput(true);
         http.addRequestProperty("Content-Type", "application/json");
 
-        UserAccess.LoginRequest loginRequest = new UserAccess.LoginRequest(username, password);
+        LoginRequest loginRequest = new LoginRequest(username, password);
         String reqData = gson.toJson(loginRequest);
         try (OutputStream reqBody = http.getOutputStream()) {
             reqBody.write(reqData.getBytes());
@@ -108,7 +117,7 @@ public class HttpCommunicator {
         // Output the response body
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-            AuthAccess.AuthResult auth = gson.fromJson(inputStreamReader, AuthAccess.AuthResult.class);
+            AuthResult auth = gson.fromJson(inputStreamReader, AuthResult.class);
             return auth;
         }
     }
@@ -131,7 +140,7 @@ public class HttpCommunicator {
         }
     }
 
-    public static AuthAccess.AuthResult register(String serverUrl, String username, String password, String email) throws IOException, URISyntaxException {
+    public static AuthResult register(String serverUrl, String username, String password, String email) throws IOException, URISyntaxException {
         Gson gson = new Gson();
         URI uri = new URI(serverUrl + "/user");
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
@@ -150,7 +159,7 @@ public class HttpCommunicator {
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             //System.out.println(gson.fromJson(inputStreamReader, Map.class));
-            AuthAccess.AuthResult auth = gson.fromJson(gson.fromJson(inputStreamReader, Map.class).toString(), AuthAccess.AuthResult.class);
+            AuthResult auth = gson.fromJson(gson.fromJson(inputStreamReader, Map.class).toString(), AuthResult.class);
             return auth;
         }
     }
@@ -169,6 +178,8 @@ public class HttpCommunicator {
         try (InputStream respBody = http.getInputStream()) {
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
         }
+
+
     }
 
 }

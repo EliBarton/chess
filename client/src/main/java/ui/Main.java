@@ -1,14 +1,8 @@
 package ui;
 
-import chess.*;
-import dataAccess.GameAccess;
-import webSocketMessages.serverMessages.Notification;
-import webSocketMessages.serverMessages.ServerMessage;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Scanner;
+import chess.ChessGame;
+import chess.ChessPiece;
 
 public class Main {
     public static void main(String[] args) {

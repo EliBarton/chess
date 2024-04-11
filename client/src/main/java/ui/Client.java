@@ -1,7 +1,6 @@
 package ui;
 
 import chess.*;
-import dataAccess.GameAccess;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
@@ -141,8 +140,8 @@ public class Client implements ServerMessageObserver{
     private static void listGamesPrompt(){
         System.out.println("Current games:");
         try {
-            GameAccess.ListGamesResult result = serverFacade.listGames(auth);
-            for (GameAccess.SerializedGameData game : result.games()){
+            ListGamesResult result = serverFacade.listGames(auth);
+            for (SerializedGameData game : result.games()){
                 System.out.println(game.gameID() + " - " + game.gameName());
                 System.out.println("White: " + game.whiteUsername() + "   Black: " + game.blackUsername());
                 System.out.println();
