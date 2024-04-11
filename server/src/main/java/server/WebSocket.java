@@ -7,8 +7,12 @@ import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.common.WebSocketSession;
 import service.GameService;
 import spark.Spark;
+import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,7 +29,7 @@ public class WebSocket {
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) throws Exception {
         //System.out.printf("Received: %s", msg);
-        UserGameCommand command = readJson(msg);
+        UserGameCommand command = readJson(msg, UserGameCommand.class);
 
         var conn = getSession(session);
         if (conn != null) {
@@ -43,14 +47,15 @@ public class WebSocket {
     }
 
 
-    private UserGameCommand readJson(String msg) {
+    private UserGameCommand readJson(String msg, Class c) {
         Gson gson = new Gson();
-        return gson.fromJson(msg, UserGameCommand.class);
+        return (UserGameCommand) gson.fromJson(msg, c);
     }
 
-    public void join(WebSocketSession c, String msg){
+    public void join(WebSocketSession c, String msg) throws IOException {
         System.out.println("A request to join the game was received: " + msg);
-
+        JoinPlayer joinPlayer = (JoinPlayer) readJson(msg, JoinPlayer.class);
+        sendMessage(joinPlayer.getGameID(), joinPlayer.getName() + " has joined the game.", joinPlayer.authToken);
     }
 
     public void observe(WebSocketSession c, String msg){
@@ -81,5 +86,20 @@ public class WebSocket {
         sessions.add((WebSocketSession) session);
     }
 
+    @OnWebSocketClose
+    public void onClose(Session session){
+        sessions.remove((WebSocketSession) session);
+    }
+
+    private void sendMessage(int gameID, String msg, String authToken) throws IOException {
+        var notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, msg);
+        for (Session session : sessions){
+            session.getRemote().sendString(new Gson().toJson(notification));
+        }
+    }
+
+    private void broadcastMessage(int gameID, String msg, String exceptThisAuthToken){
+
+    }
 
 }
