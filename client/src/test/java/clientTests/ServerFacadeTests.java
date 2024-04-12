@@ -1,8 +1,6 @@
 package clientTests;
 
 import chess.*;
-import dataAccess.AuthAccess;
-import dataAccess.exceptions.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.*;
@@ -10,7 +8,6 @@ import ui.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 
 public class ServerFacadeTests {

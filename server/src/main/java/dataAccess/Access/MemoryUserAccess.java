@@ -1,9 +1,9 @@
-package dataAccess;
+package dataAccess.Access;
 
+import dataAccess.exceptions.AuthAccess;
 import model.UserData;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class MemoryUserAccess implements UserAccess {
     ArrayList<UserData> users = new ArrayList<>();

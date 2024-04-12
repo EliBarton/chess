@@ -1,10 +1,10 @@
 package service;
 
 
-import dataAccess.AuthAccess;
+import dataAccess.exceptions.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import dataAccess.exceptions.InvalidDataException;
-import dataAccess.UserAccess;
+import dataAccess.Access.UserAccess;
 import model.UserData;
 
 public class RegisterService {

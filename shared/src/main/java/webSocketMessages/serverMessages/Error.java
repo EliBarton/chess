@@ -10,8 +10,4 @@ public class Error extends ServerMessage{
     public String getErrorMessage() {
         return errorMessage;
     }
-
-    public void setErrorMessage(String message) {
-        this.errorMessage = message;
-    }
 }

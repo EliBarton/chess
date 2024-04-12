@@ -1,9 +1,8 @@
 package service;
 
-import dataAccess.AuthAccess;
-import dataAccess.GameAccess;
-import dataAccess.MemoryUserAccess;
-import dataAccess.UserAccess;
+import dataAccess.exceptions.AuthAccess;
+import dataAccess.Access.GameAccess;
+import dataAccess.Access.UserAccess;
 
 public class ClearService {
     private final UserAccess userData;

@@ -1,7 +1,8 @@
-package dataAccess;
+package dataAccess.Access;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataAccess.exceptions.AuthAccess;
 import model.GameData;
 
 import java.util.ArrayList;

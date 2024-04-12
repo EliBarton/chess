@@ -1,7 +1,8 @@
 package service;
 
 import com.google.gson.Gson;
-import dataAccess.*;
+import dataAccess.Access.GameAccess;
+import dataAccess.exceptions.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import dataAccess.exceptions.InvalidDataException;
 import dataAccess.exceptions.UnauthorizedException;
