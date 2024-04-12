@@ -38,6 +38,10 @@ public class ServerFacade {
 
     }
 
+    public void makeMove(){
+        //ws.
+    }
+
     public AuthResult login(String username, String password) throws Exception {
         return HttpCommunicator.login(serverUrl, username, password);
     }

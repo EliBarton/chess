@@ -20,7 +20,7 @@ public class WebsocketCommunicator extends Endpoint {
 
     }
     public Session session;
-    private ServerMessageObserver observer;
+    private final ServerMessageObserver observer;
     public WebsocketCommunicator(String url, ServerMessageObserver observer) throws Exception{
         this.observer = observer;
         URI uri = new URI("ws://localhost:8080/connect");

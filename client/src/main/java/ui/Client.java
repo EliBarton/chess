@@ -28,7 +28,7 @@ public class Client implements ServerMessageObserver{
     private static String auth;
     private static String name = "";
 
-    private static ChessGame.TeamColor color = null;
+    private static final ChessGame.TeamColor color = null;
 
     public static void startMenu(){
         System.out.println("\n");
@@ -258,11 +258,7 @@ public class Client implements ServerMessageObserver{
         ChessMove move = checkForPromotion(new ChessMove(startPos, endPos, null), game);
 
         try {
-            if (game.validMoves(startPos) != null && game.validMoves(startPos).contains(move)){
-                game.makeMove(move);
-            } else{
-                throw new InvalidMoveException();
-            }
+            throw new InvalidMoveException();
         } catch (InvalidMoveException e) {
             System.out.println("Error: Move Invalid. Try again.");
         }

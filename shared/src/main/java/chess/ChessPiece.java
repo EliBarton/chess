@@ -299,7 +299,6 @@ public class ChessPiece implements Cloneable {
         output.add(new ChessMove(startPos, targetPos, PieceType.QUEEN));
         output.add(new ChessMove(startPos, targetPos, PieceType.ROOK));
         output.add(new ChessMove(startPos, targetPos, PieceType.KNIGHT));
-        return;
     }
 
 
