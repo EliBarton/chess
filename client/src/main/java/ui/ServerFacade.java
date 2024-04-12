@@ -51,11 +51,19 @@ public class ServerFacade {
         HttpCommunicator.logout(serverUrl, auth);
     }
 
+    public void leaveGame(String auth, int gameID, String name) throws Exception {
+        ws.leaveGame(auth, gameID, name);
+    }
+
     public AuthResult register(String username, String password, String email) throws IOException, URISyntaxException {
         return HttpCommunicator.register(serverUrl, username, password, email);
     }
 
     public void clear() throws IOException, URISyntaxException {
         HttpCommunicator.clear(serverUrl);
+    }
+
+    public void resign(String auth, int gameID, String name) throws Exception {
+        ws.resign(auth, gameID, name);
     }
 }

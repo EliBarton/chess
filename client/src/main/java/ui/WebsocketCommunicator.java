@@ -6,10 +6,7 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.MakeMove;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.userCommands.*;
 
 import javax.websocket.*;
 import java.net.URI;
@@ -53,7 +50,6 @@ public class WebsocketCommunicator extends Endpoint {
     }
 
     public void send(UserGameCommand msg) throws Exception {
-        System.out.println("message sent");
         this.session.getBasicRemote().sendText(new Gson().toJson(msg));
     }
 
@@ -75,5 +71,16 @@ public class WebsocketCommunicator extends Endpoint {
         send(moveMessage);
     }
 
+    public void leaveGame(String auth, int gameID, String name) throws Exception {
+        UserGameCommand leaveMessage = new Leave(auth, gameID, name);
+        leaveMessage.setCommandType(LEAVE);
+        send(leaveMessage);
+    }
 
+
+    public void resign(String auth, int gameID, String name) throws Exception {
+        UserGameCommand resignMessage = new Leave(auth, gameID, name);
+        resignMessage.setCommandType(RESIGN);
+        send(resignMessage);
+    }
 }

@@ -20,10 +20,10 @@ public class GameBoard {
     public static void draw(String color, ChessBoard board,  HashSet<ChessMove> highlightedMoves){
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        if (color.equals("BLACK")) {
-            drawBlack(out, board, highlightedMoves);
-        }else{
+        if (color == null || color.equals("WHITE")) {
             drawWhite(out, board, highlightedMoves);
+        }else{
+            drawBlack(out, board, highlightedMoves);
         }
         System.out.println();
 

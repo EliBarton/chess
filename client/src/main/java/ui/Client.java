@@ -111,16 +111,21 @@ public class Client implements ServerMessageObserver{
         System.out.println("5. Logout");
         System.out.println("6. Help");
         System.out.println("\n");
-        int input = reader.nextInt();
+        try {
+            int input = reader.nextInt();
+            switch (input){
+                case 1 -> createGamePrompt();
+                case 2 -> listGamesPrompt();
+                case 3 -> joinGamePrompt();
+                case 4 -> joinGameObserverPrompt();
+                case 5 -> logoutPrompt();
+                case 6 -> printHelpPostLogin();
+            }
+        }catch (Exception ignored){
 
-        switch (input){
-            case 1 -> createGamePrompt();
-            case 2 -> listGamesPrompt();
-            case 3 -> joinGamePrompt();
-            case 4 -> joinGameObserverPrompt();
-            case 5 -> logoutPrompt();
-            case 6 -> printHelpPostLogin();
         }
+
+
     }
 
     private static void createGamePrompt(){
@@ -223,8 +228,7 @@ public class Client implements ServerMessageObserver{
         }
     }
 
-    private static void gameplayMenu(String color, ChessGame game, HashSet<ChessMove> highlightedMoves){
-
+    private static void gameplayMenu(ChessGame game, HashSet<ChessMove> highlightedMoves){
         GameBoard.draw(color, game.getBoard(), highlightedMoves);
         System.out.println("1. Redraw Board");
         System.out.println("2. Leave Game");
@@ -250,15 +254,14 @@ public class Client implements ServerMessageObserver{
 
                 switch (input) {
                     case 0 -> {
-                        return;
                     }
-                    case 1 -> gameplayMenu(color, game, null);
+                    case 1 -> gameplayMenu(game, null);
                     case 2 -> leaveGame();
                     case 3 -> makeMovePrompt(game);
-                    case 4 -> gameplayMenu(color, game, null);
-                    case 5 -> highlightMovesPrompt(game);
+                    case 4 -> resign();
+                    case 5 -> highlightMovesPrompt(game).start();
                     case 6 -> printHelpGameplay();
-                    default -> gameplayMenu(color, game, null);
+                    default -> gameplayMenu(game, null);
                 }
             }
         };
@@ -271,8 +274,21 @@ public class Client implements ServerMessageObserver{
     }
 
     private static void leaveGame(){
+        try {
+            serverFacade.leaveGame(auth, gameID, name);
+        } catch (Exception e) {
+            System.out.println("error leaving game");
+        }
         System.out.println("You have left the game");
         postLoginMenu();
+    }
+
+    private static void resign(){
+        try {
+            serverFacade.resign(auth, gameID, name);
+        } catch (Exception e) {
+            System.out.println("error resigning game");
+        }
     }
 
     private static void makeMovePrompt(ChessGame game){
@@ -342,14 +358,27 @@ public class Client implements ServerMessageObserver{
         return newMove;
     }
 
-    private static void highlightMovesPrompt(ChessGame game){
-        System.out.println("Enter the position of the piece to highlight the moves of:");
-        String selectedPieceInput = reader.next();
-        ChessPosition piecePos = convertToChessPosition(selectedPieceInput);
+    private static Thread highlightMovesPrompt(ChessGame game){
+        Runnable getInput = () -> {
+            System.out.println("Enter the position of the piece to highlight the moves of:");
+            while (true) {
+                try {
+                    if (reader.hasNext()) {
+                        String selectedPieceInput = reader.next();
+                        ChessPosition piecePos = convertToChessPosition(selectedPieceInput);
 
-        HashSet<ChessMove> pieceMoves = (HashSet<ChessMove>) game.validMoves(piecePos);
+                        HashSet<ChessMove> pieceMoves = (HashSet<ChessMove>) game.validMoves(piecePos);
 
-        gameplayMenu(color, game, pieceMoves);
+                        gameplayMenu(game, pieceMoves);
+                        return;
+                    }
+                } catch (Exception ignored){
+
+                }
+            }
+        };
+        Thread inputThread = new Thread(getInput);
+        return inputThread;
     }
 
     @Override
@@ -359,6 +388,7 @@ public class Client implements ServerMessageObserver{
             case NOTIFICATION -> displayNotification(((Notification) message).getMessage());
             case ERROR -> displayError(((Error) message).getErrorMessage());
             case LOAD_GAME -> loadGame(((LoadGame) message).getGame());
+            default -> System.out.println("error receiving message");
         }
 
     }
@@ -368,7 +398,7 @@ public class Client implements ServerMessageObserver{
     }
 
     private void loadGame(ChessGame game){
-        gameplayMenu(color, game, null);
+        gameplayMenu(game, null);
     }
 
     private void displayError(String errorMessage){
