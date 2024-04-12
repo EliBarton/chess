@@ -200,6 +200,7 @@ public class WebSocket {
         String myName = gameService.getAuthData().getUsernameByAuth(resign.authToken);
         resign.setName(myName);
         try {
+            gameService.getGameData().getGame(resign.getGameID()).game().setTeamTurn(null);
             gameService.updateGame(resign.getGameID(), resign.authToken, null);
         } catch (UnauthorizedException e) {
             sendError("invalid", c);

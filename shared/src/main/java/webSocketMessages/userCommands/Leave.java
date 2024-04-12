@@ -9,6 +9,14 @@ public class Leave extends UserGameCommand {
         this.gameID = gameID;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getGameID() {
         return gameID;
     }

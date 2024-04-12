@@ -1,9 +1,7 @@
-package dataAccess.Access;
+package dataAccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import dataAccess.exceptions.AuthAccess;
-import dataAccess.DatabaseManager;
 import dataAccess.exceptions.DataAccessException;
 import model.GameData;
 

@@ -1,4 +1,4 @@
-package dataAccess.exceptions;
+package dataAccess;
 
 import model.UserData;
 

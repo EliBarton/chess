@@ -1,10 +1,10 @@
-package dataAccess.Access;
+package dataAccess;
 
-import dataAccess.exceptions.AuthAccess;
-import dataAccess.DatabaseManager;
 import dataAccess.exceptions.DataAccessException;
+import dataAccess.exceptions.InvalidDataException;
 import model.UserData;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class SqlUserAccess implements UserAccess{

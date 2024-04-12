@@ -1,14 +1,13 @@
-package dataAccess.Access;
+package dataAccess;
 
-import dataAccess.exceptions.AuthAccess;
-import dataAccess.DatabaseManager;
 import dataAccess.exceptions.DataAccessException;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import static dataAccess.DatabaseManager.*;
 
-public class SqlAuthAccess implements AuthAccess {
+public class SqlAuthAccess implements AuthAccess{
 
     public SqlAuthAccess() throws DataAccessException {
         configureDatabase();

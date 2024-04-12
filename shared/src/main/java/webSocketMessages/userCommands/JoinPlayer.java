@@ -14,6 +14,9 @@ public class JoinPlayer extends UserGameCommand {
         this.name = name;
     }
 
+    public int getGameID() {
+        return gameID;
+    }
 
     public void setGameID(int gameID) {
         this.gameID = gameID;

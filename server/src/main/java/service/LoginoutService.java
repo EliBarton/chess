@@ -1,9 +1,9 @@
 package service;
 
-import dataAccess.exceptions.AuthAccess;
+import dataAccess.AuthAccess;
 import dataAccess.exceptions.DataAccessException;
 import dataAccess.exceptions.InvalidDataException;
-import dataAccess.Access.UserAccess;
+import dataAccess.UserAccess;
 
 public class LoginoutService {
     private final AuthAccess authData;

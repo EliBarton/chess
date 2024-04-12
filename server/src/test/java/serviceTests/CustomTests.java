@@ -2,8 +2,7 @@ package serviceTests;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import dataAccess.Access.*;
-import dataAccess.exceptions.AuthAccess;
+import dataAccess.*;
 import dataAccess.exceptions.DataAccessException;
 import dataAccess.exceptions.InvalidDataException;
 import dataAccess.exceptions.UnauthorizedException;

@@ -1,8 +1,9 @@
-package dataAccess.Access;
+package dataAccess;
 
-import dataAccess.exceptions.AuthAccess;
+import model.UserData;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 public class MemoryAuthAccess implements AuthAccess {

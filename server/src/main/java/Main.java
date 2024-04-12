@@ -1,4 +1,5 @@
 import chess.*;
+import dataAccess.MemoryUserAccess;
 import server.Server;
 
 import java.util.Scanner;

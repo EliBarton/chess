@@ -1,6 +1,5 @@
-package dataAccess.Access;
+package dataAccess;
 
-import dataAccess.exceptions.AuthAccess;
 import model.UserData;
 
 public interface UserAccess {
