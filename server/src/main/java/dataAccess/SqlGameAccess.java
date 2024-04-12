@@ -60,6 +60,17 @@ public class SqlGameAccess implements GameAccess {
         return null;
     }
 
+    public void setGame(int id, ChessGame game) {
+        Gson gson = new Gson();
+        String serializedGame = gson.toJson(game);
+        var statement = """
+            UPDATE game
+            set chess_game = '""" + serializedGame + """
+            ' WHERE game_id = '
+            """ + id + "'";
+        DatabaseManager.updateDatabase(statement);
+    }
+
     @Override
     public ArrayList<SerializedGameData> listGames() {
         Gson gson = new Gson();

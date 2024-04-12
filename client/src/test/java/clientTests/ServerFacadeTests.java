@@ -59,7 +59,7 @@ public class ServerFacadeTests {
     public void drawRow(){
         ChessBoard board = new ChessBoard();
         board.resetBoard();
-        GameBoard.draw(ChessGame.TeamColor.WHITE, board, null);
+        GameBoard.draw("WHITE", board, null);
         System.out.println(board.getPiece(new ChessPosition(1, 1)));
     }
 
@@ -67,7 +67,7 @@ public class ServerFacadeTests {
     public void gameTest(){
         ChessBoard board = new ChessBoard();
         board.resetBoard();
-        GameBoard.draw(ChessGame.TeamColor.WHITE, board, null);
+        GameBoard.draw("WHITE", board, null);
         ChessPosition startPos = new ChessPosition(2, 1);
         System.out.println(board.getPiece(startPos));
         try {
@@ -75,7 +75,7 @@ public class ServerFacadeTests {
         } catch (InvalidMoveException e) {
             throw new RuntimeException(e);
         }
-        GameBoard.draw(ChessGame.TeamColor.WHITE, board, null);
+        GameBoard.draw("WHITE", board, null);
     }
 
     @Test

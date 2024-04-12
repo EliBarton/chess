@@ -148,6 +148,10 @@ public class WebSocket {
             }
         }else{
             String blackUsername = gameService.getGameData().getGame(makeMove.getGameID()).blackUsername();
+            if (blackUsername == null){
+                sendError("Wait for another player to join", c);
+                return;
+            }
             if (!blackUsername.equals(myName)){
                 sendError("It's not your turn", c);
                 return;
@@ -155,14 +159,16 @@ public class WebSocket {
         }
 
         try {
-            gameService.getGameData().getGame(makeMove.getGameID()).game().makeMove(makeMove.getMove());
+            ChessGame moveGame = gameService.getGameData().getGame(makeMove.getGameID()).game();
+            moveGame.makeMove(makeMove.getMove());
+            gameService.getGameData().setGame(makeMove.getGameID(), moveGame);
+            updateGame(makeMove.getGameID(), makeMove.authToken);
+            broadcastMessage(makeMove.getGameID(), myName + " made a move.", makeMove.authToken);
         } catch (InvalidMoveException e) {
             sendError("invalid move", c);
             return;
         }
 
-        updateGame(makeMove.getGameID(), makeMove.authToken);
-        broadcastMessage(makeMove.getGameID(), myName + " made a move.", makeMove.authToken);
         if (game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK) || game.isInCheckmate(null)){
             broadcastMessage(makeMove.getGameID(), myName + " has won the game.", makeMove.authToken);
             sendNotification(makeMove.getGameID(), "you have won the game.", makeMove.authToken);

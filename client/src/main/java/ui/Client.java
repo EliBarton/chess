@@ -16,6 +16,8 @@ public class Client implements ServerMessageObserver{
     public static ServerFacade serverFacade;
 
     private static boolean awaitingMessage = false;
+    private static boolean awaitingInput = false;
+
 
     public void init(){
         try {
@@ -27,8 +29,9 @@ public class Client implements ServerMessageObserver{
 
     private static String auth;
     private static String name = "";
+    private static int gameID = 0;
 
-    private static final ChessGame.TeamColor color = null;
+    private static String color = null;
 
     public static void startMenu(){
         System.out.println("\n");
@@ -158,18 +161,13 @@ public class Client implements ServerMessageObserver{
 
     private static void joinGamePrompt(){
         System.out.println("Enter the number representing the game you want to join: ");
-        int gameID = reader.nextInt();
+        gameID = reader.nextInt();
         System.out.println("Enter the color you want to play as, WHITE or BLACK");
-        String color = reader.next();
+        color = reader.next();
 
         try{
             serverFacade.joinGame(auth, color, gameID, name);
-            awaitingMessage = true;
-            while (awaitingMessage){
-                if (!awaitingMessage){
-                    break;
-                }
-            }
+            awaitMessage();
         } catch (IOException e) {
             System.out.println("There was an error joining the game: " + e.getMessage());
             postLoginMenu();
@@ -183,12 +181,22 @@ public class Client implements ServerMessageObserver{
 
     }
 
+    private static void awaitMessage() {
+        awaitingMessage = true;
+        while (awaitingMessage){
+            if (!awaitingMessage){
+                break;
+            }
+        }
+    }
+
 
     private static void joinGameObserverPrompt(){
         System.out.println("Enter the number representing the game you want to observe: ");
-        int gameID = reader.nextInt();
+        gameID = reader.nextInt();
         try{
             serverFacade.joinGame(auth, "", gameID, name);
+            awaitMessage();
         } catch (IOException e) {
             System.out.println("There was an error observing the game: " + e.getMessage());
             postLoginMenu();
@@ -215,7 +223,7 @@ public class Client implements ServerMessageObserver{
         }
     }
 
-    private static void gameplayMenu(ChessGame.TeamColor color, ChessGame game, HashSet<ChessMove> highlightedMoves){
+    private static void gameplayMenu(String color, ChessGame game, HashSet<ChessMove> highlightedMoves){
 
         GameBoard.draw(color, game.getBoard(), highlightedMoves);
         System.out.println("1. Redraw Board");
@@ -225,21 +233,41 @@ public class Client implements ServerMessageObserver{
         System.out.println("5. Highlight Legal Moves");
         System.out.println("6. Help");
         System.out.println("\n");
-        int input = reader.nextInt();
 
-        switch (input){
-            case 1 -> gameplayMenu(color, game, null);
-            case 2 -> leaveGame();
-            case 3 -> makeMovePrompt(color, game);
-            case 4 -> gameplayMenu(color, game, null);
-            case 5 -> highlightMovesPrompt(color, game);
-            case 6 -> printHelpGameplay(color, game);
-        }
+        Thread inputThread = getThread(color, game);
+        inputThread.start();
     }
 
-    private static void printHelpGameplay(ChessGame.TeamColor color, ChessGame game){
-        System.out.println("Here are the options; type the number:");
-        gameplayMenu(color, game, null);
+    private static Thread getThread(String color, ChessGame game) {
+        Runnable getInput = () -> {
+            while (true) {
+                int input = 0;
+                try{
+                    input = reader.nextInt();
+                }catch (Exception ignored){
+
+                }
+
+                switch (input) {
+                    case 0 -> {
+                        return;
+                    }
+                    case 1 -> gameplayMenu(color, game, null);
+                    case 2 -> leaveGame();
+                    case 3 -> makeMovePrompt(game);
+                    case 4 -> gameplayMenu(color, game, null);
+                    case 5 -> highlightMovesPrompt(game);
+                    case 6 -> printHelpGameplay();
+                    default -> gameplayMenu(color, game, null);
+                }
+            }
+        };
+        Thread inputThread = new Thread(getInput);
+        return inputThread;
+    }
+
+    private static void printHelpGameplay(){
+        System.out.println("There are several options to choose from. Type the number and press enter.:");
     }
 
     private static void leaveGame(){
@@ -247,7 +275,7 @@ public class Client implements ServerMessageObserver{
         postLoginMenu();
     }
 
-    private static void makeMovePrompt(ChessGame.TeamColor color, ChessGame game){
+    private static void makeMovePrompt(ChessGame game){
         System.out.println("Enter the position of the piece that you want to move:");
         String selectedPieceInput = reader.next();
         ChessPosition startPos = convertToChessPosition(selectedPieceInput);
@@ -257,12 +285,14 @@ public class Client implements ServerMessageObserver{
         ChessPosition endPos = convertToChessPosition(moveToInput);
         ChessMove move = checkForPromotion(new ChessMove(startPos, endPos, null), game);
 
+
         try {
-            throw new InvalidMoveException();
+            serverFacade.makeMove(auth, gameID, move);
         } catch (InvalidMoveException e) {
             System.out.println("Error: Move Invalid. Try again.");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        gameplayMenu(color, game, null);
     }
 
     // Converts the user's input into a Chess Position
@@ -312,7 +342,7 @@ public class Client implements ServerMessageObserver{
         return newMove;
     }
 
-    private static void highlightMovesPrompt(ChessGame.TeamColor color, ChessGame game){
+    private static void highlightMovesPrompt(ChessGame game){
         System.out.println("Enter the position of the piece to highlight the moves of:");
         String selectedPieceInput = reader.next();
         ChessPosition piecePos = convertToChessPosition(selectedPieceInput);
@@ -324,18 +354,17 @@ public class Client implements ServerMessageObserver{
 
     @Override
     public void notify(ServerMessage message) {
-        System.out.println(message.getServerMessageType() + ", Message received at client");
-
+        awaitingMessage = false;
         switch (message.getServerMessageType()) {
             case NOTIFICATION -> displayNotification(((Notification) message).getMessage());
             case ERROR -> displayError(((Error) message).getErrorMessage());
             case LOAD_GAME -> loadGame(((LoadGame) message).getGame());
         }
-        awaitingMessage = false;
+
     }
 
     private void displayNotification(String message){
-        System.out.println(message + ", The notification worked!");
+        System.out.println(message);
     }
 
     private void loadGame(ChessGame game){

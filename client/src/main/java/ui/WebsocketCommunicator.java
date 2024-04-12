@@ -1,18 +1,21 @@
 package ui;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
 import java.net.URI;
 import java.util.logging.Logger;
 
-import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
+import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
 
 public class WebsocketCommunicator extends Endpoint {
     @Override
@@ -50,13 +53,26 @@ public class WebsocketCommunicator extends Endpoint {
     }
 
     public void send(UserGameCommand msg) throws Exception {
+        System.out.println("message sent");
         this.session.getBasicRemote().sendText(new Gson().toJson(msg));
     }
 
     public void joinGame(String auth, String color, int gameID, String name) throws Exception {
-        UserGameCommand joinMessage = new JoinPlayer(auth, gameID, color, name);
-        joinMessage.setCommandType(JOIN_PLAYER);
-        send(joinMessage);
+        if (color.isEmpty()){
+            UserGameCommand observeMessage = new JoinObserver(auth, gameID, name);
+            observeMessage.setCommandType(JOIN_OBSERVER);
+            send(observeMessage);
+        }else {
+            UserGameCommand joinMessage = new JoinPlayer(auth, gameID, color, name);
+            joinMessage.setCommandType(JOIN_PLAYER);
+            send(joinMessage);
+        }
+    }
+
+    public void makeMove(String auth, int gameID, ChessMove move) throws Exception {
+        UserGameCommand moveMessage = new MakeMove(auth, gameID, move);
+        moveMessage.setCommandType(MAKE_MOVE);
+        send(moveMessage);
     }
 
 

@@ -36,6 +36,11 @@ public class MemoryGameAccess implements GameAccess {
     }
 
     @Override
+    public void setGame(int id, ChessGame game) {
+
+    }
+
+    @Override
     public ArrayList<SerializedGameData> listGames() {
         Gson gson = new Gson();
         ArrayList<SerializedGameData> serializedGames = new ArrayList<>();

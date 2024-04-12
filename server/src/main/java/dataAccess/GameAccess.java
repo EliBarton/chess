@@ -11,6 +11,8 @@ public interface GameAccess {
 
     GameData getGame(int id);
 
+    void setGame(int id, ChessGame game);
+
     ArrayList<SerializedGameData> listGames();
 
     ChessGame updateGame(int id, String authToken, String playerColor);

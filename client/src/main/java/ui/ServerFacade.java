@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import webSocketMessages.userCommands.JoinPlayer;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -38,8 +39,8 @@ public class ServerFacade {
 
     }
 
-    public void makeMove(){
-        //ws.
+    public void makeMove(String auth, int gameID, ChessMove move) throws Exception {
+        ws.makeMove(auth, gameID, move);
     }
 
     public AuthResult login(String username, String password) throws Exception {

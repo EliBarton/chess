@@ -17,10 +17,10 @@ public class GameBoard {
 
     private static final String[] columnNames = {"\u2003a ", "\u2003b ", "\u2003c ", "\u2003d ", "\u2003e ", "\u2003f ", "\u2003g ", "\u2003h "};
 
-    public static void draw(ChessGame.TeamColor color, ChessBoard board,  HashSet<ChessMove> highlightedMoves){
+    public static void draw(String color, ChessBoard board,  HashSet<ChessMove> highlightedMoves){
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        if (color == ChessGame.TeamColor.BLACK) {
+        if (color.equals("BLACK")) {
             drawBlack(out, board, highlightedMoves);
         }else{
             drawWhite(out, board, highlightedMoves);
