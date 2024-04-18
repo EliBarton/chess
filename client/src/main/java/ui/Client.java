@@ -8,6 +8,7 @@ import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -17,6 +18,8 @@ public class Client implements ServerMessageObserver{
 
     private static boolean awaitingMessage = false;
     private static boolean awaitingInput = false;
+
+    private static ArrayList<Thread> threads = new ArrayList<>();
 
 
     public void init(){
@@ -229,6 +232,7 @@ public class Client implements ServerMessageObserver{
     }
 
     private static void gameplayMenu(ChessGame game, HashSet<ChessMove> highlightedMoves){
+        awaitingInput = false;
         GameBoard.draw(color, game.getBoard(), highlightedMoves);
         System.out.println("1. Redraw Board");
         System.out.println("2. Leave Game");
@@ -237,21 +241,15 @@ public class Client implements ServerMessageObserver{
         System.out.println("5. Highlight Legal Moves");
         System.out.println("6. Help");
         System.out.println("\n");
-
-        Thread inputThread = getThread(color, game);
-        inputThread.start();
+        awaitingInput = true;
+        getInput(color, game);
     }
 
-    private static Thread getThread(String color, ChessGame game) {
-        Runnable getInput = () -> {
-            while (true) {
-                int input = 0;
-                try{
-                    input = reader.nextInt();
-                }catch (Exception ignored){
-
-                }
-
+    private static void getInput(String color, ChessGame game) {
+        int input = 0;
+        try{
+            if (reader.hasNext()) {
+                input = Integer.parseInt(reader.next());
                 switch (input) {
                     case 0 -> {
                     }
@@ -259,14 +257,18 @@ public class Client implements ServerMessageObserver{
                     case 2 -> leaveGame();
                     case 3 -> makeMovePrompt(game);
                     case 4 -> resign();
-                    case 5 -> highlightMovesPrompt(game).start();
+                    case 5 -> highlightMovesPrompt(game);
                     case 6 -> printHelpGameplay();
                     default -> gameplayMenu(game, null);
                 }
+                return;
             }
-        };
-        Thread inputThread = new Thread(getInput);
-        return inputThread;
+        }catch (NumberFormatException e) {
+            //gameplayMenu(game, null);
+            return;
+        }catch (Exception ignored){
+
+        }
     }
 
     private static void printHelpGameplay(){
@@ -310,6 +312,8 @@ public class Client implements ServerMessageObserver{
             throw new RuntimeException(e);
         }
     }
+
+
 
     // Converts the user's input into a Chess Position
     private static ChessPosition convertToChessPosition(String moveString){
@@ -358,27 +362,23 @@ public class Client implements ServerMessageObserver{
         return newMove;
     }
 
-    private static Thread highlightMovesPrompt(ChessGame game){
-        Runnable getInput = () -> {
-            System.out.println("Enter the position of the piece to highlight the moves of:");
-            while (true) {
-                try {
-                    if (reader.hasNext()) {
-                        String selectedPieceInput = reader.next();
-                        ChessPosition piecePos = convertToChessPosition(selectedPieceInput);
+    private static void highlightMovesPrompt(ChessGame game){
+        System.out.println("Enter the position of the piece to highlight the moves of:");
+        while (awaitingMessage) {
+            try {
+                if (reader.hasNext()) {
+                    String selectedPieceInput = reader.next();
+                    ChessPosition piecePos = convertToChessPosition(selectedPieceInput);
 
-                        HashSet<ChessMove> pieceMoves = (HashSet<ChessMove>) game.validMoves(piecePos);
+                    HashSet<ChessMove> pieceMoves = (HashSet<ChessMove>) game.validMoves(piecePos);
 
-                        gameplayMenu(game, pieceMoves);
-                        return;
-                    }
-                } catch (Exception ignored){
-
+                    gameplayMenu(game, pieceMoves);
+                    return;
                 }
+            } catch (Exception ignored){
+
             }
-        };
-        Thread inputThread = new Thread(getInput);
-        return inputThread;
+        }
     }
 
     @Override
@@ -398,7 +398,13 @@ public class Client implements ServerMessageObserver{
     }
 
     private void loadGame(ChessGame game){
-        gameplayMenu(game, null);
+        threads.forEach(Thread::interrupt);
+        Runnable runnable = () -> {
+            gameplayMenu(game, null);
+        };
+        Thread thread = new Thread(runnable);
+        threads.add(thread);
+        thread.start();
     }
 
     private void displayError(String errorMessage){
